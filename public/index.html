@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Demand Radar: see demand rise before everyone else</title>
+<meta name="description" content="Live demand signals for the Netherlands, the US, Germany and worldwide: what spikes today, what is rising, and what will rise next. Check any idea, product or service in seconds.">
+<meta property="og:title" content="Demand Radar: see demand rise before everyone else">
+<meta property="og:description" content="What spikes today, what is rising, and what will rise next. Check any idea, product or service against live data.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="top"><div class="top-in">
+  <a class="brand" href="/">demand<span>radar</span></a>
+  <nav class="nav" aria-label="Sections"><a href="#spikes">Spikes</a><a href="#upcoming">Upcoming</a><a href="#rising">Rising</a><a href="#pricing">Pricing</a><a href="#how">How it works</a></nav>
+  <span class="pilot" id="plan">Pilot · €39 a month</span>
+  <a class="scan" href="#check">Check an idea<span aria-hidden="true">&rarr;</span></a>
+</div></div>
+
+<main>
+  <div class="hero">
+    <div class="eyebrow">For affiliate marketers, online sellers and product builders</div>
+    <h1>See demand rise before everyone else does.</h1>
+    <p class="lead">Demand Radar reads live search, Wikipedia and news data for the Netherlands, the United States, Germany and worldwide. It shows what spikes today, what is rising and what will rise next, with the timing to act on it.</p>
+    <form class="scanform" id="check" novalidate>
+      <div class="field"><label for="q">Idea, product or service</label><input id="q" name="q" maxlength="80" autocomplete="off" placeholder="e.g. home battery, heated vest, padel lessons"></div>
+      <div class="field"><label for="m">Market</label><select id="m" name="m"><option value="NL">Netherlands</option><option value="US">United States</option><option value="DE">Germany</option><option value="WW">Worldwide</option></select></div>
+      <button class="cta" type="submit" id="go">Check demand</button>
+      <p class="micro" id="checkNote">Takes 10 to 20 seconds. You get a demand score and phase for free; Pro shows the timing, news and sources.</p>
+    </form>
+    <div id="result"></div>
+  </div>
+
+  <div class="chips" id="markets" role="group" aria-label="Market filter"></div>
+  <div class="tiles" id="tiles"><div class="tile"><div class="tv">…</div><div class="tl">Loading live data</div></div></div>
+
+  <section class="block" id="spikes">
+    <h2>Spikes</h2>
+    <p class="sub">What jumped in the last one to three days.</p>
+    <h3>Product spikes</h3>
+    <div class="card" id="spk-products"><p class="loading">Reading the latest data</p></div>
+    <h3>Search spikes · trending on Google now</h3>
+    <div class="grid3" id="spk-search"></div>
+    <h3>Attention spikes · sudden interest on Wikipedia</h3>
+    <div class="grid3" id="spk-attention"></div>
+  </section>
+
+  <section class="block" id="upcoming">
+    <h2>Upcoming</h2>
+    <p class="sub">Demand that will rise soon, and when to be ready.</p>
+    <h3>Demand windows</h3>
+    <div class="card" id="up-cal"><p class="loading">Reading the latest data</p></div>
+    <h3>Seasonal rises, based on last year</h3>
+    <div class="card" id="up-seasonal"><p class="loading">Reading the latest data</p></div>
+  </section>
+
+  <section class="block" id="rising">
+    <h2>Rising</h2>
+    <p class="sub">Products whose interest is climbing right now, ranked by demand score.</p>
+    <div class="card" id="rising-list"><p class="loading">Reading the latest data</p></div>
+    <details id="allwrap"><summary>All tracked products (<span id="n-all">0</span>)</summary><div class="gtable"><table id="all"></table></div></details>
+  </section>
+
+  <section class="block" id="pricing">
+    <h2>Pricing</h2>
+    <p class="sub">See everything blurred for free. Unlock it when you want to act on it.</p>
+    <div class="plans">
+      <div class="plan">
+        <h3>Free</h3>
+        <div class="price">€0</div>
+        <ul><li>The full radar, blurred</li><li>One open example per section</li><li>Idea checks with score and phase</li></ul>
+        <a class="cta ghost" href="#check">Check an idea</a>
+      </div>
+      <div class="plan best">
+        <h3>Pro</h3>
+        <div class="price">€39 <small>a month</small></div>
+        <ul><li>Every spike, rising product and demand window, unblurred</li><li>Unlimited idea checks with timing, seasonality, news and sources</li><li>Netherlands, United States, Germany and worldwide</li><li>Updated every hour</li><li>Stop any month</li></ul>
+        <a class="cta" href="mailto:henkjan@adsfair.xyz?subject=Demand%20Radar%20Pro">Start Pro</a>
+      </div>
+      <div class="plan">
+        <h3>Pro + AI analyst</h3>
+        <div class="price">€99 <small>a month</small></div>
+        <ul><li>Everything in Pro</li><li>An AI analyst on every check that researches the web for rules, prices and competition</li><li>A concrete first step and the best start date per idea</li><li>Stop any month</li></ul>
+        <a class="cta ghost" href="mailto:henkjan@adsfair.xyz?subject=Demand%20Radar%20Pro%20%2B%20AI">Start Pro + AI</a>
+      </div>
+    </div>
+    <form class="keyform" id="keyform" action="/api/unlock" method="get">
+      <label for="key" class="micro" style="margin:0">Have an access key?</label>
+      <input id="key" name="key" autocomplete="off" placeholder="dr-…">
+      <button class="cta ghost" type="submit">Unlock</button>
+    </form>
+    <p class="note" id="keynote" hidden></p>
+  </section>
+
+  <section class="block" id="how">
+    <h2>How it works</h2>
+    <p class="sub">Free, live signals that move with buying demand. Every number links back to its source.</p>
+    <ul class="sources">
+      <li><b>Google trending searches</b><span>What people in the Netherlands, the US and Germany suddenly search for, with estimated search counts and the news behind it. Refreshed every hour.</span></li>
+      <li><b>Wikipedia interest</b><span>Daily page views for <span id="n-watch">80</span> tracked products and for every idea you check, with more than a year of history. This shows the trend now and the season ahead.</span></li>
+      <li><b>Global news</b><span>Articles from the last four weeks in the market's language, via GDELT. It catches what drives demand: new rules, subsidies, price jumps and shortages.</span></li>
+      <li><b>Demand calendar</b><span>Holidays, shopping moments and regulation deadlines per market, with the date searches usually start rising.</span></li>
+      <li><b>AI analyst</b><span>On Pro + AI: reads all of the above and researches the web for your idea, then gives a verdict, risks and a first step.</span></li>
+    </ul>
+    <h3>The five phases</h3>
+    <div class="ideas" style="margin-bottom:8px"><span class="badge p-early">Early: the season starts soon, best moment to prepare</span><span class="badge p-rising">Rising: interest climbs now</span><span class="badge p-peak">Peak: late, most buyers have bought</span><span class="badge p-falling">Falling: do not start</span><span class="badge p-steady">Steady: no clear movement</span></div>
+  </section>
+
+  <section class="block" id="faq">
+    <h2>Questions</h2>
+    <details><summary>Is this Google search volume?</summary><p>No. Exact search volumes come from paid sources. Demand Radar combines free, live signals that move with search demand: Google's trending searches, Wikipedia interest and news. That makes it fast and fresh, and strong on timing. Exact search volumes are on the roadmap.</p></details>
+    <details><summary>How fresh is the data?</summary><p>Trending searches and spikes refresh every hour. Wikipedia interest is counted per day. News is searched live when you check an idea.</p></details>
+    <details><summary>Which markets?</summary><p>The Netherlands, the United States, Germany and a worldwide English view.</p></details>
+    <details><summary>Can I stop?</summary><p>Yes. You pay per month and can stop any month.</p></details>
+    <details><summary>Who is behind Demand Radar?</summary><p>AdsFair B.V. in Gouda, the Netherlands. We buy and test traffic every day and built this to choose our own products.</p></details>
+  </section>
+</main>
+
+<div class="paybar" id="paybar" hidden><div class="in"><span id="paytext">You are seeing a blurred radar. Pro unlocks every product, source and date for €39 a month.</span><a href="#pricing">See plans</a></div></div>
+
+<footer class="site"><div class="in">
+  Demand Radar is a service of ADSFAIR B.V., Albert Plesmanplein 20, 2805 AB Gouda, the Netherlands · VAT NL853775485B01 · henkjan@adsfair.xyz
+  <div id="pro-out" hidden><a href="/api/unlock?logout=1">Sign out of Pro</a></div>
+</div></footer>
+<script src="/site.js" defer></script>
+</body>
+</html>
