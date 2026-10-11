@@ -14,6 +14,10 @@ http.createServer(async (req, res) => {
     req.query = Object.fromEntries(u.searchParams);
     res.status = c => { res.statusCode = c; return res; };
     res.json = o => { res.setHeader('content-type', 'application/json'); res.end(JSON.stringify(o)); };
+    res.send = b => { res.end(typeof b === 'string' || Buffer.isBuffer(b) ? b : JSON.stringify(b)); };
+    const chunks = []; for await (const c of req) chunks.push(c);
+    const raw = Buffer.concat(chunks).toString();
+    try { req.body = /json/.test(req.headers['content-type'] || '') ? JSON.parse(raw || '{}') : raw; } catch { req.body = raw; }
     try { (await import(`../api/${u.pathname.slice(5)}.js`)).default(req, res); } catch (e) { res.statusCode = 404; res.end(String(e)); }
     return;
   }

@@ -6,6 +6,25 @@
   var LANG_MK = { nl: ['NL'], en: ['US', 'WW'], de: ['DE'] };
   var PH = { early: 'Early', rising: 'Rising', peak: 'Peak', falling: 'Falling', steady: 'Steady' };
   var S = { data: null, market: 'ALL' };
+  var V = 'A';
+
+  // ---------- Leren: welke kop, tekst en knop werken het best (zie /api/learn) ----------
+  function cookie(n) { var m = document.cookie.match(new RegExp('(?:^|; )' + n + '=([^;]*)')); return m ? decodeURIComponent(m[1]) : ''; }
+  function ev(k) { try { var u = '/api/e?x=page&k=' + k + '&v=' + V; if (navigator.sendBeacon) navigator.sendBeacon(u); else fetch(u, { keepalive: true }); } catch (_) {} }
+  function pickW(w) { var ks = Object.keys(w).sort(), r = Math.random(); for (var i = 0; i < ks.length; i++) { r -= w[ks[i]]; if (r < 0) return ks[i]; } return ks[0] || 'A'; }
+  function variant() {
+    var hero = $('#hero'), show = function () { hero.style.visibility = ''; };
+    var timer = setTimeout(show, 700), had = cookie('dr_v');
+    var seen = false; try { seen = sessionStorage.getItem('dr_seen') === '1'; sessionStorage.setItem('dr_seen', '1'); } catch (_) {}
+    fetch('/api/ab').then(function (r) { return r.json(); }).then(function (p) {
+      var vs = p.variants || {};
+      V = had && vs[had] ? had : pickW(p.weights || { A: 1 });
+      document.cookie = 'dr_v=' + V + '; Path=/; Max-Age=7776000; SameSite=Lax';
+      var t = vs[V];
+      if (t) { if (t.h1) hero.textContent = t.h1; if (t.lead) $('#lead').textContent = t.lead; if (t.cta) $('#go').textContent = t.cta; }
+    }).catch(function () {}).then(function () { clearTimeout(timer); show(); if (!seen) ev('view'); });
+  }
+  document.addEventListener('click', function (e) { var a = e.target.closest && e.target.closest('a[href^="mailto:"]'); if (a) ev('pro'); });
 
   function h(tag, attrs) {
     var e = document.createElement(tag), k, i, c;
@@ -222,7 +241,7 @@
       if (a.first_step) parts.push(h('p', { class: 'micro', style: 'color:var(--ink)' }, h('b', null, 'First step: '), a.first_step));
       if (a.sources && a.sources.length) parts.push(h('div', { class: 'ideas' }, a.sources.filter(function (s) { return safe(s.url); }).slice(0, 5).map(function (s) { return link(s.title || s.url, s.url, 'idea'); })));
     } else if (c.pro && c.aiEnabled === false) {
-      parts.push(h('p', { class: 'micro' }, 'AI analyst: switch it on with an Anthropic API key in Vercel (ANTHROPIC_API_KEY).'));
+      parts.push(h('p', { class: 'micro' }, 'The AI analyst is not available right now.'));
     }
     if (c.sources) parts.push(h('p', { class: 'srcs', text: c.sources.filter(function (x) { return x.ok; }).length + ' of ' + c.sources.length + ' sources answered: ' + c.sources.filter(function (x) { return x.ok; }).map(function (x) { return x.name; }).join(', ') + '.' }));
     if (L) parts.push(h('div', { class: 'unlock' }, h('p', null, 'See the timing, the news behind it and the sources.'), h('a', { class: 'cta', href: '#pricing' }, 'Unlock with Pro')));
@@ -233,6 +252,7 @@
     ev.preventDefault();
     var q = $('#q').value.trim(), m = $('#m').value, city = $('#c').value.trim(), note = $('#checkNote');
     if (q.length < 2) { note.textContent = 'Type an idea, product or service first.'; note.className = 'note'; return; }
+    ev('check');
     $('#go').disabled = true; note.className = 'micro'; note.textContent = 'Checking live sources for “' + q + '”' + (city ? ' in ' + city : '') + '…';
     $('#result').replaceChildren(h('p', { class: 'loading', text: 'Reading search, Wikipedia and news data' }));
     fetch('/api/check?m=' + m + '&c=' + encodeURIComponent(city) + '&q=' + encodeURIComponent(q), { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (c) {
@@ -244,7 +264,28 @@
     }).then(function () { $('#go').disabled = false; });
   });
 
+  // ---------- Dagmail ----------
+  $('#daily').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var email = $('#se').value.trim(), note = $('#snote');
+    var mks = Array.prototype.slice.call(document.querySelectorAll('input[name="mk"]:checked')).map(function (x) { return x.value; });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { note.className = 'note'; note.textContent = 'Type your email address first.'; return; }
+    if (!mks.length) { note.className = 'note'; note.textContent = 'Pick at least one market.'; return; }
+    $('#sgo').disabled = true;
+    fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, markets: mks, hp: $('#hp').value, v: V, src: new URLSearchParams(location.search).get('src') || '' }) })
+      .then(function (r) { return r.json(); }).then(function (j) {
+        if (j.error) throw new Error(j.error);
+        note.className = 'note ok';
+        note.textContent = j.status === 'active' ? 'You are already subscribed. Your markets are updated.' : j.status === 'confirm' ? 'Almost done: click the link in the mail we just sent you.' : 'Thanks, you are on the list. You will get a mail to confirm soon.';
+        $('#se').value = '';
+      }).catch(function (err) { note.className = 'note'; note.textContent = (err && err.message) || 'That did not work. Try again in a minute.'; })
+      .then(function () { $('#sgo').disabled = false; });
+  });
+
   var qs = new URLSearchParams(location.search);
+  var subMsg = { ok: 'You are subscribed. The first Demand of the day arrives tomorrow morning.', bye: 'You are unsubscribed. You will not get the mail any more.', invalid: 'That link is no longer valid.' }[qs.get('sub')];
+  if (subMsg) { $('#snote').className = qs.get('sub') === 'invalid' ? 'note' : 'note ok'; $('#snote').textContent = subMsg; }
+  variant();
   if (qs.get('unlock') === 'fail') { $('#keynote').hidden = false; $('#keynote').textContent = 'That key is not valid. Check it and try again.'; }
   if (qs.get('unlock') === 'ok') { $('#keynote').hidden = false; $('#keynote').className = 'note ok'; $('#keynote').textContent = 'Pro is unlocked on this browser.'; }
   try { S.market = localStorage.getItem('dr_mk') || 'ALL'; } catch (_) {}

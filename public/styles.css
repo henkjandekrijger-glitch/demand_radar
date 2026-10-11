@@ -130,3 +130,9 @@ code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6
 .temp{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600}
 .srcs{font-size:13px;color:var(--muted);margin:14px 0 0}
 #up-weather{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.subform{border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;margin:16px 0 0;display:grid;gap:10px;scroll-margin-top:80px}
+.subhead{display:flex;flex-direction:column;gap:2px}.subhead b{color:var(--ink);font-size:17px}.subhead span{font-size:15px;color:var(--muted)}
+.subrow{display:flex;flex-wrap:wrap;gap:10px}.subrow input{flex:1 1 240px;min-width:0;border:1px solid var(--line-strong);background:var(--bg);border-radius:999px;padding:10px 16px;font:inherit;font-size:16px;color:var(--ink);min-height:48px}
+.mks{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:15px}.mks label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;opacity:0}
+.subform .micro{margin:0}

@@ -91,3 +91,39 @@ test('mcp connector', async () => {
   assert.ok(radar.body.result.content[0].text.includes('DEMAND WINDOWS'));
   assert.equal((await run({ jsonrpc: '2.0', method: 'notifications/initialized' })).code, 202);
 });
+
+test('daily mail, subscribe and learning loop', async () => {
+  setFetch(mockFetch);
+  const { useStore, memoryStore, getJSON } = await import('../lib/store.js');
+  const store = memoryStore(); useStore(store);
+  const { runLoop, loadState, applyChanges, record, weights, MIN } = await import('../lib/learn.js');
+  const { buildDaily, subId } = await import('../lib/mail.js');
+  const { default: subscribe } = await import('../api/subscribe.js');
+  const call = (h, req) => new Promise(resolve => { const res = { headers: {}, statusCode: 200, setHeader(k, v) { this.headers[k] = v; }, status(c) { this.statusCode = c; return this; }, json(o) { resolve({ code: this.statusCode, body: o }); }, send(t) { resolve({ code: this.statusCode, body: t }); }, end() { resolve({ code: this.statusCode, headers: this.headers }); } }; h({ headers: { host: 'localhost:1' }, query: {}, ...req }, res); });
+  const r1 = await call(subscribe, { method: 'POST', body: { email: 'Test@Example.com', markets: ['NL', 'US'], v: 'B' } });
+  assert.equal(r1.body.status, 'saved');
+  const sub = JSON.parse(await store.get(`subs/${subId('test@example.com')}.json`));
+  assert.equal(sub.status, 'pending');
+  const r2 = await call(subscribe, { method: 'GET', query: { confirm: `${sub.id}.${sub.token}` } });
+  assert.equal(r2.headers.Location, '/?sub=ok#daily');
+  assert.equal(JSON.parse(await store.get(`subs/${sub.id}.json`)).status, 'active');
+  assert.equal((await call(subscribe, { method: 'POST', body: { email: 'nope', markets: ['NL'] } })).code, 400);
+  // e-mail opbouwen
+  const radar = await buildRadar();
+  const m = buildDaily(radar, { ...sub, status: 'active' }, { base: 'https://x.test', variant: 'B', template: '{top} is rising {pct} — today\'s demand signals', topics: {} });
+  assert.ok(m.subject.length > 5 && !m.subject.includes('{'), m.subject);
+  assert.ok(m.html.includes('Unsubscribe') && m.html.includes('/api/go?u=') && m.headers['List-Unsubscribe']);
+  // leren: gebeurtenissen tellen, oude uren worden opgeteld
+  for (let i = 0; i < 5; i++) await record(store, { x: 'page', k: 'view', v: 'B' });
+  for (const b of await store.list('ev/')) { store.files.set(b.pathname.replace(/ev\/\d+/, 'ev/2000010100'), '1'); store.files.delete(b.pathname); }
+  const out = await runLoop(store);
+  assert.ok(out.counted >= 6, JSON.stringify(out)); // 5 views + 1 sub
+  const st = await loadState(store);
+  assert.equal(st.page.stats.B.view, 5);
+  st.page.stats = { A: { view: MIN.page, check: 10 }, B: { view: MIN.page, check: 40 }, C: { view: MIN.page, check: 5 } };
+  assert.equal(weights(st, 'page').B, 0.7);
+  const done = applyChanges(st, { page: { variants: { A: { h1: 'x', cta: 'y' }, C: { h1: 'New headline', lead: 'New lead', cta: 'Go' } } }, note: 'test' });
+  assert.deepEqual(done, ['page C: New headline']);
+  assert.equal(st.page.variants.A.h1, 'See demand rise before everyone else does.');
+  useStore(undefined);
+});

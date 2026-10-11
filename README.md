@@ -29,3 +29,22 @@ Voeg in Claude een eigen connector toe met `https://<jouw-domein>/mcp?key=<sleut
 
 ## Testen
 `npm test` (gebruikt nepdata) · lokaal bekijken: `MOCK=1 npm run dev` → http://localhost:3000
+
+## Dagmail "Demand of the day"
+- Aanmelden op de site (mailadres + markten) → bevestigingsmail → actief. Afmelden met één klik (ook via de mailknop "unsubscribe").
+- Elke ochtend 05:40 UTC (`api/daily.js`, Vercel Cron) gaat de mail naar alle actieve abonnees. Maximaal één keer per dag.
+- Bekijken zonder te versturen: `/api/daily?key=<sleutel>&preview=1&m=NL,US&v=B`. Proefmail: `/api/daily?key=<sleutel>&test=<mailadres>`.
+- Nodig in Vercel: een **Blob-store** gekoppeld aan het project (opslag van abonnees en leren), plus `RESEND_API_KEY` en `MAIL_FROM` (bijv. `Demand Radar <radar@jouwdomein.com>`, domein geverifieerd in Resend).
+
+## Leren (pagina en mail)
+- De pagina test koppen, tekst en knop (varianten A, B, C …). De mail test onderwerpregels. A is de controle en blijft altijd.
+- Elke gebeurtenis (vertoning, check, aanmelding, klik op Pro, mail geopend, mail-klik) wordt geteld zonder IP of mailadres (`api/e.js`, `api/go.js`).
+- Uurronde (`api/loop.js`, Vercel Cron :23): optellen en verdelen. Gelijk tot elke variant 300 vertoningen (pagina) of 200 verzonden mails heeft, daarna 70% voor de beste.
+- De mail kiest het onderwerp van de dag mede op basis van de categorieën waarop lezers het vaakst klikken.
+- Stand bekijken: `/leren/<sleutel>`. JSON: `/api/learn?key=<sleutel>`.
+- **Aansluiten voor de leerlus:** `POST /api/learn?key=<sleutel>` met bijvoorbeeld
+  `{"page":{"variants":{"B":{"h1":"…","lead":"…","cta":"…"}}},"mail":{"variants":{"C":"… {top} … {pct}"}},"by":"leerlus","note":"waarom"}`.
+  Een variant op `null` zetten haalt hem weg. Plaatshouders in onderwerpregels: `{top}`, `{pct}`, `{n}`, `{market}`.
+
+## AI
+De AI-analist gebruikt de Vercel AI Gateway (geen eigen sleutel nodig op Vercel). Met `ANTHROPIC_API_KEY` gaat het rechtstreeks naar Anthropic, dan ook met webonderzoek.

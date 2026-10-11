@@ -4,6 +4,7 @@
 import { buildCheck, MARKETS } from '../lib/core.js';
 import { isPro, maskCheck, RAW_TOKEN } from '../lib/access.js';
 import { getCheck } from '../lib/data.js';
+import { gatewayToken, aiAvailable } from '../lib/ai.js';
 
 export default async function handler(req, res) {
   const q = String(req.query.q || '').trim().replace(/\s+/g, ' ').slice(0, 80);
@@ -13,7 +14,7 @@ export default async function handler(req, res) {
   try {
     if (req.query.raw) {
       if (req.query.raw !== RAW_TOKEN) return res.status(403).json({ error: 'forbidden' });
-      const data = await buildCheck(q, m, { ai: req.query.ai === '1', city: c });
+      const data = await buildCheck(q, m, { ai: req.query.ai === '1', city: c, aiToken: gatewayToken(req) });
       res.setHeader('Cache-Control', 'public, s-maxage=21600, stale-while-revalidate=86400');
       return res.status(200).json(data);
     }
@@ -21,7 +22,7 @@ export default async function handler(req, res) {
     const data = await getCheck(req, q, m, { ai: pro && req.query.ai !== '0', city: c });
     data.q = q;
     res.setHeader('Cache-Control', 'private, no-store');
-    res.status(200).json({ pro, aiEnabled: !!process.env.ANTHROPIC_API_KEY, ...(pro ? data : maskCheck(data)) });
+    res.status(200).json({ pro, aiEnabled: aiAvailable(req), ...(pro ? data : maskCheck(data)) });
   } catch (e) {
     res.status(500).json({ error: 'The check failed. Try again in a minute.' });
   }

@@ -16,7 +16,7 @@
 <body>
 <div class="top"><div class="top-in">
   <a class="brand" href="/">demand<span>radar</span></a>
-  <nav class="nav" aria-label="Sections"><a href="#spikes">Spikes</a><a href="#upcoming">Upcoming</a><a href="#rising">Rising</a><a href="#charts">Charts</a><a href="#pricing">Pricing</a><a href="#how">How it works</a></nav>
+  <nav class="nav" aria-label="Sections"><a href="#spikes">Spikes</a><a href="#upcoming">Upcoming</a><a href="#rising">Rising</a><a href="#charts">Charts</a><a href="#daily">Daily mail</a><a href="#pricing">Pricing</a><a href="#how">How it works</a></nav>
   <span class="pilot" id="plan">Pilot · €39 a month</span>
   <a class="scan" href="#check">Check an idea<span aria-hidden="true">&rarr;</span></a>
 </div></div>
@@ -24,8 +24,8 @@
 <main>
   <div class="hero">
     <div class="eyebrow">For affiliate marketers, online sellers and product builders</div>
-    <h1>See demand rise before everyone else does.</h1>
-    <p class="lead">Demand Radar reads live search, Wikipedia and news data for the Netherlands, the United States, Germany and worldwide. It shows what spikes today, what is rising and what will rise next, with the timing to act on it.</p>
+    <h1 id="hero" style="visibility:hidden">See demand rise before everyone else does.</h1>
+    <p class="lead" id="lead">Demand Radar reads live search, Wikipedia and news data for the Netherlands, the United States, Germany and worldwide. It shows what spikes today, what is rising and what will rise next, with the timing to act on it.</p>
     <form class="scanform" id="check" novalidate>
       <div class="field"><label for="q">Idea, product or service</label><input id="q" name="q" maxlength="80" autocomplete="off" placeholder="e.g. home battery, heated vest, padel lessons"></div>
       <div class="field"><label for="m">Market</label><select id="m" name="m"><option value="NL">Netherlands</option><option value="US">United States</option><option value="DE">Germany</option><option value="WW">Worldwide</option></select></div>
@@ -34,6 +34,16 @@
       <p class="micro" id="checkNote">Takes 10 to 20 seconds. Add a city for a hyperlocal check. Free shows the score and phase; Pro shows the timing, news, local competition and sources.</p>
     </form>
     <div id="result"></div>
+    <form class="subform" id="daily" novalidate>
+      <div class="subhead"><b>Demand of the day, by email</b><span>One short mail each morning: what is rising, spiking and coming up. Free, stop with one click.</span></div>
+      <div class="subrow">
+        <input id="se" type="email" autocomplete="email" placeholder="you@company.com" aria-label="Email address">
+        <button class="cta" type="submit" id="sgo">Get it daily</button>
+      </div>
+      <div class="mks" role="group" aria-label="Markets"><label><input type="checkbox" name="mk" value="NL" checked> Netherlands</label><label><input type="checkbox" name="mk" value="US"> United States</label><label><input type="checkbox" name="mk" value="DE"> Germany</label><label><input type="checkbox" name="mk" value="WW"> Worldwide</label></div>
+      <input type="text" id="hp" name="hp" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+      <p class="micro" id="snote">We only use your address for this mail. Confirm it once from your inbox.</p>
+    </form>
   </div>
 
   <div class="chips" id="markets" role="group" aria-label="Market filter"></div>
@@ -81,7 +91,7 @@
       <div class="plan">
         <h3>Free</h3>
         <div class="price">€0</div>
-        <ul><li>The full radar, blurred</li><li>One open example per section</li><li>Idea checks with score and phase</li></ul>
+        <ul><li>The Demand of the day by email</li><li>The full radar, blurred</li><li>One open example per section</li><li>Idea checks with score and phase</li></ul>
         <a class="cta ghost" href="#check">Check an idea</a>
       </div>
       <div class="plan best">

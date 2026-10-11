@@ -17,12 +17,29 @@
     },
     "api/mcp.js": {
       "maxDuration": 60
+    },
+    "api/daily.js": {
+      "maxDuration": 300
+    },
+    "api/loop.js": {
+      "maxDuration": 60
+    },
+    "api/learn.js": {
+      "maxDuration": 30
     }
   },
   "crons": [
     {
       "path": "/api/warm",
       "schedule": "7 * * * *"
+    },
+    {
+      "path": "/api/loop",
+      "schedule": "23 * * * *"
+    },
+    {
+      "path": "/api/daily",
+      "schedule": "40 5 * * *"
     }
   ],
   "headers": [
@@ -57,6 +74,10 @@
     {
       "source": "/mcp",
       "destination": "/api/mcp"
+    },
+    {
+      "source": "/leren/:key",
+      "destination": "/api/learn?key=:key&html=1"
     }
   ]
 }
