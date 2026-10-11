@@ -26,6 +26,9 @@
     },
     "api/learn.js": {
       "maxDuration": 30
+    },
+    "api/status.js": {
+      "maxDuration": 60
     }
   },
   "crons": [
@@ -61,7 +64,7 @@
       ]
     },
     {
-      "source": "/api/(.*)",
+      "source": "/api/((?!status).*)",
       "headers": [
         {
           "key": "X-Robots-Tag",
