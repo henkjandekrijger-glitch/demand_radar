@@ -16,7 +16,7 @@
 <body>
 <div class="top"><div class="top-in">
   <a class="brand" href="/">demand<span>radar</span></a>
-  <nav class="nav" aria-label="Sections"><a href="#spikes">Spikes</a><a href="#upcoming">Upcoming</a><a href="#rising">Rising</a><a href="#pricing">Pricing</a><a href="#how">How it works</a></nav>
+  <nav class="nav" aria-label="Sections"><a href="#spikes">Spikes</a><a href="#upcoming">Upcoming</a><a href="#rising">Rising</a><a href="#charts">Charts</a><a href="#pricing">Pricing</a><a href="#how">How it works</a></nav>
   <span class="pilot" id="plan">Pilot · €39 a month</span>
   <a class="scan" href="#check">Check an idea<span aria-hidden="true">&rarr;</span></a>
 </div></div>
@@ -29,8 +29,9 @@
     <form class="scanform" id="check" novalidate>
       <div class="field"><label for="q">Idea, product or service</label><input id="q" name="q" maxlength="80" autocomplete="off" placeholder="e.g. home battery, heated vest, padel lessons"></div>
       <div class="field"><label for="m">Market</label><select id="m" name="m"><option value="NL">Netherlands</option><option value="US">United States</option><option value="DE">Germany</option><option value="WW">Worldwide</option></select></div>
+      <div class="field"><label for="c">City <span style="font-weight:400;color:var(--muted)">(optional)</span></label><input id="c" name="c" maxlength="60" autocomplete="off" placeholder="e.g. Gouda"></div>
       <button class="cta" type="submit" id="go">Check demand</button>
-      <p class="micro" id="checkNote">Takes 10 to 20 seconds. You get a demand score and phase for free; Pro shows the timing, news and sources.</p>
+      <p class="micro" id="checkNote">Takes 10 to 20 seconds. Add a city for a hyperlocal check. Free shows the score and phase; Pro shows the timing, news, local competition and sources.</p>
     </form>
     <div id="result"></div>
   </div>
@@ -54,6 +55,8 @@
     <p class="sub">Demand that will rise soon, and when to be ready.</p>
     <h3>Demand windows</h3>
     <div class="card" id="up-cal"><p class="loading">Reading the latest data</p></div>
+    <h3>Weather ahead · demand that follows the forecast</h3>
+    <div class="grid3" id="up-weather"></div>
     <h3>Seasonal rises, based on last year</h3>
     <div class="card" id="up-seasonal"><p class="loading">Reading the latest data</p></div>
   </section>
@@ -63,6 +66,12 @@
     <p class="sub">Products whose interest is climbing right now, ranked by demand score.</p>
     <div class="card" id="rising-list"><p class="loading">Reading the latest data</p></div>
     <details id="allwrap"><summary>All tracked products (<span id="n-all">0</span>)</summary><div class="gtable"><table id="all"></table></div></details>
+  </section>
+
+  <section class="block" id="charts">
+    <h2>Charts</h2>
+    <p class="sub">What people download and buy right now: App Store top free apps and Apple Books top paid books per country.</p>
+    <div class="grid3" id="chart-grid"><p class="loading">Reading the latest data</p></div>
   </section>
 
   <section class="block" id="pricing">
@@ -78,7 +87,7 @@
       <div class="plan best">
         <h3>Pro</h3>
         <div class="price">€39 <small>a month</small></div>
-        <ul><li>Every spike, rising product and demand window, unblurred</li><li>Unlimited idea checks with timing, seasonality, news and sources</li><li>Netherlands, United States, Germany and worldwide</li><li>Updated every hour</li><li>Stop any month</li></ul>
+        <ul><li>Every spike, rising product and demand window, unblurred</li><li>Unlimited idea checks with timing, seasonality, news and sources</li><li>Hyperlocal checks for any city</li><li>Netherlands, United States, Germany and worldwide</li><li>Use it inside Claude and other AI assistants as a connector</li><li>Updated every hour</li><li>Stop any month</li></ul>
         <a class="cta" href="mailto:henkjan@adsfair.xyz?subject=Demand%20Radar%20Pro">Start Pro</a>
       </div>
       <div class="plan">
@@ -104,8 +113,17 @@
       <li><b>Wikipedia interest</b><span>Daily page views for <span id="n-watch">80</span> tracked products and for every idea you check, with more than a year of history. This shows the trend now and the season ahead.</span></li>
       <li><b>Global news</b><span>Articles from the last four weeks in the market's language, via GDELT. It catches what drives demand: new rules, subsidies, price jumps and shortages.</span></li>
       <li><b>Demand calendar</b><span>Holidays, shopping moments and regulation deadlines per market, with the date searches usually start rising.</span></li>
+      <li><b>What people type</b><span>Google, YouTube and Amazon search suggestions for your idea, nationally and with your city name. Amazon suggestions show buying intent.</span></li>
+      <li><b>Conversations</b><span>Reddit posts and Hacker News stories from the last four weeks, counted per week.</span></li>
+      <li><b>Google News</b><span>Articles in the market's language over the last four weeks, linked to the publisher.</span></li>
+      <li><b>Weather</b><span>Sixteen-day forecasts from Open-Meteo for Amsterdam, Berlin, New York, Chicago and any city you check. Cold snaps, frost, heat and rain move demand.</span></li>
+      <li><b>Local businesses</b><span>Existing places that match your idea within about 9 km of the city centre, from OpenStreetMap, with the count per 10,000 inhabitants.</span></li>
+      <li><b>Public holidays</b><span>Official days off in the Netherlands, Germany and the US, from Nager.Date.</span></li>
+      <li><b>Top charts</b><span>App Store top free apps and Apple Books top paid books per country.</span></li>
       <li><b>AI analyst</b><span>On Pro + AI: reads all of the above and researches the web for your idea, then gives a verdict, risks and a first step.</span></li>
     </ul>
+    <h3>Use it inside your AI assistant</h3>
+    <p>Pro members can ask for a demand check from any chat. In Claude, add a custom connector with the address <code id="mcp-url">https://this-site/mcp?key=YOUR-KEY</code> and ask, for example, "check demand for home batteries in Gouda".</p>
     <h3>The five phases</h3>
     <div class="ideas" style="margin-bottom:8px"><span class="badge p-early">Early: the season starts soon, best moment to prepare</span><span class="badge p-rising">Rising: interest climbs now</span><span class="badge p-peak">Peak: late, most buyers have bought</span><span class="badge p-falling">Falling: do not start</span><span class="badge p-steady">Steady: no clear movement</span></div>
   </section>

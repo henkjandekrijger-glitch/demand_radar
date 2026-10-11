@@ -33,5 +33,15 @@ export async function mockFetch(url) {
     const articles = Array.from({ length: 30 }, (_, i) => ({ url: `https://news.example.com/${i}`, title: `Headline number ${i} about demand`, seendate: new Date(now - (i * i * 0.04 + 0.2) * DAY).toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z', domain: 'news.example.com' }));
     return new Response(JSON.stringify({ articles }), { status: 200 });
   }
+  if (u.includes('suggestqueries.google.com')) { const q = decodeURIComponent((u.match(/[?&]q=([^&]+)/) || [])[1] || ''); return json([q, ['kopen', 'prijs', 'subsidie', 'ervaringen', 'review', 'beste', 'goedkoop', 'aanbieding'].map(w => `${q} ${w}`)]); }
+  if (u.includes('completion.amazon')) { const q = decodeURIComponent((u.match(/prefix=([^&]+)/) || [])[1] || ''); return json({ suggestions: ['set', 'pro', 'mini', 'xl', 'kit'].map(w => ({ value: `${q} ${w}` })) }); }
+  if (u.includes('reddit.com')) { const now = Date.now() / 1000; return json({ data: { children: Array.from({ length: 24 }, (_, i) => ({ data: { title: `Reddit thread ${i}`, permalink: `/r/test/comments/${i}`, subreddit_name_prefixed: i % 3 ? 'r/Netherlands' : 'r/solar', created_utc: now - i * i * 3000, score: 50 - i, num_comments: i } })) } }); }
+  if (u.includes('hn.algolia.com')) { const now = Date.now() / 1000; return json({ hits: Array.from({ length: 5 }, (_, i) => ({ title: `HN story ${i}`, objectID: String(1000 + i), created_at_i: now - i * 86400 * 4, points: 10 * i })) }); }
+  if (u.includes('news.google.com')) { const items = Array.from({ length: 18 }, (_, i) => `<item><title>Nieuwsbericht ${i} - Bron</title><pubDate>${new Date(Date.now() - i * i * 0.08 * DAY).toUTCString()}</pubDate><source url="https://www.nu.nl">NU.nl</source></item>`).join(''); return new Response(`<rss><channel>${items}</channel></rss>`, { status: 200 }); }
+  if (u.includes('geocoding-api.open-meteo.com')) return json({ results: [{ name: 'Gouda', admin1: 'South Holland', country_code: 'NL', latitude: 52.01, longitude: 4.71, population: 73000 }] });
+  if (u.includes('api.open-meteo.com')) { const time = Array.from({ length: 23 }, (_, i) => new Date(Date.now() + (i - 7) * DAY).toISOString().slice(0, 10)); return json({ daily: { time, temperature_2m_max: time.map((_, i) => (i < 8 ? 14 : 7)), temperature_2m_min: time.map((_, i) => (i < 8 ? 6 : -3)), precipitation_sum: time.map(() => 2), snowfall_sum: time.map((_, i) => (i > 15 ? 0.4 : 0)) } }); }
+  if (u.includes('nominatim.openstreetmap.org')) return json(Array.from({ length: 3 }, (_, i) => ({ name: `Shop ${i}`, type: 'shop', osm_type: 'node', osm_id: 100 + i })));
+  if (u.includes('date.nager.at')) { const y = (u.match(/PublicHolidays\/(\d{4})/) || [])[1]; return json([{ date: `${y}-12-26`, name: 'St. Stephen\'s Day', global: true }, { date: `${y}-11-11`, name: 'Veterans Day', global: true }]); }
+  if (u.includes('rss.applemarketingtools.com')) return json({ feed: { results: Array.from({ length: 10 }, (_, i) => ({ name: `Title ${i + 1}`, artistName: `Maker ${i + 1}`, url: `https://apps.apple.com/x/${i}`, genres: [{ name: 'Lifestyle' }] })) } });
   return new Response('not mocked', { status: 404 });
 }

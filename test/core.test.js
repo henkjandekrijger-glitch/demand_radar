@@ -59,8 +59,35 @@ test('radar + check end to end on mock data', async () => {
   assert.ok(r.spikes.attention[0].items.every(a => !a.name.includes(':')));
   const m = maskRadar(r);
   assert.ok(m.rising.slice(1).every(x => x.locked && x.url === null && x.name !== r.rising.find(y => y.article === x.article)?.name));
-  const c = await buildCheck('thuisbatterij', 'NL');
+  assert.ok(r.upcoming.weather.length === 4 && r.upcoming.weather[0].triggers.length >= 1, 'weather triggers');
+  assert.ok(r.charts.length === 6, 'charts');
+  assert.ok(r.upcoming.calendar.some(e => e.kind === 'holiday'), 'holidays merged');
+  const c = await buildCheck('thuisbatterij', 'NL', { city: 'Gouda' });
   assert.ok(c.wiki && c.news && c.score >= 0 && c.score <= 100);
+  assert.ok(c.gnews && c.reddit && c.hn && c.suggest.google.length && c.suggest.amazon.length);
+  assert.equal(c.local.place.name, 'Gouda'); assert.equal(c.local.competitors.count, 3);
+  assert.ok(c.sources.every(s => s.ok), JSON.stringify(c.sources.filter(s => !s.ok)));
   const mc = maskCheck(c);
   assert.equal(mc.wiki.momentum, null); assert.ok(mc.news.top.every(h => h.url === null));
+  assert.ok(mc.local.competitors.top.every(p => p.url === null) && mc.reddit.top.every(p => p.url === null));
+});
+
+test('mcp connector', async () => {
+  setFetch(mockFetch);
+  const { default: mcp } = await import('../api/mcp.js');
+  const run = (body, key = 'dr-362d937ce815868c78') => new Promise(resolve => {
+    const res = { headers: {}, statusCode: 200, setHeader(k, v) { this.headers[k] = v; }, status(c) { this.statusCode = c; return this; }, json(o) { resolve({ code: this.statusCode, body: o }); }, send(t) { resolve({ code: this.statusCode, body: JSON.parse(t) }); }, end() { resolve({ code: this.statusCode }); } };
+    mcp({ method: 'POST', query: { key }, headers: { host: 'localhost:1' }, body }, res);
+  });
+  assert.equal((await run({ jsonrpc: '2.0', id: 1, method: 'tools/list' }, 'wrong')).code, 401);
+  const init = await run({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-06-18' } });
+  assert.equal(init.body.result.serverInfo.name, 'demand-radar');
+  const list = await run({ jsonrpc: '2.0', id: 2, method: 'tools/list' });
+  assert.equal(list.body.result.tools.length, 2);
+  const call = await run({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'check_demand', arguments: { idea: 'padel', market: 'NL', city: 'Gouda' } } });
+  const text = call.body.result.content[0].text;
+  assert.ok(text.includes('Demand check') && text.includes('LOCAL') && text.includes('Gouda'), text.slice(0, 300));
+  const radar = await run({ jsonrpc: '2.0', id: 4, method: 'tools/call', params: { name: 'demand_radar', arguments: { market: 'NL', section: 'upcoming' } } });
+  assert.ok(radar.body.result.content[0].text.includes('DEMAND WINDOWS'));
+  assert.equal((await run({ jsonrpc: '2.0', method: 'notifications/initialized' })).code, 202);
 });

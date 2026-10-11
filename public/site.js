@@ -114,7 +114,18 @@
         h('div', { class: 'ideas' }, e.ideas.map(function (i) { return h('span', { class: 'idea', text: i }); }), e.locked ? lockHint() : null)));
     }), 'No demand windows for this market in the next four months.');
 
+    fill($('#up-weather'), (d.upcoming.weather || []).filter(function (w) { return showMk([w.market]); }).map(function (w) {
+      return h('div', { class: 'card' + (w.locked ? ' locked' : '') }, h('h4', null, mkTag(w.market), w.city),
+        h('div', { class: 'lsub' }, 'Next 7 days ', h('span', { class: 'temp', text: Math.round(w.next) + '°C' }), ' · last week ' + Math.round(w.past) + '°C · lowest ' + Math.round(w.minLow) + '°C'),
+        w.triggers.length ? w.triggers.map(function (t) { return h('div', { class: 'mini' }, h('div', { class: 'line-top' }, h('span', { style: 'font-weight:600;color:var(--ink)', text: t.name })), h('div', { class: 'ideas' }, t.ideas.map(function (i) { return h('span', { class: 'idea', text: i }); }), w.locked ? lockHint() : null)); })
+          : h('p', { class: 'empty', text: 'No weather trigger in the next two weeks.' }));
+    }), 'Weather data is not available right now.');
     fill($('#up-seasonal'), seasonal.map(function (x) { return watchLine(x, 'season'); }), 'No strong seasonal rises ahead for this market.');
+    fill($('#chart-grid'), (d.charts || []).filter(function (g) { return showMk([g.geo]); }).map(function (g) {
+      return h('div', { class: 'card' }, h('h4', null, mkTag(g.geo), g.kind === 'apps' ? 'Top free apps' : 'Top paid books'), g.items.map(function (x) {
+        return h('div', { class: 'mini' + (x.locked ? ' locked' : '') }, h('div', { class: 'line-top' }, h('span', null, h('span', { class: 'lsub', text: x.rank + '. ' }), link(x.name, x.url)), x.locked ? lockHint() : null), h('div', { class: 'lsub' }, h('span', { class: 'blur', text: x.artist + (x.genre ? ' · ' + x.genre : '') })));
+      }));
+    }), 'Charts are not available right now.');
     fill($('#rising-list'), rising.map(function (x) { return watchLine(x); }), 'Nothing is clearly rising in this market right now.');
 
     var all = W(d.watch); $('#n-all').textContent = all.length; $('#n-watch').textContent = d.watch.length;
@@ -148,7 +159,7 @@
       S.data = d; setPlan(d.pro); render();
     }).catch(function () {
       if ((tries || 0) < 2) return setTimeout(function () { load((tries || 0) + 1); }, 4000);
-      ['#spk-products', '#up-cal', '#up-seasonal', '#rising-list'].forEach(function (s) { fill($(s), [], 'The radar could not load right now. Refresh the page in a minute.'); });
+      ['#spk-products', '#up-cal', '#up-seasonal', '#rising-list', '#chart-grid'].forEach(function (s) { fill($(s), [], 'The radar could not load right now. Refresh the page in a minute.'); });
     });
   }
 
@@ -161,18 +172,47 @@
         h('div', null, badge(c.phase), h('span', { class: 'lname', text: c.q + ' · ' + MK[c.market] }), h('p', { class: L ? 'blurall' : '', style: 'margin:0', text: c.verdict })))
     ];
     if (w) {
-      parts.push(h('div', { class: 'tiles' + (L ? ' blurall' : '') }, tile(num(w.daily), 'daily views'), tile(pct(w.momentum), 'week vs month', cls(w.momentum)), tile(pct(w.yoy), 'year on year', cls(w.yoy)), tile(pct(w.outlook), 'next 6 weeks, last year', cls(w.outlook)), tile(w.peakInDays == null ? '••' : w.peakInDays <= 3 ? 'now' : inDays(w.peakInDays), 'last year’s peak')));
+      parts.push(h('div', { class: 'tiles' + (L ? ' blurall' : '') }, tile(num(w.daily), 'daily views'), tile(pct(w.momentum), 'week vs month', cls(w.momentum)), tile(pct(w.yoy), 'year on year', cls(w.yoy)), tile(pct(w.outlook), 'next 6 weeks, last year', cls(w.outlook)), tile(w.peakInDays == null ? '••' : w.peakInDays <= 3 ? 'now' : inDays(w.peakInDays), 'next peak, by last year')));
       parts.push(h('div', { class: L ? 'blurall' : '' }, spark(w.weeks, w.proj, 560, 70)));
       parts.push(h('p', { class: 'micro' }, 'Measured on Wikipedia (' + w.lang + '): ', h('span', { class: L ? 'blurall' : '' }, link(w.article, w.url, 'x')), '. Solid line: last 26 weeks. Dotted: next 8 weeks if this year follows last year.'));
     }
     if (n) {
       var mx = Math.max.apply(null, n.weeks.concat([1]));
-      parts.push(h('h3', null, 'In the news · ' + n.total + (n.capped ? '+' : '') + ' articles in four weeks'));
+      parts.push(h('h3', null, 'World news · ' + n.total + (n.capped ? '+' : '') + ' articles in four weeks'));
       parts.push(h('div', { class: 'weekbars', title: 'Articles per week, oldest left' }, n.weeks.map(function (v) { return h('i', { style: 'height:' + Math.max(2, Math.round((v / mx) * 44)) + 'px' }); })));
       parts.push(h('div', { class: L ? 'blurall' : '' }, n.top.map(function (a) { return h('div', { class: 'headline' }, link(a.title, a.url, 'x'), h('span', { class: 'lsub', text: ' · ' + (a.source || '') })); })));
     }
     if (c.trending && c.trending.length) parts.push(h('h3', null, 'Trending on Google today'), h('div', { class: 'ideas' + (L ? ' blurall' : '') }, c.trending.map(function (t) { return h('span', { class: 'idea', text: t.name + ' · ' + t.traffic }); })));
     if (c.calendar && c.calendar.length) parts.push(h('h3', null, 'Related demand moments'), h('div', null, c.calendar.map(function (e) { return h('div', { class: 'lsub' }, e.name + ' · ' + fdate(e.date) + ' · ' + (e.status === 'open' ? 'window open now' : 'window opens ' + inDays(e.opensIn))); })));
+    var sg = c.suggest || {};
+    if ((sg.google || []).length + (sg.youtube || []).length + (sg.amazon || []).length) {
+      parts.push(h('h3', null, 'What people type'));
+      [['Google', sg.google], ['YouTube', sg.youtube], ['Amazon', sg.amazon]].forEach(function (p) {
+        if (p[1] && p[1].length) parts.push(h('div', { class: 'ideas' + (L ? ' blurall' : ''), style: 'align-items:center' }, h('b', { class: 'lsub', style: 'filter:none' }, p[0] + ':'), p[1].slice(0, 8).map(function (t) { return h('span', { class: 'idea', text: t }); })));
+      });
+    }
+    function feedBlock(title, f, withSubs) {
+      if (!f) return;
+      var mx = Math.max.apply(null, f.weeks.concat([1]));
+      parts.push(h('h3', null, title + ' · ' + f.total + (f.capped ? '+' : '') + ' in four weeks'));
+      parts.push(h('div', { class: 'weekbars' }, f.weeks.map(function (v) { return h('i', { style: 'height:' + Math.max(2, Math.round((v / mx) * 44)) + 'px' }); })));
+      if (withSubs && f.subs && f.subs.length) parts.push(h('p', { class: 'micro' + (L ? ' blurall' : '') }, f.subs.join(' · ')));
+      parts.push(h('div', { class: L ? 'blurall' : '' }, (f.top || []).slice(0, 4).map(function (a) { return h('div', { class: 'headline' }, a.url && title !== 'Google News' ? link(a.title, a.url, 'x') : h('span', { text: a.title }), h('span', { class: 'lsub' }, ' · ', title === 'Google News' && a.url ? link(a.source, a.url, 'x') : (a.source || ''))); })));
+    }
+    feedBlock('Google News', c.gnews);
+    feedBlock('Reddit', c.reddit, true);
+    if (c.hn && c.hn.total) feedBlock('Hacker News', c.hn);
+    if (c.weather) parts.push(h('h3', null, 'Weather · ' + c.weather.city), h('p', { class: 'lsub' }, 'Next 7 days ' + Math.round(c.weather.next) + '°C, last week ' + Math.round(c.weather.past) + '°C' + (c.weather.triggers.length ? ' · ' + c.weather.triggers.map(function (t) { return t.name; }).join(' · ') : ' · no weather trigger')));
+    var lo = c.local;
+    if (lo && lo.error) parts.push(h('h3', null, 'Local'), h('p', { class: 'note', text: lo.error }));
+    else if (lo) {
+      var pl = lo.place, cp = lo.competitors;
+      parts.push(h('h3', null, 'Local · ' + pl.name + (pl.region ? ', ' + pl.region : '') + (pl.population ? ' · ' + num(pl.population) + ' inhabitants' : '')));
+      parts.push(h('p', { class: L ? 'blurall' : '', text: lo.verdict }));
+      parts.push(h('div', { class: 'tiles' }, tile(String(lo.suggestions.length), 'searches with the city name'), tile(lo.news ? String(lo.news.total) : '–', 'local news, 4 weeks'), tile(lo.reddit ? String(lo.reddit.total) : '–', 'local Reddit posts'), tile(cp ? cp.count + (cp.capped ? '+' : '') : '–', 'places on the map'), tile(cp && cp.per10k != null ? String(cp.per10k) : '–', 'per 10,000 inhabitants')));
+      if (lo.suggestions.length) parts.push(h('div', { class: 'ideas' + (L ? ' blurall' : '') }, lo.suggestions.slice(0, 8).map(function (t) { return h('span', { class: 'idea', text: t }); })));
+      if (cp && cp.top.length) parts.push(h('div', { class: L ? 'blurall' : '', style: 'margin-top:8px' }, cp.top.map(function (p) { return h('div', { class: 'headline' }, link(p.name, p.url, 'x'), h('span', { class: 'lsub', text: ' · ' + p.type })); })));
+    }
     if (c.ai && !c.ai.error) {
       var a = c.ai;
       parts.push(h('h3', null, 'AI analyst'), h('p', { text: a.verdict || '' }));
@@ -184,20 +224,21 @@
     } else if (c.pro && c.aiEnabled === false) {
       parts.push(h('p', { class: 'micro' }, 'AI analyst: switch it on with an Anthropic API key in Vercel (ANTHROPIC_API_KEY).'));
     }
+    if (c.sources) parts.push(h('p', { class: 'srcs', text: c.sources.filter(function (x) { return x.ok; }).length + ' of ' + c.sources.length + ' sources answered: ' + c.sources.filter(function (x) { return x.ok; }).map(function (x) { return x.name; }).join(', ') + '.' }));
     if (L) parts.push(h('div', { class: 'unlock' }, h('p', null, 'See the timing, the news behind it and the sources.'), h('a', { class: 'cta', href: '#pricing' }, 'Unlock with Pro')));
     box.replaceChildren(h('div', { class: 'card result' }, parts));
   }
 
   $('#check').addEventListener('submit', function (ev) {
     ev.preventDefault();
-    var q = $('#q').value.trim(), m = $('#m').value, note = $('#checkNote');
+    var q = $('#q').value.trim(), m = $('#m').value, city = $('#c').value.trim(), note = $('#checkNote');
     if (q.length < 2) { note.textContent = 'Type an idea, product or service first.'; note.className = 'note'; return; }
-    $('#go').disabled = true; note.className = 'micro'; note.textContent = 'Checking live sources for “' + q + '”…';
+    $('#go').disabled = true; note.className = 'micro'; note.textContent = 'Checking live sources for “' + q + '”' + (city ? ' in ' + city : '') + '…';
     $('#result').replaceChildren(h('p', { class: 'loading', text: 'Reading search, Wikipedia and news data' }));
-    fetch('/api/check?m=' + m + '&q=' + encodeURIComponent(q), { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (c) {
+    fetch('/api/check?m=' + m + '&c=' + encodeURIComponent(city) + '&q=' + encodeURIComponent(q), { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (c) {
       if (c.error) throw new Error(c.error);
       renderCheck(c); note.textContent = 'Checked ' + new Date(c.generatedAt).toLocaleString() + '.';
-      try { history.replaceState(null, '', '?q=' + encodeURIComponent(q) + '&m=' + m + '#check'); } catch (_) {}
+      try { history.replaceState(null, '', '?q=' + encodeURIComponent(q) + '&m=' + m + (city ? '&c=' + encodeURIComponent(city) : '') + '#check'); } catch (_) {}
     }).catch(function (e) {
       $('#result').replaceChildren(); note.className = 'note'; note.textContent = (e && e.message) || 'The check failed. Try again in a minute.';
     }).then(function () { $('#go').disabled = false; });
@@ -208,5 +249,7 @@
   if (qs.get('unlock') === 'ok') { $('#keynote').hidden = false; $('#keynote').className = 'note ok'; $('#keynote').textContent = 'Pro is unlocked on this browser.'; }
   try { S.market = localStorage.getItem('dr_mk') || 'ALL'; } catch (_) {}
   chips(); load(0);
+  try { $('#mcp-url').textContent = location.origin + '/mcp?key=YOUR-KEY'; } catch (_) {}
+  if (qs.get('c')) $('#c').value = qs.get('c');
   if (qs.get('q')) { $('#q').value = qs.get('q'); if (MK[qs.get('m')]) $('#m').value = qs.get('m'); $('#check').requestSubmit(); }
 })();

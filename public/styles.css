@@ -36,7 +36,7 @@ section.block{padding:40px 0 8px;border-top:1px solid var(--line);margin-top:36p
 .cta{display:inline-block;border:0;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:13px 24px;font-weight:600;font-size:17px;text-decoration:none;text-align:center}
 .cta:disabled{opacity:.5;cursor:default}
 .cta.ghost{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
-.scanform{display:grid;grid-template-columns:1fr 190px auto;gap:12px;align-items:end;background:var(--accent-soft);border-radius:var(--radius);padding:18px 20px;margin:20px 0 8px}
+.scanform{display:grid;grid-template-columns:1fr 170px 170px auto;gap:12px;align-items:end;background:var(--accent-soft);border-radius:var(--radius);padding:18px 20px;margin:20px 0 8px}
 .scanform .field{margin:0;min-width:0}
 .scanform input,.scanform select,.scanform .cta{min-height:52px}
 .scanform .micro{grid-column:1/-1;margin:0}
@@ -125,3 +125,8 @@ footer.site .in{max-width:1080px;margin:0 auto;padding:22px 20px 40px;font-size:
 .loading{color:var(--muted);padding:16px 0;margin:0}
 .loading::after{content:"";display:inline-block;width:12px;height:12px;margin-left:10px;border:2px solid var(--line-strong);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;vertical-align:-1px}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6px;border-radius:6px;overflow-wrap:anywhere}
+.temp{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600}
+.srcs{font-size:13px;color:var(--muted);margin:14px 0 0}
+#up-weather{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
