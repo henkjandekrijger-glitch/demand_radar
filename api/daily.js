@@ -5,7 +5,7 @@
 import { getStore, getJSON, putJSON } from '../lib/store.js';
 import { loadState, bump, bumpTopic, pick, STATE } from '../lib/learn.js';
 import { allSubs, buildDaily, sendMail, mailReady, confirmMail, siteBase, saveSub, validEmail, newToken } from '../lib/mail.js';
-import { cookieFor } from '../lib/access.js';
+import { cookieFor, OPEN } from '../lib/access.js';
 import { getRadar } from '../lib/data.js';
 
 export default async function handler(req, res) {
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
       const v = String(req.query.v || 'A').toUpperCase();
       const template = st ? st.mail.variants[v] || st.mail.variants.A : undefined;
       const fake = { id: '0'.repeat(20), token: 'preview', email: String(req.query.test || 'you@example.com'), markets: String(req.query.m || 'NL').toUpperCase().split(',') };
-      const msg = buildDaily(radar, fake, { base, variant: v, template, topics, date });
+      const msg = buildDaily(radar, fake, { base, variant: v, template, topics, date, open: OPEN });
       if (req.query.test) {
         if (!validEmail(req.query.test)) return res.status(400).json({ error: 'bad address' });
         await sendMail({ to: msg.to, subject: `[test] ${msg.subject}`, html: msg.html, text: msg.text });
@@ -42,7 +42,7 @@ export default async function handler(req, res) {
       try { s.token = s.token || newToken(); await sendMail(confirmMail(base, s)); s.confirmSent = new Date().toISOString(); await saveSub(store, s); } catch {}
     }
     const active = subs.filter(s => s.status === 'active');
-    const msgs = active.map(s => { const v = pick(st.mail.weights); const m = buildDaily(radar, s, { base, variant: v, template: st.mail.variants[v], topics, date }); return { v, m }; });
+    const msgs = active.map(s => { const v = pick(st.mail.weights); const m = buildDaily(radar, s, { base, variant: v, template: st.mail.variants[v], topics, date, open: OPEN }); return { v, m }; });
     let sent = 0; const per = {}; const errors = [];
     for (let i = 0; i < msgs.length; i += 100) {
       const chunk = msgs.slice(i, i + 100);

@@ -2,7 +2,7 @@
 // Ruwe uitkomst wordt 6 uur per idee+markt+stad bewaard. Pro + ANTHROPIC_API_KEY = ook AI-analist met webonderzoek.
 // Pro-toegang via het cookie of via &key=<sleutel> (voor gebruik vanuit andere tools).
 import { buildCheck, MARKETS } from '../lib/core.js';
-import { isPro, maskCheck, RAW_TOKEN } from '../lib/access.js';
+import { isPro, canSee, maskCheck, RAW_TOKEN, OPEN } from '../lib/access.js';
 import { getCheck } from '../lib/data.js';
 import { gatewayToken, aiAvailable } from '../lib/ai.js';
 
@@ -22,7 +22,8 @@ export default async function handler(req, res) {
     const data = await getCheck(req, q, m, { ai: pro && req.query.ai !== '0', city: c });
     data.q = q;
     res.setHeader('Cache-Control', 'private, no-store');
-    res.status(200).json({ pro, aiEnabled: aiAvailable(req), ...(pro ? data : maskCheck(data)) });
+    const see = canSee(req);
+    res.status(200).json({ pro: see, open: OPEN, aiEnabled: pro && aiAvailable(req), ...(see ? data : maskCheck(data)) });
   } catch (e) {
     res.status(500).json({ error: 'The check failed. Try again in a minute.' });
   }

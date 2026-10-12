@@ -165,17 +165,22 @@
     });
   }
 
-  function setPlan(pro) {
-    $('#plan').textContent = pro ? 'Pro' : 'Pilot · €39 a month';
+  function setPlan(pro, open) {
+    $('#plan').textContent = open ? 'Free beta' : pro ? 'Pro' : 'Pilot · €39 a month';
     $('#plan').classList.toggle('pro', !!pro);
     $('#paybar').hidden = !!pro;
-    $('#pro-out').hidden = !pro;
+    $('#pro-out').hidden = !pro || !!open;
+    if (open) {
+      $('#pricing').hidden = true;
+      var nl = document.querySelector('.nav a[href="#pricing"]'); if (nl) nl.hidden = true;
+      $('#checkNote').textContent = 'Takes 10 to 20 seconds. Add a city for a hyperlocal check.';
+    }
   }
 
   function load(tries) {
     fetch('/api/radar', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (d) {
       if (d.error) throw new Error(d.error);
-      S.data = d; setPlan(d.pro); render();
+      S.data = d; setPlan(d.pro, d.open); render();
     }).catch(function () {
       if ((tries || 0) < 2) return setTimeout(function () { load((tries || 0) + 1); }, 4000);
       ['#spk-products', '#up-cal', '#up-seasonal', '#rising-list', '#chart-grid'].forEach(function (s) { fill($(s), [], 'The radar could not load right now. Refresh the page in a minute.'); });
