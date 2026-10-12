@@ -58,7 +58,7 @@
     var d = S.d, box = $('#cu-list'), note = $('#cu-note');
     if (!d) return;
     if (!d.ready) return box.replaceChildren(h('p', { class: 'empty', text: 'Measured search data is not connected yet.' }));
-    if (note && d.period) note.textContent = 'Measured Google searches for ' + mon(d.period, true) + ', the latest full month. Refreshed daily.' + (d.ai === 'on' ? ' Sports, news and celebrity searches are filtered out.' : '');
+    if (note && d.period) note.textContent = 'Measured Google searches for ' + mon(d.period, true) + ', the latest month in the data. Refreshed daily.' + (d.ai === 'on' ? ' Sports, news and celebrity searches are filtered out.' : '');
     var list = (d.items[S.win] || []).filter(function (x) { return S.mk === 'ALL' || x.cc === S.mk; });
     if (S.mk === 'ALL') list = interleave(list);
     if (!list.length) return box.replaceChildren(h('p', { class: 'empty', text: d.errors && d.errors.length ? 'The search data could not be read right now (' + d.errors[0] + ').' : 'Nothing measured for this selection yet.' }));
