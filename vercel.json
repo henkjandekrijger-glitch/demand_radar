@@ -35,6 +35,9 @@
     },
     "api/warmmap.js": {
       "maxDuration": 300
+    },
+    "api/rising.js": {
+      "maxDuration": 120
     }
   },
   "crons": [

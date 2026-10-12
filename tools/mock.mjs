@@ -52,6 +52,7 @@ export async function mockFetch(url, opts = {}) {
     let result;
     if (u.includes('search_volume')) result = task.keywords.map(kw);
     else if (u.includes('keywords_for_keywords')) result = task.keywords.flatMap(k => ['online', 'gratis', 'free', 'pdf'].map(w => kw(`${k} ${w}`)));
+    else if (u.includes('top_searches')) result = [{ items: Array.from({ length: 30 }, (_, i) => { const k = `product ${task.location_code} ${i}`; const x = kw(k); return { keyword: k, keyword_info: { search_volume: x.search_volume, cpc: x.cpc, competition: 0.4, monthly_searches: x.monthly_searches, search_volume_trend: { monthly: 300 - i * 9, quarterly: 50, yearly: i % 3 ? 120 - i : 5 } }, search_intent_info: { main_intent: 'commercial' }, keyword_properties: { core_keyword: null, keyword_difficulty: 20 } }; }) }];
     else if (u.includes('serp/google')) result = [{ items: [...Array.from({ length: 8 }, (_, i) => ({ type: 'organic', domain: `site${i}.com`, title: `Result ${i}`, url: `https://site${i}.com` })), ...(hash(task.keyword) % 3 ? [{ type: 'paid', domain: 'ads.example', title: 'Ad' }] : [])] }];
     return json({ status_code: 20000, cost: 0.05, tasks: [{ status_code: 20000, result }] });
   }

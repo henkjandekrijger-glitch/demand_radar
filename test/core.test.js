@@ -151,3 +151,16 @@ test('opportunity map: free signals and measured mode', async () => {
   assert.equal(seasonality([{ ym: '2025-01', v: 1 }]), null);
   assert.equal(yoy([]), null);
 });
+
+test('rising searches (measured)', async () => {
+  setFetch(mockFetch);
+  const { buildRising, label } = await import('../lib/rising.js');
+  assert.equal((await buildRising()).ready, false);
+  process.env.DFS_LOGIN = 'x'; process.env.DFS_PASSWORD = 'y';
+  const r = await buildRising();
+  delete process.env.DFS_LOGIN; delete process.env.DFS_PASSWORD;
+  assert.ok(r.ready && r.items.month.length === 90 && r.items.year.length > 0, JSON.stringify({ m: r.items.month.length, e: r.errors }));
+  assert.ok(r.items.month.every((x, i, a) => i === 0 || a[i - 1].cc !== x.cc || a[i - 1].added >= x.added));
+  assert.equal(label({ m: 200, y: 5 }), 'seasonal');
+  assert.equal(label({ m: 20, y: 80 }), 'new');
+});

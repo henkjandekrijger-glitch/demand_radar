@@ -16,7 +16,7 @@
 <body>
 <div class="top"><div class="top-in">
   <a class="brand" href="/">demand<span>radar</span></a>
-  <nav class="nav" aria-label="Sections"><a href="/map">Opportunity map</a><a href="#spikes">Spikes</a><a href="#upcoming">Upcoming</a><a href="#rising">Rising</a><a href="#charts">Charts</a><a href="#daily">Daily mail</a><a href="#pricing">Pricing</a><a href="#how">How it works</a></nav>
+  <nav class="nav" aria-label="Sections"><a href="#cameup">What came up</a><a href="/map">Opportunity map</a><a href="#spikes">Spikes</a><a href="#upcoming">Upcoming</a><a href="#rising">Rising</a><a href="#charts">Charts</a><a href="#daily">Daily mail</a><a href="#pricing">Pricing</a><a href="#how">How it works</a></nav>
   <span class="pilot" id="plan">Pilot · €39 a month</span>
   <a class="scan" href="#check">Check an idea<span aria-hidden="true">&rarr;</span></a>
 </div></div>
@@ -45,6 +45,14 @@
       <p class="micro" id="snote">We only use your address for this mail. Confirm it once from your inbox.</p>
     </form>
   </div>
+
+  <section class="block" id="cameup" style="margin-top:28px">
+    <h2>What came up</h2>
+    <p class="sub">Measured Google searches that grew the most: buying and comparing searches only, per country.</p>
+    <div class="chips" style="margin-top:12px" id="cu-win" role="group" aria-label="Period"></div>
+    <div class="chips" style="margin-top:8px" id="cu-mk" role="group" aria-label="Country"></div>
+    <div class="card" id="cu-list" style="margin-top:12px"><p class="loading">Reading measured search data</p></div>
+  </section>
 
   <div class="chips" id="markets" role="group" aria-label="Market filter"></div>
   <div class="tiles" id="tiles"><div class="tile"><div class="tv">…</div><div class="tl">Loading live data</div></div></div>
@@ -155,5 +163,6 @@
   <div id="pro-out" hidden><a href="/api/unlock?logout=1">Sign out of Pro</a></div>
 </div></footer>
 <script src="/site.js" defer></script>
+<script src="/rising.js" defer></script>
 </body>
 </html>
