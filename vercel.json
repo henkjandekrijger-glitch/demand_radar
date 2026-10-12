@@ -92,5 +92,12 @@
       "source": "/leren/:key",
       "destination": "/api/learn?key=:key&html=1"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/radar",
+      "destination": "/",
+      "permanent": false
+    }
   ]
 }

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Opportunity map · Demand Radar</title>
+<meta name="description" content="For every sub-niche and country: how many people search, whether it is rising, when it peaks, what advertisers pay, who already sells it, and where the gap is.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="top"><div class="top-in">
+  <a class="brand" href="/">demand<span>radar</span></a>
+  <nav class="nav" aria-label="Sections"><a href="/">Live radar</a><a href="/map" aria-current="page">Opportunity map</a><a href="#how">How it works</a></nav>
+  <span class="pilot">Free beta</span>
+  <a class="scan" href="/#check">Check an idea<span aria-hidden="true">&rarr;</span></a>
+</div></div>
+
+<main>
+  <div class="hero">
+    <div class="eyebrow">Opportunity map</div>
+    <h1 id="title">Find the gap in any market.</h1>
+    <p class="lead">Type a theme and get every sub-niche per country: how many people search, whether it is rising, when it peaks, what advertisers pay, who already sells it, and where the gap is. With a first step for each.</p>
+    <form class="themeform" id="tf" novalidate>
+      <input id="theme" maxlength="80" autocomplete="off" placeholder="Type a theme, e.g. home energy, pet care, hobbies people pay to learn" aria-label="Your own theme">
+      <button class="cta" type="submit" id="tgo">Map this theme</button>
+      <button class="cta ghost" type="button" id="reset" hidden>Back to the example</button>
+    </form>
+    <p class="micro" id="tnote">The example below is everything people practise for. A new theme takes one to three minutes the first time. After that it is ready for everyone for a day.</p>
+  </div>
+
+  <div class="chips" id="cc" role="group" aria-label="Country"></div>
+  <div class="tiles" id="tiles"><div class="tile"><div class="tv">…</div><div class="tl">Building the map</div></div></div>
+  <div id="banner"></div>
+
+  <section class="block" id="map" style="margin-top:20px">
+    <h2 id="maptitle">Everything people practise for</h2>
+    <p class="sub" id="mapsub">Ranked by opportunity score: demand, growth, money, timing and the gap.</p>
+    <div class="card" id="list"><p class="loading">Reading 9 sources for every niche and country. The first time this takes up to two minutes</p></div>
+  </section>
+
+  <section class="block" id="how">
+    <h2>How the score works</h2>
+    <p class="sub">0 to 100, built from five parts you can check in every row.</p>
+    <ul class="sources">
+      <li><b>Demand · 35</b><span>Monthly Google searches over all related terms (DataForSEO). Without that: how many distinct searches Google suggests, plus how many App Store ratings existing apps collected.</span></li>
+      <li><b>Growth · 20</b><span>The last three months against the same months a year earlier. Without search data: Wikipedia interest year on year.</span></li>
+      <li><b>Money · 20</b><span>What advertisers pay per click on Google. Three dollars or more counts as full.</span></li>
+      <li><b>Timing · 10</b><span>A peak within ten weeks scores highest. Peaks come from two years of search data, from fixed exam and application periods, or from last year's Wikipedia pattern.</span></li>
+      <li><b>Gap · 15</b><span>Few apps in the local language, a thin or outdated supply, low ad competition, unanswered questions, no recent books.</span></li>
+    </ul>
+    <h3>Sources</h3>
+    <p>Google search suggestions (with question words), YouTube suggestions, Amazon search suggestions, App Store search (apps, ratings, languages, last update), Google Books, Google News, Wikipedia page views, and with DataForSEO: Google Ads search volumes for two years, cost per click, competition, related searches, and who ranks and advertises on Google.</p>
+  </section>
+</main>
+
+<footer class="site"><div class="in">
+  Demand Radar is a service of ADSFAIR B.V., Albert Plesmanplein 20, 2805 AB Gouda, the Netherlands · VAT NL853775485B01 · henkjan@adsfair.xyz
+</div></footer>
+<script src="/map.js" defer></script>
+</body>
+</html>
