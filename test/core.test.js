@@ -83,7 +83,7 @@ test('mcp connector', async () => {
   const init = await run({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-06-18' } });
   assert.equal(init.body.result.serverInfo.name, 'demand-radar');
   const list = await run({ jsonrpc: '2.0', id: 2, method: 'tools/list' });
-  assert.equal(list.body.result.tools.length, 2);
+  assert.equal(list.body.result.tools.length, 3);
   const call = await run({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'check_demand', arguments: { idea: 'padel', market: 'NL', city: 'Gouda' } } });
   const text = call.body.result.content[0].text;
   assert.ok(text.includes('Demand check') && text.includes('LOCAL') && text.includes('Gouda'), text.slice(0, 300));
@@ -126,4 +126,28 @@ test('daily mail, subscribe and learning loop', async () => {
   assert.deepEqual(done, ['page C: New headline']);
   assert.equal(st.page.variants.A.h1, 'See demand rise before everyone else does.');
   useStore(undefined);
+});
+
+test('opportunity map: free signals and measured mode', async () => {
+  setFetch(mockFetch);
+  const { buildMap, seasonality, timing, yoy } = await import('../lib/map.js');
+  const free = await buildMap({ pack: 'practice' });
+  assert.equal(free.mode, 'signals');
+  assert.equal(free.items.length, 30);
+  assert.ok(free.items.every((p, i, a) => i === 0 || a[i - 1].score >= p.score), 'sorted');
+  assert.ok(free.items.every(p => p.score >= 0 && p.score <= 100 && p.firstStep && p.offer.apps));
+  process.env.DFS_LOGIN = 'x'; process.env.DFS_PASSWORD = 'y';
+  const m = await buildMap({ pack: 'practice', countries: ['NL'] });
+  delete process.env.DFS_LOGIN; delete process.env.DFS_PASSWORD;
+  assert.equal(m.mode, 'measured');
+  const job = m.items.find(p => p.nicheId === 'job-interview');
+  assert.ok(job.demand.volume > 0 && job.money.cpc != null && job.trend.yoy > 1, JSON.stringify(job.trend));
+  assert.deepEqual(job.timing.peaks.sort((a, b) => a - b), [1, 9]);
+  assert.equal(job.timing.source, 'measured');
+  assert.ok(job.offer.serp && job.offer.serp.organic.length === 8);
+  assert.ok(m.dataforseo.calls >= 3 && m.dataforseo.spent > 0);
+  assert.equal(timing([1], new Date(Date.UTC(2026, 9, 12))).weeks, 12);
+  assert.equal(timing([10], new Date(Date.UTC(2026, 9, 12))).status, 'now');
+  assert.equal(seasonality([{ ym: '2025-01', v: 1 }]), null);
+  assert.equal(yoy([]), null);
 });

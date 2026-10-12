@@ -3,7 +3,7 @@ const hash = s => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0))
 const json = o => new Response(JSON.stringify(o), { status: 200, headers: { 'content-type': 'application/json' } });
 const DAY = 864e5;
 
-export async function mockFetch(url) {
+export async function mockFetch(url, opts = {}) {
   const u = String(url);
   let m;
   if ((m = u.match(/srsearch=([^&]+)/))) return json({ query: { search: [{ title: decodeURIComponent(m[1]) }] } });
@@ -43,5 +43,17 @@ export async function mockFetch(url) {
   if (u.includes('nominatim.openstreetmap.org')) return json(Array.from({ length: 3 }, (_, i) => ({ name: `Shop ${i}`, type: 'shop', osm_type: 'node', osm_id: 100 + i })));
   if (u.includes('date.nager.at')) { const y = (u.match(/PublicHolidays\/(\d{4})/) || [])[1]; return json([{ date: `${y}-12-26`, name: 'St. Stephen\'s Day', global: true }, { date: `${y}-11-11`, name: 'Veterans Day', global: true }]); }
   if (u.includes('rss.applemarketingtools.com')) return json({ feed: { results: Array.from({ length: 10 }, (_, i) => ({ name: `Title ${i + 1}`, artistName: `Maker ${i + 1}`, url: `https://apps.apple.com/x/${i}`, genres: [{ name: 'Lifestyle' }] })) } });
+  if (u.includes('itunes.apple.com/search')) { const h = hash(u); return json({ results: Array.from({ length: 4 + (h % 8) }, (_, i) => ({ trackName: `Practice App ${i + 1}`, sellerName: `Maker ${i}`, userRatingCount: (h >>> i) % 5000, averageUserRating: 4.2, price: i % 3 ? 0 : 4.99, currentVersionReleaseDate: i === 0 ? '2023-05-01T00:00:00Z' : '2026-08-01T00:00:00Z', languageCodesISO2A: i % 4 ? ['EN'] : ['EN', 'NL', 'DE'], trackViewUrl: `https://apps.apple.com/app/${i}` })) }); }
+  if (u.includes('googleapis.com/books')) { const h = hash(u); return json({ totalItems: h % 900, items: Array.from({ length: 5 }, (_, i) => ({ volumeInfo: { title: `Book ${i}`, publishedDate: String(2018 + ((h + i) % 9)), infoLink: `https://books.google.com/${i}` } })) }); }
+  if (u.includes('api.dataforseo.com')) {
+    const task = JSON.parse(opts.body || '[{}]')[0];
+    const monthly = k => Array.from({ length: 25 }, (_, i) => { const d = new Date(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - i); const m = d.getUTCMonth() + 1; return { year: d.getUTCFullYear(), month: m, search_volume: Math.round((hash(k) % 3000 + 50) * (m === 1 || m === 9 ? 1.6 : 1) * (i < 12 ? 1.15 : 1)) }; });
+    const kw = k => ({ keyword: k, search_volume: hash(k) % 5000 + 20, cpc: (hash(k) % 400) / 100, competition_index: hash(k) % 100, low_top_of_page_bid: 0.4, high_top_of_page_bid: 2.1, monthly_searches: monthly(k) });
+    let result;
+    if (u.includes('search_volume')) result = task.keywords.map(kw);
+    else if (u.includes('keywords_for_keywords')) result = task.keywords.flatMap(k => ['online', 'gratis', 'free', 'pdf'].map(w => kw(`${k} ${w}`)));
+    else if (u.includes('serp/google')) result = [{ items: [...Array.from({ length: 8 }, (_, i) => ({ type: 'organic', domain: `site${i}.com`, title: `Result ${i}`, url: `https://site${i}.com` })), ...(hash(task.keyword) % 3 ? [{ type: 'paid', domain: 'ads.example', title: 'Ad' }] : [])] }];
+    return json({ status_code: 20000, cost: 0.05, tasks: [{ status_code: 20000, result }] });
+  }
   return new Response('not mocked', { status: 404 });
 }

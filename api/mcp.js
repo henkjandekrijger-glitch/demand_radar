@@ -2,7 +2,7 @@
 // Daarna kun je in elke chat vragen: "check de vraag naar thuisbatterijen in Gouda". Zonder geldige sleutel: geen toegang.
 import { MARKETS } from '../lib/core.js';
 import { cookieFor } from '../lib/access.js';
-import { getRadar, getCheck } from '../lib/data.js';
+import { getRadar, getCheck, getMap } from '../lib/data.js';
 
 const MK = ['NL', 'US', 'DE', 'WW'];
 const TOOLS = [
@@ -12,11 +12,34 @@ const TOOLS = [
     inputSchema: { type: 'object', properties: { idea: { type: 'string', description: 'The idea, product or service, in the language of the market works best (e.g. "thuisbatterij" for NL).' }, market: { type: 'string', enum: MK, description: 'NL, US, DE or WW (worldwide, English).' }, city: { type: 'string', description: 'Optional city for a hyperlocal check, e.g. "Gouda" or "Chicago".' } }, required: ['idea', 'market'] },
   },
   {
+    name: 'opportunity_map',
+    description: 'Ranked opportunity map for a theme, per sub-niche and country (NL, DE, US): monthly search volume, whether it is rising, when it peaks (exam and application periods), what advertisers pay per click, who already offers it (App Store apps, books, Google results and ads), the gap in the market and a concrete first step. Default theme: everything people practise for (job interviews, assessments, IQ, citizenship, driving theory, school and language exams, certificates). Pass your own theme to map any market (takes up to a few minutes the first time, then cached for a day).',
+    inputSchema: { type: 'object', properties: { theme: { type: 'string', description: 'Optional own theme, e.g. "things people learn for a hobby". Leave empty for the practice/exams map.' }, country: { type: 'string', enum: ['ALL', 'NL', 'DE', 'US'], description: 'Filter, default ALL.' }, limit: { type: 'number', description: 'Max rows, default 15.' } } },
+  },
+  {
     name: 'demand_radar',
     description: 'The live Demand Radar overview: spikes right now (product spikes, Google trending searches, Wikipedia attention spikes), upcoming demand (shopping moments, public holidays, regulation deadlines, weather-driven demand, seasonal rises based on last year), products rising now, and App Store / Apple Books top charts. Filter by market.',
     inputSchema: { type: 'object', properties: { market: { type: 'string', enum: ['ALL', ...MK], description: 'Market filter, default ALL.' }, section: { type: 'string', enum: ['all', 'spikes', 'upcoming', 'rising', 'charts'], description: 'Which part, default all.' }, limit: { type: 'number', description: 'Max items per list, default 10.' } } },
   },
 ];
+
+function mapText(d, country = 'ALL', n = 15) {
+  const rows = d.items.filter(p => country === 'ALL' || p.cc === country).slice(0, n);
+  const L = [`Opportunity map: ${d.title}. Updated ${d.generatedAt}. Data: ${d.mode === 'measured' ? 'measured search volumes and ad prices (DataForSEO) plus free signals' : 'free signals only (no search volumes or ad prices yet)'}.`];
+  rows.forEach((p, i) => {
+    const t = p.timing, pk = t.status === 'now' ? 'peak now' : t.status === 'soon' ? `peak in ${t.weeks} weeks (${t.source})` : t.status === 'later' ? `next peak in ${t.weeks} weeks (${t.source})` : 'no clear peak';
+    L.push(`\n${i + 1}. ${p.niche} — ${p.country} — score ${p.score}/100 (${p.confidence})`);
+    L.push(`   Demand: ${p.demand.volume != null ? `${p.demand.volume.toLocaleString('en-US')} searches/month over ${p.demand.terms} terms` : `${p.demand.breadth} distinct Google suggestions`}. Trend: ${p.trend.yoy != null ? pct(p.trend.yoy) + ' year on year' : 'unknown'}. Timing: ${pk}.`);
+    L.push(`   Money: ${p.money.cpc != null ? `$${p.money.cpc} per click, competition ${p.money.competition}/100` : 'ad prices need DataForSEO'}.`);
+    const o = p.offer;
+    L.push(`   Offered by: ${o.apps ? `${o.apps.count} apps (${o.apps.local} in local language, ${o.apps.ratings} ratings; top: ${o.apps.top.slice(0, 2).map(a => a.name).join(', ')})` : 'apps unknown'}; ${o.books ? `${o.books.total} books (${o.books.recent} recent)` : ''}${o.serp ? `; Google top: ${o.serp.organic.slice(0, 3).map(x => x.domain).join(', ')}; ${o.serp.adCount} ads` : ''}.`);
+    if (p.demand.top.length) L.push(`   Top searches: ${p.demand.top.slice(0, 5).map(k => `${k.k} (${k.v}${k.cpc != null ? `, $${k.cpc}` : ''})`).join('; ')}.`);
+    if (p.demand.questions.length) L.push(`   Questions people type: ${p.demand.questions.slice(0, 4).join('; ')}.`);
+    L.push(`   Gap: ${p.aiGap || (p.gaps[0] && p.gaps[0].text) || 'no clear gap found'}`);
+    L.push(`   First step: ${p.firstStep}`);
+  });
+  return L.join('\n');
+}
 
 const pct = x => (x == null ? '?' : `${x >= 1 ? '+' : ''}${Math.round((x - 1) * 100)}%`);
 const feed = (name, f) => (f ? `${name}: ${f.total}${f.capped ? '+' : ''} in 4 weeks (per week, oldest first: ${f.weeks.join('/')})${f.top && f.top.length ? `. Top: ${f.top.slice(0, 3).map(t => `${t.title}${t.url ? ` <${t.url}>` : ''}`).join(' | ')}` : ''}` : `${name}: no data`);
@@ -76,6 +99,11 @@ async function call(name, args, req) {
     c.q = q;
     return checkText(c);
   }
+  if (name === 'opportunity_map') {
+    const d = await getMap(req, { pack: 'practice', theme: String(args.theme || '').trim().slice(0, 80) });
+    const c = String(args.country || 'ALL').toUpperCase();
+    return mapText(d, ['NL', 'DE', 'US'].includes(c) ? c : 'ALL', Math.max(1, Math.min(40, +args.limit || 15)));
+  }
   if (name === 'demand_radar') {
     const r = await getRadar(req);
     const m = String(args.market || 'ALL').toUpperCase();
@@ -87,7 +115,7 @@ async function call(name, args, req) {
 async function handle(msg, req) {
   const { id, method, params = {} } = msg || {};
   const ok = result => ({ jsonrpc: '2.0', id, result });
-  if (method === 'initialize') return ok({ protocolVersion: params.protocolVersion || '2025-06-18', capabilities: { tools: { listChanged: false } }, serverInfo: { name: 'demand-radar', version: '1.1.0' }, instructions: 'Use check_demand before choosing a product, campaign or business idea, and demand_radar for what is spiking, rising or coming up. Markets: NL, US, DE, WW. Add a city for a hyperlocal check.' });
+  if (method === 'initialize') return ok({ protocolVersion: params.protocolVersion || '2025-06-18', capabilities: { tools: { listChanged: false } }, serverInfo: { name: 'demand-radar', version: '1.1.0' }, instructions: 'Use opportunity_map to find where demand and gaps are in a theme (default: everything people practise for). Use check_demand before choosing a product, campaign or business idea, and demand_radar for what is spiking, rising or coming up. Markets: NL, US, DE, WW. Add a city for a hyperlocal check.' });
   if (method === 'ping') return ok({});
   if (method === 'tools/list') return ok({ tools: TOOLS });
   if (method === 'tools/call') {
