@@ -154,13 +154,35 @@ test('opportunity map: free signals and measured mode', async () => {
 
 test('rising searches (measured)', async () => {
   setFetch(mockFetch);
-  const { buildRising, label } = await import('../lib/rising.js');
-  assert.equal((await buildRising()).ready, false);
+  const R = await import('../lib/rising.js');
+  assert.equal((await R.buildRising()).ready, false);
   process.env.DFS_LOGIN = 'x'; process.env.DFS_PASSWORD = 'y';
-  const r = await buildRising();
+  const r = await R.buildRising();
   delete process.env.DFS_LOGIN; delete process.env.DFS_PASSWORD;
-  assert.ok(r.ready && r.items.month.length === 90 && r.items.year.length > 0, JSON.stringify({ m: r.items.month.length, e: r.errors }));
-  assert.ok(r.items.month.every((x, i, a) => i === 0 || a[i - 1].cc !== x.cc || a[i - 1].added >= x.added));
-  assert.equal(label({ m: 200, y: 5 }), 'seasonal');
-  assert.equal(label({ m: 20, y: 80 }), 'new');
+  const all = [...r.items.month, ...r.items.year];
+  assert.ok(r.ready && r.items.month.length > 0 && r.items.year.length > 0, JSON.stringify({ m: r.items.month.length, y: r.items.year.length, e: r.errors }));
+  assert.ok(all.every(x => /boom/.test(x.name) && x.source === 'ads' && x.series.length === 13 && x.period), 'only growing topics, with fresh data');
+  assert.ok(!all.some(x => / vs /.test(x.name)), 'sports filtered');
+  assert.ok(r.items.month.every((x, i, a) => i === 0 || a[i - 1].cc !== x.cc || a[i - 1].addedMonth >= x.addedMonth));
+  assert.equal(r.ai, 'off');
+  // ruis, varianten en datafouten
+  assert.ok(R.noise({ k: 'feyenoord tegen ajax', monthly: [] }, 'NL') && R.noise({ k: 'brand venray', monthly: [] }, 'NL') && !R.noise({ k: 'brand new shoes', monthly: [] }, 'US'));
+  assert.ok(R.glitch('plywood grounds', 'playground') && !R.glitch('eclipsbrillen kopen', 'eclipsbril kopen') && !R.glitch('stopp-start-system', 'start stopp system'));
+  const c = R.cluster([{ k: 'eclipsbril', volume: 100 }, { k: 'eclipsbril hema', volume: 50 }, { k: 'eclipsbrillen kopen', volume: 40 }, { k: 'airfryer', volume: 80 }]);
+  assert.equal(c.length, 2); assert.deepEqual(c.find(g => g.name === 'eclipsbril').where, ['HEMA']);
+  const flat = Array.from({ length: 14 }, (_, i) => ({ y: 2025 + (i > 11 ? 1 : 0), m: (i % 12) + 1, v: i < 3 ? 8 : 1000000 }));
+  assert.ok(R.stepGlitch(flat));
+  const ramp = Array.from({ length: 25 }, (_, i) => ({ y: 2024 + Math.floor(i / 12), m: (i % 12) + 1, v: 100 + i * i * 10 }));
+  const me = R.measure(ramp); assert.ok(me.yoy > 50 && me.sustained && !R.stepGlitch(ramp));
+  assert.equal(R.sumSeries([[{ y: 2026, m: 1, v: 5 }], [{ y: 2026, m: 1, v: 5 }], [{ y: 2026, m: 1, v: 7 }]])[0].v, 12);
+  // AI schrapt wat geen koopvraag is en schrijft wat het is
+  const { setAiFetch } = await import('../lib/ai.js');
+  setAiFetch(async (url, opts) => { const p = JSON.parse(opts.body).messages[0].content; const n = (p.match(/^\d+\. /gm) || []).length; return new Response(JSON.stringify({ content: [{ type: 'text', text: JSON.stringify({ r: Array.from({ length: n }, (_, i) => ({ id: i + 1, keep: i !== 0, kind: 'product', what: 'People want gadgets', idea: 'Run a shopping ad' })) }) }] }), { status: 200 }); });
+  process.env.DFS_LOGIN = 'x'; process.env.DFS_PASSWORD = 'y';
+  const r2 = await R.buildRising({ aiToken: 't' });
+  delete process.env.DFS_LOGIN; delete process.env.DFS_PASSWORD;
+  setAiFetch((...a) => fetch(...a));
+  assert.equal(r2.ai, 'on');
+  assert.ok([...r2.items.month, ...r2.items.year].every(x => x.what && x.idea));
+  assert.ok(r2.items.month.length + r2.items.year.length < all.length);
 });

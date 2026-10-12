@@ -1,6 +1,7 @@
 // GET /api/rising — gemeten zoekopdrachten die het hardst groeien in NL, DE en de VS (DataForSEO), één keer per dag ververst.
 import { buildRising } from '../lib/rising.js';
 import { RAW_TOKEN } from '../lib/access.js';
+import { gatewayToken } from '../lib/ai.js';
 import { getRising, storedMap, saveMap } from '../lib/data.js';
 
 export default async function handler(req, res) {
@@ -8,7 +9,7 @@ export default async function handler(req, res) {
     if (req.query.raw) {
       if (req.query.raw !== RAW_TOKEN) return res.status(403).json({ error: 'forbidden' });
       let d = await storedMap('rising');
-      if (!d) { d = await buildRising(); if (d.ready && !d.errors.length) await saveMap('rising', d); }
+      if (!d) { d = await buildRising({ aiToken: gatewayToken(req) }); if (d.ready && !d.errors.length) await saveMap('rising', d); }
       res.setHeader('Cache-Control', d.ready && !d.errors.length ? 'public, s-maxage=86400, stale-while-revalidate=604800' : 'no-store');
       return res.status(200).json(d);
     }

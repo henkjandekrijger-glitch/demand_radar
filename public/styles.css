@@ -161,3 +161,8 @@ code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6
 .themeform{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0}
 .themeform input{flex:1 1 260px;min-width:0;border:1px solid var(--line-strong);background:var(--bg);border-radius:999px;padding:10px 16px;font:inherit;font-size:16px;color:var(--ink);min-height:48px}
 @media (max-width:600px){.opp{grid-template-columns:1fr}.rank{grid-auto-flow:column;align-items:center;justify-content:start;gap:12px}}
+
+.cu-what{margin:4px 0 0;color:var(--body);font-size:15px}
+.cu-idea{margin:6px 0 0;font-size:14px;color:var(--ink)}
+.cu-idea b{font-weight:600;color:var(--accent);margin-right:4px}
+.cu-also{margin:4px 0 0}
