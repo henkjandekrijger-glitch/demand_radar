@@ -32,6 +32,9 @@
     },
     "api/map.js": {
       "maxDuration": 300
+    },
+    "api/warmmap.js": {
+      "maxDuration": 300
     }
   },
   "crons": [
@@ -48,7 +51,7 @@
       "schedule": "40 5 * * *"
     },
     {
-      "path": "/api/warm?map=1",
+      "path": "/api/warmmap",
       "schedule": "15 4 * * *"
     }
   ],
