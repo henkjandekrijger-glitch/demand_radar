@@ -17,7 +17,9 @@ export default async function handler(req, res) {
     for (let i = 0; i < kws.length; i += 5) groups.push(kws.slice(i, i + 5));
     const tb = budget(1.5);
     const parts = await pool(groups, 25, g => longTrends(g, C, tb));
-    return res.status(200).json({ cc, spent: tb.spent, errors: tb.errors.slice(0, 5), trends: Object.assign({}, ...parts.filter(Boolean)) });
+    const all = Object.assign({}, ...parts.filter(Boolean)), first = Object.values(all)[0];
+    // Compact: één datumlijst, per zoekterm alleen de waarden (anders te groot voor één antwoord).
+    return res.status(200).json({ cc, spent: tb.spent, errors: tb.errors.slice(0, 5), dates: first ? first.map(x => x.d) : [], trends: Object.fromEntries(Object.entries(all).map(([k, a]) => [k, a.map(x => x.v)])) });
   }
   const offset = +req.query.offset || 0;
   // mode=pop: populairste (geen groeifilter); mode=mid: middelgroot volume; mode=grow: wat de radar zou kiezen (hardst gegroeid)
