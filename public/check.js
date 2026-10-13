@@ -58,9 +58,18 @@
     var lo = c.local;
     if (lo && lo.error) parts.push(h('h3', null, 'Local'), h('p', { class: 'meta', text: lo.error }));
     else if (lo) {
-      parts.push(h('h3', null, 'In ' + lo.place.name));
-      parts.push(h('p', { class: 'cu-what', text: lo.verdict }));
-      if (lo.competitors && lo.competitors.top && lo.competitors.top.length) parts.push(h('div', { class: 'ck-list' }, lo.competitors.top.slice(0, 4).map(function (p) { return row(p.name, safe(p.url) ? h('a', { href: p.url, target: '_blank', rel: 'noopener' }, 'map') : ''); })));
+      // Met gemeten zoekvolume in de stad zeggen we niets meer over "lokale zoekopdrachten"; alleen wie het daar al aanbiedt.
+      var comp = lo.competitors && lo.competitors.top && lo.competitors.top.length ? lo.competitors : null;
+      if (comp) {
+        parts.push(h('h3', null, 'Already offered in ' + lo.place.name));
+        parts.push(h('div', { class: 'ck-list' }, comp.top.slice(0, 5).map(function (p) { return row(p.name, safe(p.url) ? h('a', { href: p.url, target: '_blank', rel: 'noopener' }, 'map') : ''); })));
+      } else if (m && m.local) {
+        parts.push(h('h3', null, 'Already offered in ' + lo.place.name));
+        parts.push(h('p', { class: 'meta', text: 'No shops or businesses for this found on the map in ' + lo.place.name + '.' }));
+      } else {
+        parts.push(h('h3', null, 'In ' + lo.place.name));
+        parts.push(h('p', { class: 'cu-what', text: lo.verdict }));
+      }
     }
     if (c.ai && !c.ai.error && c.ai.first_step) parts.push(h('p', { class: 'cu-idea' }, h('b', null, 'First step'), c.ai.first_step));
     $('#result').replaceChildren(h('div', { class: 'ck-card' }, parts));
