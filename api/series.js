@@ -1,7 +1,8 @@
 // /api/series — alleen voor de eigenaar: historische zoekreeksen (Google Ads, 25 maanden) voor een brede steekproef per land,
 // om voorspelmodellen op te toetsen. Steekproef = populairste zoekopdrachten (niet geselecteerd op groei, dus eerlijk) + categorieën.
 import { isPro } from '../lib/access.js';
-import { budget, topSearches, searchVolume, cleanKw } from '../lib/dfs.js';
+import { budget, topSearches, searchVolume, cleanKw, longTrends } from '../lib/dfs.js';
+import { pool } from '../lib/core.js';
 import { COUNTRIES } from '../lib/niches.js';
 
 export default async function handler(req, res) {
@@ -9,6 +10,15 @@ export default async function handler(req, res) {
   const cc = String(req.query.cc || 'NL').toUpperCase(), C = COUNTRIES[cc];
   if (!C) return res.status(400).json({ error: 'cc' });
   const b = budget(1), min = { NL: 300, DE: 1000, US: 3000 }[cc];
+  // POST {keywords: [...]} met ?trends=1: 5 jaar weekdata per zoekterm (gegroepeerd per 5, in de aangeleverde volgorde).
+  if (req.method === 'POST' && req.query.trends) {
+    let body = req.body; if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
+    const kws = (body && body.keywords || []).slice(0, 600), groups = [];
+    for (let i = 0; i < kws.length; i += 5) groups.push(kws.slice(i, i + 5));
+    const tb = budget(1.5);
+    const parts = await pool(groups, 25, g => longTrends(g, C, tb));
+    return res.status(200).json({ cc, spent: tb.spent, errors: tb.errors.slice(0, 5), trends: Object.assign({}, ...parts.filter(Boolean)) });
+  }
   const offset = +req.query.offset || 0;
   // mode=pop: populairste (geen groeifilter); mode=mid: middelgroot volume; mode=grow: wat de radar zou kiezen (hardst gegroeid)
   const mode = String(req.query.mode || 'pop');
