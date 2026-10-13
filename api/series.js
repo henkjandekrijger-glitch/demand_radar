@@ -1,7 +1,7 @@
 // /api/series — alleen voor de eigenaar: historische zoekreeksen (Google Ads, 25 maanden) voor een brede steekproef per land,
 // om voorspelmodellen op te toetsen. Steekproef = populairste zoekopdrachten (niet geselecteerd op groei, dus eerlijk) + categorieën.
 import { isPro } from '../lib/access.js';
-import { budget, topSearches, searchVolume, cleanKw, longTrends } from '../lib/dfs.js';
+import { budget, topSearches, searchVolume, cleanKw, longTrends, googleTrends } from '../lib/dfs.js';
 import { pool } from '../lib/core.js';
 import { COUNTRIES } from '../lib/niches.js';
 
@@ -16,7 +16,8 @@ export default async function handler(req, res) {
     const kws = (body && body.keywords || []).slice(0, 600), groups = [];
     for (let i = 0; i < kws.length; i += 5) groups.push(kws.slice(i, i + 5));
     const tb = budget(1.5);
-    const parts = await pool(groups, 25, g => longTrends(g, C, tb));
+    const fn = req.query.src === 'google' ? googleTrends : longTrends;
+    const parts = await pool(groups, 25, g => fn(g, C, tb));
     const all = Object.assign({}, ...parts.filter(Boolean)), first = Object.values(all)[0];
     // Compact: één datumlijst, per zoekterm alleen de waarden (anders te groot voor één antwoord).
     return res.status(200).json({ cc, spent: tb.spent, errors: tb.errors.slice(0, 5), dates: first ? first.map(x => x.d) : [], trends: Object.fromEntries(Object.entries(all).map(([k, a]) => [k, a.map(x => x.v)])) });
