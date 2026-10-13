@@ -83,12 +83,18 @@ test('mcp connector', async () => {
   const init = await run({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-06-18' } });
   assert.equal(init.body.result.serverInfo.name, 'demand-radar');
   const list = await run({ jsonrpc: '2.0', id: 2, method: 'tools/list' });
-  assert.equal(list.body.result.tools.length, 3);
+  assert.equal(list.body.result.tools.length, 4);
   const call = await run({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'check_demand', arguments: { idea: 'padel', market: 'NL', city: 'Gouda' } } });
   const text = call.body.result.content[0].text;
   assert.ok(text.includes('Demand check') && text.includes('LOCAL') && text.includes('Gouda'), text.slice(0, 300));
-  const radar = await run({ jsonrpc: '2.0', id: 4, method: 'tools/call', params: { name: 'demand_radar', arguments: { market: 'NL', section: 'upcoming' } } });
+  const radar = await run({ jsonrpc: '2.0', id: 4, method: 'tools/call', params: { name: 'live_signals', arguments: { market: 'NL', section: 'upcoming' } } });
   assert.ok(radar.body.result.content[0].text.includes('DEMAND WINDOWS'));
+  const { demandText } = await import('../api/mcp.js');
+  const t = demandText({ ready: true, day: '2026-10-13', period: '2026-08', items: [{ cc: 'NL', name: 'thuisbatterij', cat: 'money', what: 'Home batteries', last: 1000, mom: 40, yoy: 120, now: { status: 'rising' }, idea: 'Sell installs', firstSeen: '2026-10-13' }], missing: [], coming: [], today: [] }, 'money', 'NL', 5);
+  assert.ok(t.includes('thuisbatterij') && t.includes('rising'), t);
+  process.env.TEAM_KEY = 'team-test-key';
+  assert.equal((await run({ jsonrpc: '2.0', id: 5, method: 'tools/list' }, 'team-test-key')).code, 200);
+  delete process.env.TEAM_KEY;
   assert.equal((await run({ jsonrpc: '2.0', method: 'notifications/initialized' })).code, 202);
 });
 
@@ -197,7 +203,7 @@ test('demand radar: categories, missing, coming up, daily learning', async () =>
   setAiFetch(async (url, opts) => {
     const p = JSON.parse(opts.body).messages[0].content;
     if (p.includes('search terms people in that country')) { const keys = [...p.matchAll(/^(\w\w\|[\w-]+):/gm)].map(m => m[1]); return resp({ t: Object.fromEntries(keys.map(k => [k, [`boom ${k.split('|')[1]}`, 'cadeau idee', 'feest spullen']])) }); }
-    if (p.includes('Group them into distinct needs')) return resp({ needs: [{ need: 'An app that measures room temperature', ids: [1, 2], exists: 'no', gap: 'Phones have no thermometer', idea: 'Sell a bluetooth thermometer with app', cat: 'apps' }], today: [{ id: 1, angle: 'People want the thing in the news', cat: 'products', idea: 'Stock it now' }] });
+    if (p.includes('distinct needs')) return resp({ needs: [{ need: 'An app that measures room temperature', ids: [1, 2], exists: 'no', gap: 'Phones have no thermometer', idea: 'Sell a bluetooth thermometer with app', cat: 'apps' }], today: [{ id: 1, angle: 'People want the thing in the news', cat: 'products', idea: 'Stock it now' }] });
     const n = (p.match(/^\d+\. /gm) || []).length;
     return resp({ r: Array.from({ length: n }, (_, i) => ({ id: i + 1, keep: i % 5 !== 4, cat: ['products', 'courses', 'books', 'services'][i % 4], topic: `topic ${i}`, what: 'What people want', idea: 'One idea', unexpected: i === 0, why: 'Came out of nowhere' })) });
   });

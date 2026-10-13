@@ -4,71 +4,43 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Demand Radar: what people want right now</title>
-<meta name="description" content="Measured demand for the Netherlands, Germany and the US: products, courses, books, services, apps and trips that are rising now, what people look for but cannot find, and what is coming up. Rebuilt every day.">
+<meta name="description" content="Measured demand in the Netherlands, Germany and the US: products, courses, books, services, apps and trips that are rising now, what people want that doesn't exist yet, and what is coming up. Rebuilt every night.">
 <meta property="og:title" content="Demand Radar: what people want right now">
-<meta property="og:description" content="Measured demand per category and country, rebuilt every day: rising now, unexpected, doesn't exist yet, and coming up.">
+<meta property="og:description" content="Measured demand per category and country, rebuilt every night.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
 </head>
-<body>
+<body class="clean">
 <div class="top"><div class="top-in">
   <a class="brand" href="/">demand<span>radar</span></a>
-  <nav class="nav" aria-label="Sections"><a href="#radar">Radar</a><a href="#learning">How it learns</a><a href="#sources">Sources</a></nav>
   <a class="scan" href="/check#check">Check an idea<span aria-hidden="true">&rarr;</span></a>
 </div></div>
 
 <main>
-  <div class="hero">
-    <div class="eyebrow">Demand Radar · Netherlands · Germany · United States</div>
-    <h1>What people want right now.</h1>
-    <p class="lead">Measured demand from Google searches, autocomplete, charts and today's trends, sorted into products, courses, books, services, apps and trips. Rebuilt every day, and every day it checks which signals held up and learns from it.</p>
-  </div>
+  <h1>What people want right&nbsp;now.</h1>
+  <p class="lead">Measured demand in the Netherlands, Germany and the US. Rebuilt every night.</p>
+  <p class="status" id="dr-status" aria-live="polite">&nbsp;</p>
 
-  <div class="tiles" id="dr-tiles" aria-live="polite"><div class="tile"><div class="tv">…</div><div class="tl">Reading today's demand</div></div></div>
-
-  <section class="block" id="radar" style="margin-top:28px">
-    <div class="chips" id="dr-mk" role="group" aria-label="Country"></div>
+  <div class="bar">
     <div class="tabs" id="dr-views" role="tablist" aria-label="Category"></div>
-    <p class="sub" id="dr-desc" style="margin-top:14px"></p>
-    <div class="card" id="dr-list" style="margin-top:10px"><p class="loading">Reading today's demand</p></div>
-    <div id="dr-extra"></div>
-  </section>
-
-  <section class="block" id="learning">
-    <h2>How it learns</h2>
-    <p class="sub">Every night the radar is rebuilt from fresh data. Then it grades itself.</p>
-    <div class="card">
-      <ol class="steps">
-        <li><b>Measure.</b> Searches that grew the most per country, with real monthly volumes from Google Ads over 25 months.</li>
-        <li><b>Check now.</b> Daily data up to today shows whether something is still rising or already over.</li>
-        <li><b>Grade yesterday.</b> What was on top yesterday is checked again today. Categories and sources that hold up count more tomorrow.</li>
-        <li><b>Learn the noise.</b> Words that keep turning out to be sports, news or celebrities are filtered out before they reach the list.</li>
-        <li><b>Remember.</b> Every topic keeps its first day on the radar, so you see what is new and what keeps coming back.</li>
-      </ol>
-      <p class="micro" id="dr-learn"></p>
-    </div>
-  </section>
-
-  <section class="block" id="sources">
-    <h2>Sources</h2>
-    <p class="sub">Paid where it matters, free where it is just as good.</p>
-    <div class="card src-list">
-      <p><b>DataForSEO</b> Google search growth per country and category, Google Ads volumes and ad prices, daily trend data.</p>
-      <p><b>Google autocomplete</b> What people type when they look for something that may not exist yet.</p>
-      <p><b>Google trending</b> Today's fastest searches with the news behind them.</p>
-      <p><b>Hacker News</b> "Is there a…" questions from builders.</p>
-      <p><b>Open Library and Apple</b> Book and app charts, and what is new in them today.</p>
-      <p><b>Demand calendar</b> Holidays, shopping moments and rule changes, with last year's search curve.</p>
-      <p><b>AI</b> Sorts everything into categories, removes what is not buying demand, and writes one idea per topic.</p>
-    </div>
-  </section>
+    <div class="seg" id="dr-mk" role="group" aria-label="Country"></div>
+  </div>
+  <p class="desc" id="dr-desc"></p>
+  <div id="dr-list" class="list"><p class="loading">Reading today's demand</p></div>
+  <div id="dr-extra"></div>
 </main>
 
 <footer class="site"><div class="in">
-  Demand Radar is a service of ADSFAIR B.V., Albert Plesmanplein 20, 2805 AB Gouda, the Netherlands · VAT NL853775485B01 · henkjan@adsfair.xyz
+  <details class="how">
+    <summary>How it works</summary>
+    <p>Every night the radar measures which Google searches grew the most per country (DataForSEO, with Google Ads volumes over 25 months), checks with daily data whether they are still rising today, and adds what people type into Google, Bing and DuckDuckGo, Reddit and Hacker News wishes, today's trends, book and app charts, and a calendar of buying moments. AI sorts it into categories and removes sports, news and celebrities.</p>
+    <p>Then it grades itself: yesterday's top picks are checked again, and categories and sources that hold up count more the next day. Words that keep turning out to be noise are filtered automatically. <span id="dr-learn"></span></p>
+    <p>For teams and AI assistants: <a href="/team">use the radar from your own tools</a>.</p>
+  </details>
+  <div class="co">Demand Radar is a service of ADSFAIR B.V., Albert Plesmanplein 20, 2805 AB Gouda, the Netherlands · VAT NL853775485B01 · henkjan@adsfair.xyz</div>
 </div></footer>
 <script src="/radar.js" defer></script>
 </body>

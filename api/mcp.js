@@ -2,7 +2,7 @@
 // Daarna kun je in elke chat vragen: "check de vraag naar thuisbatterijen in Gouda". Zonder geldige sleutel: geen toegang.
 import { MARKETS } from '../lib/core.js';
 import { cookieFor } from '../lib/access.js';
-import { getRadar, getCheck, getMap } from '../lib/data.js';
+import { getRadar, getCheck, getMap, getDemand } from '../lib/data.js';
 
 const MK = ['NL', 'US', 'DE', 'WW'];
 const TOOLS = [
@@ -18,6 +18,11 @@ const TOOLS = [
   },
   {
     name: 'demand_radar',
+    description: 'Today\'s Demand Radar (rebuilt every night, learns daily): measured demand that is rising in the Netherlands, Germany and the US, per category (products, courses, books, services, apps, trips, money), plus what is unexpected, what people look for but does not exist yet, and moments coming up with last year\'s search curve. Each topic has monthly Google searches, growth vs last month and last year, whether it is still rising today, ad price per click, what people want and one idea to sell to it. Use this first to find demand; use check_demand to dig into one idea.',
+    inputSchema: { type: 'object', properties: { view: { type: 'string', enum: ['now', 'products', 'courses', 'books', 'services', 'apps', 'trips', 'money', 'unexpected', 'missing', 'coming'], description: 'now = strongest across all categories (default); a category; unexpected; missing = does not exist yet; coming = coming up.' }, country: { type: 'string', enum: ['ALL', 'NL', 'DE', 'US'], description: 'Default ALL.' }, limit: { type: 'number', description: 'Max rows, default 15, max 50.' } } },
+  },
+  {
+    name: 'live_signals',
     description: 'The live Demand Radar overview: spikes right now (product spikes, Google trending searches, Wikipedia attention spikes), upcoming demand (shopping moments, public holidays, regulation deadlines, weather-driven demand, seasonal rises based on last year), products rising now, and App Store / Apple Books top charts. Filter by market.',
     inputSchema: { type: 'object', properties: { market: { type: 'string', enum: ['ALL', ...MK], description: 'Market filter, default ALL.' }, section: { type: 'string', enum: ['all', 'spikes', 'upcoming', 'rising', 'charts'], description: 'Which part, default all.' }, limit: { type: 'number', description: 'Max items per list, default 10.' } } },
   },
@@ -91,6 +96,25 @@ function radarText(r, market = 'ALL', section = 'all', n = 10) {
   return L.join('\n');
 }
 
+const n0 = x => (x == null ? '?' : Number(x).toLocaleString('en-US'));
+const p0 = x => (x == null ? '?' : x >= 999 ? 'new' : `${x >= 0 ? '+' : ''}${x}%`);
+export function demandText(d, view = 'now', country = 'ALL', n = 15) {
+  if (!d || !d.ready) return 'The Demand Radar has no measured data right now.';
+  const on = x => country === 'ALL' || x.cc === country;
+  const L = [`Demand Radar ${d.day} (search volumes for ${d.period}; "today" = daily trend up to today). View: ${view}. Country: ${country}.`];
+  if (view === 'missing') {
+    d.missing.filter(on).slice(0, n).forEach((m, i) => L.push(`${i + 1}. [${m.cc}] ${m.need} — ${m.exists === 'no' ? "doesn't exist yet" : 'only partly exists'}; ${m.volume ? `${n0(m.volume)} searches/month` : 'searches not measured'}. Gap: ${m.gap || '-'} Idea: ${m.idea || '-'} People typed: ${m.searches.map(s => `"${s.q}"`).join('; ')}`));
+  } else if (view === 'coming') {
+    d.coming.filter(on).slice(0, n).forEach((m, i) => L.push(`${i + 1}. [${m.cc}] ${m.name} on ${m.date} (in ${m.days} days; ${m.status === 'open' ? 'demand open now' : `demand opens in ${m.opensIn} days`}). Last year: ${n0(m.lastYear.now)} → ${n0(m.lastYear.peak)} searches (${p0(m.lastYear.rise)}). Terms: ${m.terms.map(t => `${t.k} ${n0(t.now)}→${n0(t.peak)}`).join('; ') || '-'}. Sell: ${m.ideas.join(', ')}`));
+  } else {
+    let list = d.items.filter(on).filter(x => view === 'now' || (view === 'unexpected' ? x.unexpected : x.cat === view));
+    if (view === 'unexpected') d.today.filter(on).forEach(t => L.push(`- TODAY [${t.cc}] ${t.name} (${t.traffic}): ${t.angle}. Idea: ${t.idea || '-'}${t.news && t.news.url ? ` <${t.news.url}>` : ''}`));
+    list.slice(0, n).forEach((x, i) => L.push(`${i + 1}. [${x.cc}] ${x.name} (${x.cat}) — ${x.what || ''} ${n0(x.last)} searches in ${x.period}, ${p0(x.mom)} vs previous month, ${p0(x.yoy)} vs a year ago, today: ${x.now ? x.now.status : 'unknown'}${x.cpc != null ? `, $${x.cpc}/click` : ''}. ${x.unexpected && x.why ? `Unexpected: ${x.why}. ` : ''}Idea: ${x.idea || '-'}${x.firstSeen ? ` (on radar since ${x.firstSeen})` : ''}`));
+  }
+  if (L.length === 1) L.push('Nothing for this selection today.');
+  return L.join('\n');
+}
+
 async function call(name, args, req) {
   if (name === 'check_demand') {
     const q = String(args.idea || '').trim().slice(0, 80), m = String(args.market || 'NL').toUpperCase();
@@ -105,6 +129,11 @@ async function call(name, args, req) {
     return mapText(d, ['NL', 'DE', 'US'].includes(c) ? c : 'ALL', Math.max(1, Math.min(40, +args.limit || 15)));
   }
   if (name === 'demand_radar') {
+    const d = await getDemand(req);
+    const c = String(args.country || 'ALL').toUpperCase();
+    return demandText(d, String(args.view || 'now'), ['NL', 'DE', 'US'].includes(c) ? c : 'ALL', Math.max(1, Math.min(50, +args.limit || 15)));
+  }
+  if (name === 'live_signals') {
     const r = await getRadar(req);
     const m = String(args.market || 'ALL').toUpperCase();
     return radarText(r, MK.includes(m) ? m : 'ALL', args.section || 'all', Math.max(1, Math.min(30, +args.limit || 10)));

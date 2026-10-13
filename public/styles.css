@@ -199,3 +199,32 @@ code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6
 @media (max-width:560px){.line{grid-template-columns:minmax(0,1fr)}.line .spark{display:none}.line-top{flex-wrap:wrap}.badges{justify-content:flex-start}}
 #radar{border-top:0;padding-top:0;margin-top:6px!important}
 #dr-mk{margin-top:22px}
+/* Schone voorpagina */
+.clean main{max-width:920px;padding-top:40px}
+.clean h1{margin:0 0 8px}
+.clean .lead{margin:0;color:var(--body)}
+.status{font-size:14px;color:var(--muted);margin:10px 0 0;min-height:1.4em}
+.bar{display:flex;align-items:flex-end;gap:16px;margin-top:30px;border-bottom:1px solid var(--line)}
+.bar .tabs{border-bottom:0;margin:0;flex:1 1 auto;min-width:0}
+.seg{display:inline-flex;flex:0 0 auto;border:1px solid var(--line-strong);border-radius:999px;padding:2px;margin-bottom:8px}
+.seg button{border:0;background:none;font-size:13px;font-weight:600;color:var(--muted);padding:4px 10px;border-radius:999px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.desc{font-size:14px;color:var(--muted);margin:12px 0 0}
+.list .line{padding:18px 0}
+.list .line:first-child{border-top:0}
+.meta{margin:4px 0 0;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.meta a{color:var(--muted)}
+.clean .cu-what{margin:2px 0 0}
+.clean .badge.up{background:var(--ok-soft);color:var(--ok)}
+.how{margin:0 0 14px}
+.how summary{cursor:pointer;font-weight:600;color:var(--ink)}
+.how p{max-width:70ch}
+.co{font-size:13px}
+@media (max-width:640px){.bar{flex-direction:column;align-items:stretch;gap:6px}.seg{align-self:flex-start;margin:0 0 6px}.clean main{padding-top:24px}}
+.clean footer.site .in{max-width:920px}
+.clean .top-in{max-width:920px}
+.clean .scan{margin-left:auto}
+.doc h2{font-size:20px;margin:34px 0 6px}
+.doc pre{background:var(--accent-soft);border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:14px;line-height:1.5}
+.doc code{font-size:.92em}
+.doc li{margin:4px 0}

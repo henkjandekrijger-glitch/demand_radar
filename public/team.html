@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Demand Radar for teams</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body class="clean">
+<div class="top"><div class="top-in">
+  <a class="brand" href="/">demand<span>radar</span></a>
+  <a class="scan" href="/">Open the radar<span aria-hidden="true">&rarr;</span></a>
+</div></div>
+<main class="doc">
+  <h1>Use the radar from your own tools.</h1>
+  <p class="lead">Everyone on the team can pull today's demand into Claude, a script or a spreadsheet.</p>
+
+  <h2>1. In Claude (or any AI assistant)</h2>
+  <p>Add a custom connector with this URL. The team key is in Vercel: project <b>demand_radar</b> → Settings → Environment Variables → <code>TEAM_KEY</code>. Anyone with access to the team's Vercel account can read it.</p>
+  <pre><code>https://demandradar-ivory.vercel.app/mcp?key=TEAM_KEY</code></pre>
+  <p>Then ask things like:</p>
+  <ul>
+    <li>"What courses are rising in the Netherlands on the Demand Radar?"</li>
+    <li>"Which things do people want in Germany that don't exist yet?"</li>
+    <li>"What is coming up in the next 60 days, and what did searches do last year?"</li>
+    <li>"Check demand for home batteries in Gouda."</li>
+  </ul>
+  <p>Tools: <code>demand_radar</code> (today's radar per category and country), <code>check_demand</code> (one idea, optionally one city), <code>opportunity_map</code> (ranked niches for a theme), <code>live_signals</code> (today's spikes and calendar).</p>
+
+  <h2>2. As data (no key needed)</h2>
+  <pre><code>GET /api/demand                              everything (JSON)
+GET /api/demand?view=courses&amp;cc=NL&amp;limit=20  one category, one country
+GET /api/demand?view=missing&amp;format=text      readable text</code></pre>
+  <p>Views: <code>now</code>, <code>products</code>, <code>courses</code>, <code>books</code>, <code>services</code>, <code>apps</code>, <code>trips</code>, <code>money</code>, <code>unexpected</code>, <code>missing</code>, <code>coming</code>. Countries: <code>NL</code>, <code>DE</code>, <code>US</code>.</p>
+
+  <h2>What the numbers mean</h2>
+  <ul>
+    <li><b>Searches</b>: Google searches in the latest month Google has released (usually one to two months back).</li>
+    <li><b>Today</b>: whether the topic is still rising, from daily data up to today.</li>
+    <li><b>Per click</b>: what advertisers pay in Google Ads.</li>
+    <li>The radar is rebuilt every night at about 04:15 UTC and grades yesterday's picks.</li>
+  </ul>
+</main>
+<footer class="site"><div class="in"><div class="co">Demand Radar is a service of ADSFAIR B.V., Albert Plesmanplein 20, 2805 AB Gouda, the Netherlands · VAT NL853775485B01 · henkjan@adsfair.xyz</div></div></footer>
+</body>
+</html>

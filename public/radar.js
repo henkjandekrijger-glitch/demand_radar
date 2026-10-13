@@ -6,8 +6,8 @@
   var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var ORDER = ['NL', 'DE', 'US'];
   var MKN = { NL: 'Netherlands', DE: 'Germany', US: 'United States', WW: 'Worldwide' };
-  var LBL = { new: ['New demand', 'p-early'], seasonal: ['Seasonal return', 'p-peak'], rising: ['Growing', 'p-rising'] };
-  var NOW = { rising: ['Rising now', 'up'], steady: ['Holding now', ''], fading: ['Fading now', 'down'], gone: ['Over now', 'down'], quiet: ['Too quiet to tell', ''] };
+  var LBL = { new: ['New demand'], seasonal: ['Seasonal'], rising: ['Growing'] };
+  var NOW = { rising: ['Rising today', 'p-early'], steady: ['Holding', 'p-steady'], fading: ['Fading', 'p-falling'], gone: ['Over', 'p-falling'], quiet: ['', ''] };
   var ITEM_VIEWS = { now: 1, products: 1, courses: 1, books: 1, services: 1, apps: 1, trips: 1, money: 1 };
   try { var saved = JSON.parse(localStorage.getItem('dr-view') || 'null'); if (saved) { S.mk = saved.mk || S.mk; S.view = saved.view || S.view; } } catch (e) {}
 
@@ -44,58 +44,56 @@
   }
   function empty(box, t) { box.replaceChildren(h('p', { class: 'empty', text: t })); }
 
-  function itemRow(x, i) {
-    var l = LBL[x.label] || LBL.rising, nw = x.now && NOW[x.now.status];
-    var also = (x.members || []).map(function (m) { return m.k; }).filter(function (k) { return k !== x.name; }).slice(0, 3);
+  function itemRow(x) {
+    var nw = x.now && NOW[x.now.status], lbl = (LBL[x.label] || LBL.rising)[0];
     var useYear = !x.jump && x.grew;
-    var link = h('a', { class: 'lname', href: checkUrl(x.name, x.cc), title: 'Check this demand', onclick: function () { ev('open', x.cat); } }, x.name);
+    var also = (x.members || []).map(function (m) { return m.k; }).filter(function (k) { return k !== x.name; }).slice(0, 4);
+    var link = h('a', { class: 'lname', href: checkUrl(x.name, x.cc), title: also.length ? 'Also searched: ' + also.join(', ') : 'Check this demand', onclick: function () { ev('open', x.cat); } }, x.name);
+    var nums = [lbl, num(x.last) + ' searches in ' + mon(x.period)];
+    if (!useYear) nums.push(pc(x.mom) + ' vs ' + prevMon(x.period));
+    if (x.yoy != null) nums.push(pc(x.yoy) + ' vs last year');
+    if (x.cpc != null) nums.push('$' + Number(x.cpc).toFixed(2) + ' per click');
     return h('div', { class: 'line' },
       h('div', { class: 'line-main' },
         h('div', { class: 'line-top' },
-          h('div', null, h('span', { class: 'lsub', text: '#' + (i + 1) + ' ' }), h('span', { class: 'mk', text: x.cc }), link),
+          h('div', null, h('span', { class: 'mk', text: x.cc }), link),
           h('div', { class: 'badges' },
-            x.fresh ? h('span', { class: 'badge p-early', text: 'New today' }) : x.seen > 1 ? h('span', { class: 'badge p-steady', text: 'Day ' + x.seen + ' on radar' }) : null,
-            h('span', { class: 'badge ' + l[1], text: l[0] }))),
+            x.fresh ? h('span', { class: 'badge p-early', text: 'New' }) : null,
+            nw && x.now.status !== 'quiet' ? h('span', { class: 'badge ' + nw[1], text: nw[0] }) : null)),
         x.what ? h('p', { class: 'cu-what', text: x.what }) : null,
-        x.unexpected && x.why ? h('p', { class: 'cu-why', text: 'Unexpected: ' + x.why }) : null,
-        h('div', { class: 'lnums' },
-          h('span', null, h('b', null, 'Searches in ' + mon(x.period) + ' '), num(x.last)),
-          useYear ? null : h('span', { class: x.mom > 0 ? 'up' : x.mom < 0 ? 'down' : '' }, h('b', null, 'vs ' + prevMon(x.period) + ' '), pc(x.mom)),
-          x.yoy != null ? h('span', { class: x.yoy > 0 ? 'up' : x.yoy < 0 ? 'down' : '' }, h('b', null, 'vs a year ago '), pc(x.yoy)) : null,
-          nw ? h('span', { class: nw[1] }, h('b', null, 'Today '), nw[0]) : null,
-          x.cpc != null ? h('span', null, h('b', null, 'Ad price '), '$' + Number(x.cpc).toFixed(2)) : null,
-          x.where && x.where.length ? h('span', null, h('b', null, 'Searched with '), x.where.slice(0, 4).join(', ')) : null),
-        x.idea ? h('p', { class: 'cu-idea' }, h('b', null, 'Idea'), x.idea) : null,
-        also.length ? h('p', { class: 'lsub cu-also', text: 'Also searched: ' + also.join(' · ') }) : null),
+        S.view === 'unexpected' && x.why ? h('p', { class: 'cu-why', text: x.why }) : null,
+        h('p', { class: 'meta', text: nums.join(' · ') }),
+        x.idea ? h('p', { class: 'cu-idea' }, h('b', null, 'Idea'), x.idea) : null),
       spark((x.series || []).map(function (s) { return s.v; })));
   }
 
   function todayRow(t) {
-    return h('div', { class: 'line' },
+    return h('div', { class: 'line one' },
       h('div', { class: 'line-main' },
-        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: t.cc }), h('a', { class: 'lname', href: checkUrl(t.name, t.cc), onclick: function () { ev('open', 'today'); } }, t.name)), h('span', { class: 'badge p-early', text: 'Trending today' })),
+        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: t.cc }), h('a', { class: 'lname', href: checkUrl(t.name, t.cc), onclick: function () { ev('open', 'today'); } }, t.name)), h('span', { class: 'badge p-early', text: 'Today' })),
         h('p', { class: 'cu-what', text: t.angle }),
-        h('div', { class: 'lnums' }, t.traffic ? h('span', null, h('b', null, 'Searches today '), t.traffic) : null, t.news ? h('span', null, h('b', null, 'News '), h('a', { href: t.news.url, target: '_blank', rel: 'noopener' }, t.news.source || 'source')) : null),
+        h('p', { class: 'meta' }, (t.traffic && t.traffic !== 'Bluesky' ? t.traffic + ' searches today' : t.traffic === 'Bluesky' ? 'Trending on Bluesky' : ''), t.news && t.news.url ? [' · ', h('a', { href: t.news.url, target: '_blank', rel: 'noopener' }, t.news.source || 'news')] : null),
         t.idea ? h('p', { class: 'cu-idea' }, h('b', null, 'Idea'), t.idea) : null));
   }
 
   function needRow(n) {
     return h('div', { class: 'line one' },
       h('div', { class: 'line-main' },
-        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: n.cc }), h('span', { class: 'lname', text: n.need })), h('span', { class: 'badge ' + (n.exists === 'no' ? 'p-early' : 'p-peak'), text: n.exists === 'no' ? "Doesn't exist yet" : 'Only partly exists' })),
+        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: n.cc }), h('span', { class: 'lname', text: n.need })), h('span', { class: 'badge ' + (n.exists === 'no' ? 'p-early' : 'p-steady'), text: n.exists === 'no' ? "Doesn't exist" : 'Partly exists' })),
         n.gap ? h('p', { class: 'cu-what', text: n.gap }) : null,
-        h('div', { class: 'lnums' }, h('span', null, h('b', null, 'Searches / month '), n.volume ? num(n.volume) : 'not measured yet')),
-        n.idea ? h('p', { class: 'cu-idea' }, h('b', null, 'Idea'), n.idea) : null,
-        h('ul', { class: 'quotes' }, n.searches.map(function (s) { return h('li', null, s.url ? h('a', { href: s.url, target: '_blank', rel: 'noopener' }, '“' + s.q + '”') : '“' + s.q + '”', s.volume ? h('span', { class: 'lsub', text: ' ' + num(s.volume) + '/mo' }) : null); }))));
+        h('p', { class: 'meta' }, (n.volume ? num(n.volume) + ' searches a month · ' : '') + 'People typed: ', n.searches.slice(0, 2).map(function (q, i) { return [i ? ' · ' : '', q.url ? h('a', { href: q.url, target: '_blank', rel: 'noopener' }, '“' + q.q + '”') : '“' + q.q + '”']; })),
+        n.idea ? h('p', { class: 'cu-idea' }, h('b', null, 'Idea'), n.idea) : null));
   }
 
   function comingRow(m) {
-    var ly = m.lastYear || {}, when = m.status === 'open' ? 'Demand is open now' : 'Demand opens in ' + m.opensIn + ' days';
+    var ly = m.lastYear || {}, peakNow = ly.now && ly.now === ly.peak;
+    var line = !ly.peak ? (m.status === 'open' ? 'Demand is open now' : 'Demand opens in ' + m.opensIn + ' days')
+      : peakNow ? 'Peak month is now: ' + num(ly.peak) + ' searches last year'
+      : 'Last year ' + num(ly.now) + ' → ' + num(ly.peak) + ' searches by ' + MON[(ly.peakMonth || 1) - 1] + ' (' + pc(ly.rise) + ')';
     return h('div', { class: 'line one' },
       h('div', { class: 'line-main' },
         h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: m.cc }), h('span', { class: 'lname', text: m.name })), h('span', { class: 'badge ' + (m.status === 'open' ? 'p-early' : 'p-steady'), text: m.days === 0 ? 'Today' : 'In ' + m.days + ' days' })),
-        h('div', { class: 'lnums' }, h('span', null, h('b', null, 'Date '), m.date), h('span', { class: m.status === 'open' ? 'up' : '' }, when),
-          ly.now && ly.peak ? h('span', null, h('b', null, 'Last year '), num(ly.now) + ' → ' + num(ly.peak) + ' searches by ' + MON[(ly.peakMonth || 1) - 1], ly.rise != null ? h('span', { class: ly.rise > 0 ? 'up' : 'down', text: ' (' + pc(ly.rise) + ')' }) : null) : null),
+        h('p', { class: 'meta', text: line }),
         m.terms && m.terms.length ? h('div', { class: 'tchips' }, m.terms.map(function (t) { return h('a', { class: 'tchip', href: checkUrl(t.k, m.cc), onclick: function () { ev('open', 'coming'); } }, t.k, h('span', { text: ' ' + num(t.now) + '→' + num(t.peak) })); })) : null,
         m.ideas && m.ideas.length ? h('p', { class: 'cu-idea' }, h('b', null, 'Sell'), m.ideas.join(', ')) : null));
   }
@@ -111,45 +109,37 @@
       })));
   }
 
-  function tiles() {
-    var d = S.d, L = d.learning || {}, box = $('#dr-tiles');
-    var items = byCountry(d.items || []);
-    var t = [
-      [items.filter(function (x) { return x.now && x.now.status === 'rising'; }).length, 'topics rising right now'],
-      [byCountry(d.missing || []).length, "things people want that don't exist yet"],
-      [byCountry(d.coming || []).filter(function (m) { return m.status === 'open'; }).length, 'moments where demand is open now'],
-      [L.day ? 'Day ' + L.day : '–', L.hitRate != null ? L.hitRate + '% of picks held up' : 'learning since ' + (L.since || 'today')],
-    ];
-    box.replaceChildren.apply(box, t.map(function (x) { return h('div', { class: 'tile' }, h('div', { class: 'tv', text: String(x[0]) }), h('div', { class: 'tl', text: x[1] })); }));
-  }
-
-  function learnNote() {
-    var L = S.d.learning || {}, p = [];
-    if (L.day) p.push('Day ' + L.day + ' of learning' + (L.since ? ', since ' + L.since : '') + '.');
-    if (L.yesterday && L.yesterday.checked) p.push('Yesterday’s top picks checked today: ' + L.yesterday.hits + ' of ' + L.yesterday.checked + ' still rising or holding.');
-    if (L.tracked) p.push(L.tracked + ' topics remembered.');
-    if (L.noiseWords) p.push(L.noiseWords + ' noise words learned.');
-    if (S.d.period) p.push('Search volumes: ' + mon(S.d.period, true) + ' (latest month Google has released). Trend check: up to today.');
-    if (S.d.generatedAt) p.push('Updated ' + new Date(S.d.generatedAt).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) + '.');
-    $('#dr-learn').textContent = p.join(' ');
+  function status() {
+    var d = S.d, L = d.learning || {}, p = [];
+    if (d.generatedAt) p.push('Updated ' + new Date(d.generatedAt).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }));
+    p.push(byCountry(d.items || []).length + ' topics');
+    if (L.day) p.push('learning day ' + L.day);
+    if (L.yesterday && L.yesterday.checked) p.push(Math.round(100 * L.yesterday.hits / L.yesterday.checked) + '% of yesterday’s picks held up');
+    $('#dr-status').textContent = p.join(' · ');
+    var q = [];
+    if (L.tracked) q.push(L.tracked + ' topics remembered');
+    if (L.noiseWords) q.push(L.noiseWords + ' noise words learned');
+    if (d.period) q.push('search volumes up to ' + mon(d.period, true) + ', daily trend up to today');
+    $('#dr-learn').textContent = q.length ? 'Now: ' + q.join(', ') + '.' : '';
   }
 
   function draw() {
     var d = S.d;
     // landen
     var mk = $('#dr-mk'); mk.replaceChildren();
-    [['ALL', 'All countries'], ['NL', 'Netherlands'], ['DE', 'Germany'], ['US', 'United States']].forEach(function (o) {
-      mk.append(h('button', { class: 'chip', type: 'button', 'aria-pressed': String(S.mk === o[0]), text: o[1], onclick: function () { S.mk = o[0]; S.n = 12; save(); draw(); } }));
+    [['ALL', 'All'], ['NL', 'NL'], ['DE', 'DE'], ['US', 'US']].forEach(function (o) {
+      mk.append(h('button', { type: 'button', 'aria-pressed': String(S.mk === o[0]), title: o[0] === 'ALL' ? 'All countries' : MKN[o[0]], text: o[1], onclick: function () { S.mk = o[0]; S.n = 12; save(); draw(); } }));
     });
     if (!d) return;
     if (!d.ready) { empty($('#dr-list'), 'Measured data is not connected yet.'); return; }
-    tiles(); learnNote();
+    status();
     // categorieën (volgorde: geleerd uit wat bezoekers openen, anders vast)
     var views = (d.views || []).slice();
     if (d.order && d.order.length) views.sort(function (a, b) { var ia = d.order.indexOf(a.id), ib = d.order.indexOf(b.id); return (a.id === 'now' ? -1 : b.id === 'now' ? 1 : 0) || (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
     var tabs = $('#dr-views'); tabs.replaceChildren();
     views.forEach(function (v) {
       var n = countFor(v.id);
+      if (!n && v.id !== 'now' && v.id !== S.view) return; // lege categorieën verbergen: rustiger
       tabs.append(h('button', { class: 'tab', type: 'button', role: 'tab', 'aria-selected': String(S.view === v.id), onclick: function () { S.view = v.id; S.n = 12; save(); ev('open', 'tab-' + v.id); draw(); } }, v.name, h('span', { class: 'cnt', text: String(n) })));
     });
     var cur = views.filter(function (v) { return v.id === S.view; })[0] || views[0];
@@ -165,7 +155,7 @@
       var u = interleave(byCountry(d.items || []).filter(function (x) { return x.unexpected; }));
       var td = interleave(byCountry(d.today || []));
       var rows = td.map(todayRow).concat(u.map(itemRow));
-      if (!rows.length) empty(box, 'Nothing unexpected for this selection today.'); else box.replaceChildren.apply(box, rows);
+      if (!rows.length) empty(box, 'Nothing unexpected for this selection today.'); else box.replaceChildren.apply(box, rows.slice(0, 30));
     } else if (S.view === 'missing') {
       var ms = interleave(byCountry(d.missing || []));
       if (!ms.length) empty(box, 'No unmet wishes found for this selection today.'); else more(ms, box, needRow);

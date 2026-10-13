@@ -5,6 +5,7 @@ import { gatewayToken } from '../lib/ai.js';
 import { getDemand, storedMap, saveMap, demandDay } from '../lib/data.js';
 import { getStore, getJSON } from '../lib/store.js';
 import { STATE } from '../lib/learn.js';
+import { demandText } from './mcp.js';
 
 // Volgorde van de categorieën leren uit wat bezoekers openen (pas vanaf 30 kliks).
 async function learnedOrder() {
@@ -30,6 +31,15 @@ export default async function handler(req, res) {
     const d = await getDemand(req);
     const order = await learnedOrder().catch(() => null);
     res.setHeader('Cache-Control', 'private, no-store');
+    // Voor tools en collega's: ?view=courses&cc=NL&limit=20 geeft een korte lijst; ?format=text geeft leesbare tekst.
+    const { view, cc, limit, format } = req.query;
+    if (view || cc || limit || format) {
+      const v = String(view || 'now'), c = ['NL', 'DE', 'US'].includes(String(cc || '').toUpperCase()) ? String(cc).toUpperCase() : 'ALL', n = Math.max(1, Math.min(100, +limit || 20));
+      if (format === 'text') { res.setHeader('Content-Type', 'text/plain; charset=utf-8'); return res.status(200).send(demandText(d, v, c, n)); }
+      const on = x => c === 'ALL' || x.cc === c;
+      const pick = v === 'missing' ? d.missing.filter(on) : v === 'coming' ? d.coming.filter(on) : v === 'unexpected' ? [...d.today.filter(on), ...d.items.filter(on).filter(x => x.unexpected)] : d.items.filter(on).filter(x => v === 'now' || x.cat === v);
+      return res.status(200).json({ day: d.day, period: d.period, view: v, country: c, items: pick.slice(0, n).map(x => { const { series, members, srcs, weight, base, ...rest } = x; return { ...rest, also: members ? members.slice(1, 4).map(m => m.k) : undefined }; }) });
+    }
     res.status(200).json(order ? { ...d, order } : d);
   } catch (e) {
     res.status(500).json({ error: 'The radar could not load right now.' });
