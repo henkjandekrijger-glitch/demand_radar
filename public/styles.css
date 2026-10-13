@@ -166,3 +166,36 @@ code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6
 .cu-idea{margin:6px 0 0;font-size:14px;color:var(--ink)}
 .cu-idea b{font-weight:600;color:var(--accent);margin-right:4px}
 .cu-also{margin:4px 0 0}
+/* Demand Radar voorpagina */
+.tabs{display:flex;gap:4px;margin:14px 0 0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line);-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;font-size:15px;font-weight:600;padding:10px 12px 11px;border:0;border-bottom:2px solid transparent;background:none;color:var(--muted);white-space:nowrap;margin-bottom:-1px}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tab .cnt{font-size:12px;font-weight:600;margin-left:6px;padding:1px 7px;border-radius:999px;background:var(--line);color:var(--muted);font-variant-numeric:tabular-nums}
+.tab[aria-selected="true"] .cnt{background:var(--accent-soft);color:var(--accent)}
+.badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.badge.mini{font-size:11px;padding:1px 7px;margin-left:6px}
+.cu-why{margin:4px 0 0;font-size:14px;color:var(--mid)}
+.line.one{grid-template-columns:minmax(0,1fr)}
+.quotes{margin:8px 0 0;padding:0;list-style:none;font-size:14px;color:var(--body)}
+.quotes li{padding:2px 0}
+.quotes a{color:var(--body)}
+.tchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tchip{font-size:13px;border:1px solid var(--line-strong);border-radius:999px;padding:3px 10px;color:var(--ink);text-decoration:none}
+.tchip span{color:var(--muted);font-variant-numeric:tabular-nums}
+.tchip:hover{border-color:var(--accent);color:var(--accent)}
+.chartsbox{margin-top:22px}
+.chartgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.chart{margin:0 0 12px;padding-left:22px;font-size:14px}
+.chart li{padding:2px 0}
+.chart a{color:var(--ink);text-decoration:none}
+.chart a:hover{color:var(--accent)}
+.steps{margin:14px 0 6px;padding-left:22px}
+.steps li{padding:4px 0}
+.steps b,.src-list b{color:var(--ink);font-weight:600;margin-right:4px}
+.src-list p{margin:12px 0}
+#learning,#sources{margin-top:40px}
+@media (max-width:560px){.line{grid-template-columns:minmax(0,1fr)}.line .spark{display:none}.line-top{flex-wrap:wrap}.badges{justify-content:flex-start}}
+#radar{border-top:0;padding-top:0;margin-top:6px!important}
+#dr-mk{margin-top:22px}

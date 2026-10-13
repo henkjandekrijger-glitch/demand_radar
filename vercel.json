@@ -38,6 +38,9 @@
     },
     "api/rising.js": {
       "maxDuration": 300
+    },
+    "api/demand.js": {
+      "maxDuration": 300
     }
   },
   "crons": [

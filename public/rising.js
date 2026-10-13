@@ -37,7 +37,7 @@
       h('div', { class: 'line-main' },
         h('div', { class: 'line-top' },
           h('div', null, h('span', { class: 'lsub', text: '#' + (i + 1) + ' ' }), h('span', { class: 'mk', text: x.cc }),
-            h('a', { class: 'lname', href: '/?q=' + encodeURIComponent(x.name) + '&m=' + x.cc + '#check', title: 'Check this demand' }, x.name)),
+            h('a', { class: 'lname', href: '/check?q=' + encodeURIComponent(x.name) + '&m=' + x.cc + '#check', title: 'Check this demand' }, x.name)),
           h('span', { class: 'badge ' + l[1], text: l[0] })),
         x.what ? h('p', { class: 'cu-what', text: x.what }) : null,
         h('div', { class: 'lnums' },

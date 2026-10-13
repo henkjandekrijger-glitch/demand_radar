@@ -186,3 +186,36 @@ test('rising searches (measured)', async () => {
   assert.ok([...r2.items.month, ...r2.items.year].every(x => x.what && x.idea));
   assert.ok(r2.items.month.length + r2.items.year.length < all.length);
 });
+
+test('demand radar: categories, missing, coming up, daily learning', async () => {
+  setFetch(mockFetch);
+  const { buildDemand, CATS } = await import('../lib/demand.js');
+  const { memoryStore } = await import('../lib/store.js');
+  const { setAiFetch } = await import('../lib/ai.js');
+  const store = memoryStore();
+  const resp = o => new Response(JSON.stringify({ content: [{ type: 'text', text: JSON.stringify(o) }] }), { status: 200 });
+  setAiFetch(async (url, opts) => {
+    const p = JSON.parse(opts.body).messages[0].content;
+    if (p.includes('search terms people in that country')) { const keys = [...p.matchAll(/^(\w\w\|[\w-]+):/gm)].map(m => m[1]); return resp({ t: Object.fromEntries(keys.map(k => [k, [`boom ${k.split('|')[1]}`, 'cadeau idee', 'feest spullen']])) }); }
+    if (p.includes('Group them into distinct needs')) return resp({ needs: [{ need: 'An app that measures room temperature', ids: [1, 2], exists: 'no', gap: 'Phones have no thermometer', idea: 'Sell a bluetooth thermometer with app', cat: 'apps' }], today: [{ id: 1, angle: 'People want the thing in the news', cat: 'products', idea: 'Stock it now' }] });
+    const n = (p.match(/^\d+\. /gm) || []).length;
+    return resp({ r: Array.from({ length: n }, (_, i) => ({ id: i + 1, keep: i % 5 !== 4, cat: ['products', 'courses', 'books', 'services'][i % 4], topic: `topic ${i}`, what: 'What people want', idea: 'One idea', unexpected: i === 0, why: 'Came out of nowhere' })) });
+  });
+  process.env.DFS_LOGIN = 'x'; process.env.DFS_PASSWORD = 'y'; process.env.DFS_MAX_DEMAND = '10';
+  const d1 = await buildDemand({ aiToken: 't', store, day: '2026-10-13' });
+  const d2 = await buildDemand({ aiToken: 't', store, day: '2026-10-14' });
+  delete process.env.DFS_LOGIN; delete process.env.DFS_PASSWORD; delete process.env.DFS_MAX_DEMAND;
+  setAiFetch((...a) => fetch(...a));
+  const ids = CATS.map(c => c.id);
+  assert.ok(d1.ready && d1.items.length > 0, JSON.stringify({ n: d1.items.length, e: d1.errors, notes: d1.notes, ai: d1.aiErrors }));
+  assert.ok(d1.items.every(i => ids.includes(i.cat) && typeof i.score === 'number' && i.now && i.what && i.firstSeen === '2026-10-13'));
+  assert.ok(d1.items.some(i => i.unexpected) && d1.today.length > 0, 'unexpected');
+  assert.ok(d1.missing.length > 0 && d1.missing[0].searches.length > 0, 'missing');
+  assert.ok(d1.coming.length > 0 && d1.coming.some(c => c.terms.length), 'coming up');
+  assert.ok(d1.views.find(v => v.id === 'missing').n > 0 && d1.views.find(v => v.id === 'now').n === d1.items.length);
+  assert.equal(d1.learning.day, 1); assert.ok(d1.learning.saved);
+  assert.equal(d2.learning.day, 2);
+  assert.ok(d2.learning.checked > 0, 'yesterday graded');
+  assert.ok(d2.items.some(i => i.firstSeen === '2026-10-13' && i.seen === 2), 'remembered');
+  assert.ok(!d2.items.some(i => / vs /.test(i.name)), 'sports filtered');
+});
