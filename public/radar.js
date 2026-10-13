@@ -6,7 +6,7 @@
   var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var ORDER = ['NL', 'DE', 'US'];
   var MKN = { NL: 'Netherlands', DE: 'Germany', US: 'United States', WW: 'Worldwide' };
-  var LBL = { new: ['New demand'], seasonal: ['Seasonal'], rising: ['Growing'] };
+  var LBL = { new: ['New demand'], seasonal: ['Seasonal'], rising: ['Growing'], steady: ['Steady demand'] };
   var NOW = { rising: ['Rising today', 'p-early'], steady: ['Holding', 'p-steady'], fading: ['Fading', 'p-falling'], gone: ['Over', 'p-falling'], quiet: ['', ''] };
   var ITEM_VIEWS = { now: 1, products: 1, courses: 1, books: 1, services: 1, apps: 1, trips: 1, money: 1 };
   try { var saved = JSON.parse(localStorage.getItem('dr-view') || 'null'); if (saved) { S.mk = saved.mk || S.mk; S.view = saved.view || S.view; } } catch (e) {}
