@@ -4,6 +4,15 @@ Live vraag-signalen voor NL, VS, DE en wereldwijd: **Spikes** (wat nu piekt), **
 
 Een dienst van ADSFAIR B.V. Draait volledig op Vercel, zonder computer of Claude-account.
 
+## Stand van zaken (overdracht) — 13 okt 2026
+- **Voorpagina = Demand Radar** (`public/index.html` + `public/radar.js`, data uit `/api/demand`). Categorieën: producten, cursussen & training, boeken, diensten, apps & AI, reizen & uitjes, geld & contracten, plus **Onverwacht**, **Bestaat nog niet** en **Komt eraan**. Per land NL, DE, US.
+- De oude pagina met de idee-check staat op `/check`; de kansenkaart op `/map`; uitleg voor collega's op `/team`.
+- **Opbouw**: één keer per dag (cron `/api/warmmap` om 04:15 UTC; de dag wisselt om 04:00 UTC). Kost ca. $1,0–1,3 DataForSEO per opbouw (budget `DFS_MAX_DEMAND`, standaard $1,5). Elke nieuwe deploy bouwt één keer opnieuw.
+- **Bronnen**: DataForSEO Labs (groei per land en per categorie), Google Ads-volumes 25 maanden, DataForSEO Trends (dagdata tot vandaag), autocomplete van Google, Bing en DuckDuckGo (wensen + per categorie), Reddit (RSS van r/SomebodyMakeThis, r/AppIdeas, r/shutupandtakemymoney, r/BuyItForLife, r/INEEDIT), Hacker News "is there a", Google trending + Bluesky trending, Open Library trending, Apple Books/App Store-hitlijsten, vraagkalender met zoekcurve van vorig jaar. AI (Vercel AI Gateway) sorteert en schrapt ruis.
+- **Leren** (`lib/demandlearn.js`): onthoudt onderwerpen (eerst gezien, dagen op rij), kijkt de toppers van gisteren vandaag na (trefkans per categorie en bron weegt mee), leert ruiswoorden, onthoudt zoektermen voor komende momenten en wat nieuw is in hitlijsten. Klikken van bezoekers per categorie (via `/api/e`, uurronde `/api/loop`) bepalen na 30 kliks de volgorde van de tabs. **Geheugen vraagt Vercel Blob** (`BLOB_READ_WRITE_TOKEN`); zonder Blob begint het elke dag opnieuw.
+- **Team-toegang**: connector `https://demandradar-ivory.vercel.app/mcp?key=<teamsleutel>`. Teamsleutel = `TEAM_KEY` als die in Vercel staat, anders de Project ID van dit Vercel-project (Settings → General). Data zonder sleutel: `/api/demand?view=courses&cc=NL&limit=20` of `&format=text`.
+- Niet bereikbaar vanaf Vercel: Reddit JSON/zoeken (wel RSS), Kickstarter, Etsy, Pushshift-alternatieven.
+
 ## Hoe het werkt
 - `public/` — de site (index.html, styles.css, site.js). Zelfde huisstijl als outname.now.
 - `api/radar.js` — het radaroverzicht. Wordt elk uur ververst (cron `api/warm.js`) en door Vercel bewaard.

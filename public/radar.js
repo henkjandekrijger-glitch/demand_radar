@@ -12,6 +12,7 @@
   try { var saved = JSON.parse(localStorage.getItem('dr-view') || 'null'); if (saved) { S.mk = saved.mk || S.mk; S.view = saved.view || S.view; } } catch (e) {}
 
   function h(t, a) { var e = document.createElement(t), k, i, c; for (k in a || {}) { if (a[k] == null) continue; if (k === 'class') e.className = a[k]; else if (k === 'text') e.textContent = a[k]; else if (k.slice(0, 2) === 'on') e[k] = a[k]; else e.setAttribute(k, a[k]); } for (i = 2; i < arguments.length; i++) { c = arguments[i]; if (c == null || c === false) continue; (Array.isArray(c) ? c : [c]).forEach(function (x) { if (x != null && x !== false) e.append(x.nodeType ? x : document.createTextNode(String(x))); }); } return e; }
+  function cap(t) { t = String(t || ''); return t.charAt(0).toUpperCase() + t.slice(1); }
   function num(n) { return n == null ? '–' : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : Number(n).toLocaleString('en-US'); }
   function pc(x) { return x == null ? '–' : x >= 999 ? 'new' : (x >= 0 ? '+' : '') + Math.round(x).toLocaleString('en-US') + '%'; }
   function mon(p, long) { if (!p) return ''; var a = p.split('-'); return MON[+a[1] - 1] + (long ? ' ' + a[0] : ''); }
@@ -60,10 +61,10 @@
           h('div', { class: 'badges' },
             x.fresh ? h('span', { class: 'badge p-early', text: 'New' }) : null,
             nw && x.now.status !== 'quiet' ? h('span', { class: 'badge ' + nw[1], text: nw[0] }) : null)),
-        x.what ? h('p', { class: 'cu-what', text: x.what }) : null,
+        x.what ? h('p', { class: 'cu-what', text: cap(x.what) }) : null,
         S.view === 'unexpected' && x.why ? h('p', { class: 'cu-why', text: x.why }) : null,
         h('p', { class: 'meta', text: nums.join(' · ') }),
-        x.idea ? h('p', { class: 'cu-idea' }, h('b', null, 'Idea'), x.idea) : null),
+        x.idea ? h('p', { class: 'cu-idea' }, h('b', null, 'Idea'), cap(x.idea)) : null),
       spark((x.series || []).map(function (s) { return s.v; })));
   }
 
@@ -81,7 +82,7 @@
       h('div', { class: 'line-main' },
         h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: n.cc }), h('span', { class: 'lname', text: n.need })), h('span', { class: 'badge ' + (n.exists === 'no' ? 'p-early' : 'p-steady'), text: n.exists === 'no' ? "Doesn't exist" : 'Partly exists' })),
         n.gap ? h('p', { class: 'cu-what', text: n.gap }) : null,
-        h('p', { class: 'meta' }, (n.volume ? num(n.volume) + ' searches a month · ' : '') + 'People typed: ', n.searches.slice(0, 2).map(function (q, i) { return [i ? ' · ' : '', q.url ? h('a', { href: q.url, target: '_blank', rel: 'noopener' }, '“' + q.q + '”') : '“' + q.q + '”']; })),
+        h('p', { class: 'meta' }, (n.volume ? num(n.volume) + ' searches a month · ' : '') + 'People typed: ', [].concat.apply([], n.searches.slice(0, 2).map(function (q, i) { return [i ? ' · ' : '', q.url ? h('a', { href: q.url, target: '_blank', rel: 'noopener' }, '“' + q.q + '”') : '“' + q.q + '”']; }))),
         n.idea ? h('p', { class: 'cu-idea' }, h('b', null, 'Idea'), n.idea) : null));
   }
 
@@ -94,7 +95,7 @@
       h('div', { class: 'line-main' },
         h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: m.cc }), h('span', { class: 'lname', text: m.name })), h('span', { class: 'badge ' + (m.status === 'open' ? 'p-early' : 'p-steady'), text: m.days === 0 ? 'Today' : 'In ' + m.days + ' days' })),
         h('p', { class: 'meta', text: line }),
-        m.terms && m.terms.length ? h('div', { class: 'tchips' }, m.terms.map(function (t) { return h('a', { class: 'tchip', href: checkUrl(t.k, m.cc), onclick: function () { ev('open', 'coming'); } }, t.k, h('span', { text: ' ' + num(t.now) + '→' + num(t.peak) })); })) : null,
+        m.terms && m.terms.length ? h('div', { class: 'tchips' }, m.terms.map(function (t) { return h('a', { class: 'tchip', href: checkUrl(t.k, m.cc), onclick: function () { ev('open', 'coming'); } }, t.k, h('span', { text: ' ' + (t.now === t.peak ? num(t.peak) : num(t.now) + '→' + num(t.peak)) })); })) : null,
         m.ideas && m.ideas.length ? h('p', { class: 'cu-idea' }, h('b', null, 'Sell'), m.ideas.join(', ')) : null));
   }
 
@@ -147,7 +148,7 @@
     $('#dr-desc').textContent = cur ? cur.desc : '';
     var box = $('#dr-list'), extra = $('#dr-extra'); extra.replaceChildren();
     if (ITEM_VIEWS[S.view]) {
-      var list = byCountry(d.items || []).filter(function (x) { return S.view === 'now' || x.cat === S.view; });
+      var list = byCountry(d.items || []).filter(function (x) { return S.view === 'now' ? !(x.now && (x.now.status === 'gone' || x.now.status === 'fading')) : x.cat === S.view; });
       list = interleave(list.sort(function (a, b) { return b.score - a.score; }));
       if (!list.length) empty(box, 'Nothing measured in this category for this selection today.'); else more(list, box, itemRow);
       if (S.view === 'books' || S.view === 'apps') { var c = charts(S.view); if (c) extra.append(c); }
@@ -166,7 +167,7 @@
   }
   function countFor(id) {
     var d = S.d;
-    if (ITEM_VIEWS[id]) return byCountry(d.items || []).filter(function (x) { return id === 'now' || x.cat === id; }).length;
+    if (ITEM_VIEWS[id]) return byCountry(d.items || []).filter(function (x) { return id === 'now' ? !(x.now && (x.now.status === 'gone' || x.now.status === 'fading')) : x.cat === id; }).length;
     if (id === 'unexpected') return byCountry(d.items || []).filter(function (x) { return x.unexpected; }).length + byCountry(d.today || []).length;
     if (id === 'missing') return byCountry(d.missing || []).length;
     if (id === 'coming') return byCountry(d.coming || []).length;
