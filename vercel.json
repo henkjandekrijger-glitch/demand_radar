@@ -41,6 +41,9 @@
     },
     "api/demand.js": {
       "maxDuration": 300
+    },
+    "api/series.js": {
+      "maxDuration": 120
     }
   },
   "crons": [
