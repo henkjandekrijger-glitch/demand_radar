@@ -32,7 +32,15 @@
       else if (m.volume != null) facts.push(num(m.volume) + ' searches a month');
       if (m.yoy != null) facts.push(pc(m.yoy) + ' vs last year');
       if (m.cpc != null) facts.push('$' + Number(m.cpc).toFixed(2) + ' per click');
-      parts.push(h('h3', null, 'Searches on Google'));
+      var CN = { NL: 'the Netherlands', DE: 'Germany', US: 'the United States' }[c.market] || '';
+      if (m.local) {
+        var ll = m.local;
+        parts.push(h('h3', null, 'Searches in ' + ll.city));
+        parts.push(h('p', { class: 'ck-big', text: (ll.measured ? '' : 'About ') + num(ll.volume) + ' searches a month' + (ll.cpc != null ? ' · $' + Number(ll.cpc).toFixed(2) + ' per click' : '') }));
+        if (!ll.measured) parts.push(h('p', { class: 'meta', text: 'Estimate: the national number scaled to the number of inhabitants. Google has no separate figure for this city.' }));
+        if (ll.related && ll.related.length) parts.push(h('div', { class: 'ck-list' }, ll.related.map(function (r) { return row(r.k, num(r.volume) + ' / month'); })));
+      }
+      parts.push(h('h3', null, 'Searches in ' + CN));
       if (facts.length) parts.push(h('p', { class: 'ck-big', text: facts.join(' · ') }));
       var sp = spark((m.series || []).map(function (x) { return x.v; }), 600, 80); if (sp) parts.push(sp);
       if (m.related && m.related.length) parts.push(h('div', { class: 'ck-list' }, m.related.slice(0, 6).map(function (r) { return row(r.k, num(r.volume) + ' / month' + (r.cpc != null ? ' · $' + Number(r.cpc).toFixed(2) : '')); })));
