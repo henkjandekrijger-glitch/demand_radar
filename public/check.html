@@ -8,6 +8,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#2B47C4">
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body class="clean">
@@ -21,7 +25,8 @@
   <p class="lead">Real monthly searches, growth, ad price and what people type. Netherlands, Germany or the US.</p>
   <form class="ckform" id="check" novalidate>
     <input id="q" name="q" maxlength="80" autocomplete="off" placeholder="Idea, product or service, e.g. thuisbatterij" aria-label="Idea, product or service">
-    <select id="m" name="m" aria-label="Country"><option value="NL">Netherlands</option><option value="DE">Germany</option><option value="US">United States</option></select>
+    <input type="hidden" id="m" name="m" value="NL">
+    <div class="seg ckseg" id="mseg" role="group" aria-label="Country"><button type="button" data-m="NL" aria-pressed="true" title="Netherlands">NL</button><button type="button" data-m="DE" aria-pressed="false" title="Germany">DE</button><button type="button" data-m="US" aria-pressed="false" title="United States">US</button></div>
     <input id="c" name="c" maxlength="60" autocomplete="off" placeholder="City (optional)" aria-label="City, optional">
     <button class="cta" type="submit" id="go">Check</button>
   </form>

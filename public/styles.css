@@ -231,7 +231,7 @@ code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6
 /* Schone idee-check */
 .scan.ghost{background:transparent;color:var(--ink);border:1px solid var(--line-strong);box-shadow:none}
 .scan.ghost:hover{box-shadow:none;border-color:var(--ink)}
-.ckform{display:grid;grid-template-columns:minmax(0,1fr) 170px 170px auto;gap:8px;margin-top:26px}
+.ckform{display:grid;grid-template-columns:minmax(0,1fr) auto 170px auto;gap:8px;margin-top:26px;align-items:center}
 .ckform input,.ckform select{width:100%;border:1px solid var(--line-strong);background:var(--bg);border-radius:999px;padding:11px 16px;font:inherit;font-size:16px;color:var(--ink)}
 .ckform .cta{border-radius:999px;padding:11px 22px}
 .ck-card{margin-top:18px}
@@ -246,4 +246,6 @@ code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6
 .ck-row{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid var(--line);font-size:15px}
 .ck-l{color:var(--ink);min-width:0;overflow-wrap:anywhere}
 .ck-v{color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
-@media (max-width:720px){.ckform{grid-template-columns:1fr 1fr}.ckform #q{grid-column:1/-1}.ckform .cta{grid-column:1/-1}}
+@media (max-width:720px){.ckform{grid-template-columns:auto 1fr}.ckform #q{grid-column:1/-1}.ckform .cta{grid-column:1/-1}}
+.ckseg{margin:0;padding:3px;height:46px;align-items:center}
+.ckseg button{font-size:14px;padding:8px 14px}

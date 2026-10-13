@@ -91,7 +91,9 @@
       .catch(function (e) { $('#result').replaceChildren(); note.textContent = (e && e.message) || 'The check failed. Try again in a minute.'; })
       .then(function () { $('#go').disabled = false; });
   }
+  function setM(v) { $('#m').value = v; [].forEach.call(document.querySelectorAll('#mseg button'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-m') === v)); }); }
+  [].forEach.call(document.querySelectorAll('#mseg button'), function (b) { b.addEventListener('click', function () { setM(b.getAttribute('data-m')); }); });
   $('#check').addEventListener('submit', function (e) { e.preventDefault(); run($('#q').value.trim(), $('#m').value, $('#c').value.trim()); });
   var qs = new URLSearchParams(location.search);
-  if (qs.get('q')) { $('#q').value = qs.get('q'); if (/^(NL|DE|US)$/.test(qs.get('m') || '')) $('#m').value = qs.get('m'); if (qs.get('c')) $('#c').value = qs.get('c'); run($('#q').value.trim(), $('#m').value, $('#c').value.trim()); }
+  if (qs.get('q')) { $('#q').value = qs.get('q'); if (/^(NL|DE|US)$/.test(qs.get('m') || '')) setM(qs.get('m')); if (qs.get('c')) $('#c').value = qs.get('c'); run($('#q').value.trim(), $('#m').value, $('#c').value.trim()); }
 })();
