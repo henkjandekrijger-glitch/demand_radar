@@ -20,7 +20,7 @@
   <p class="lead">Everyone on the team can pull today's demand into Claude, a script or a spreadsheet.</p>
 
   <h2>1. In Claude (or any AI assistant)</h2>
-  <p>Add a custom connector with this URL. The team key is in Vercel: project <b>demand_radar</b> → Settings → Environment Variables → <code>TEAM_KEY</code>. Anyone with access to the team's Vercel account can read it.</p>
+  <p>Add a custom connector with this URL. The team key is in Vercel, so anyone on the team's Vercel account has it: project <b>demand_radar</b> → Settings → General → <b>Project ID</b> (starts with <code>prj_</code>). If an environment variable <code>TEAM_KEY</code> is set in that project, use that instead.</p>
   <pre><code>https://demandradar-ivory.vercel.app/mcp?key=TEAM_KEY</code></pre>
   <p>Then ask things like:</p>
   <ul>
