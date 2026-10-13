@@ -228,3 +228,22 @@ code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6
 .doc pre{background:var(--accent-soft);border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:14px;line-height:1.5}
 .doc code{font-size:.92em}
 .doc li{margin:4px 0}
+/* Schone idee-check */
+.scan.ghost{background:transparent;color:var(--ink);border:1px solid var(--line-strong);box-shadow:none}
+.scan.ghost:hover{box-shadow:none;border-color:var(--ink)}
+.ckform{display:grid;grid-template-columns:minmax(0,1fr) 170px 170px auto;gap:8px;margin-top:26px}
+.ckform input,.ckform select{width:100%;border:1px solid var(--line-strong);background:var(--bg);border-radius:999px;padding:11px 16px;font:inherit;font-size:16px;color:var(--ink)}
+.ckform .cta{border-radius:999px;padding:11px 22px}
+.ck-card{margin-top:18px}
+.ck-head{display:flex;gap:18px;align-items:flex-start}
+.ck-score{font-size:46px;font-weight:700;letter-spacing:-.03em;color:var(--ink);line-height:1}
+.ck-score small{font-size:16px;color:var(--muted);font-weight:500;margin-left:2px}
+.ck-verdict{margin:8px 0 0;color:var(--body)}
+.ck-card h3{margin:30px 0 8px;font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.ck-big{font-size:20px;color:var(--ink);font-weight:600;margin:0 0 6px;font-variant-numeric:tabular-nums}
+.spark.wide{width:100%;height:80px;max-width:600px}
+.ck-list{border-top:1px solid var(--line)}
+.ck-row{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid var(--line);font-size:15px}
+.ck-l{color:var(--ink);min-width:0;overflow-wrap:anywhere}
+.ck-v{color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+@media (max-width:720px){.ckform{grid-template-columns:1fr 1fr}.ckform #q{grid-column:1/-1}.ckform .cta{grid-column:1/-1}}
