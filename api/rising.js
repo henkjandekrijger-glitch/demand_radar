@@ -6,14 +6,8 @@ import { getRising, storedMap, saveMap } from '../lib/data.js';
 
 export default async function handler(req, res) {
   try {
-    if (req.query.raw) {
-      if (req.query.raw !== RAW_TOKEN) return res.status(403).json({ error: 'forbidden' });
-      let d = await storedMap('rising');
-      if (!d) { d = await buildRising({ aiToken: gatewayToken(req) }); if (worthKeeping(d)) await saveMap('rising', d); }
-      res.setHeader('Cache-Control', worthKeeping(d) ? 'public, s-maxage=86400, stale-while-revalidate=604800' : 'no-store');
-      return res.status(200).json(d);
-    }
-    if (req.query.rebuild && isPro(req)) { const nd = await buildRising({ aiToken: gatewayToken(req) }); if (worthKeeping(nd)) await saveMap('rising', nd); return res.status(200).json({ rebuilt: true, month: nd.items.month.length, year: nd.items.year.length, ai: nd.ai }); }
+    if (req.query.raw) return res.status(410).json({ error: 'gone' });
+    if (req.query.rebuild && isPro(req)) { const nd = await getRising(req, { build: true }); return res.status(200).json({ rebuilt: true, month: nd.items.month.length, year: nd.items.year.length }); }
     const r0 = await getRising(req);
     const cap = t => { t = String(t || ''); return t.charAt(0).toUpperCase() + t.slice(1); };
     const pr = x => ({ ...x, name: x.title || cap(x.name), keyword: x.name });

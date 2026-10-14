@@ -1,7 +1,7 @@
 // GET /api/map?pack=practice  of  /api/map?theme=<eigen thema> — de kansenkaart.
 // Wordt één keer per dag per thema opgebouwd (Vercel CDN), zodat het snel is en DataForSEO weinig kost.
 import { buildMap } from '../lib/map.js';
-import { RAW_TOKEN } from '../lib/access.js';
+import { RAW_TOKEN, isPro } from '../lib/access.js';
 import { getMap, mapKey, storedMap, saveMap } from '../lib/data.js';
 import { gatewayToken } from '../lib/ai.js';
 import { PACKS } from '../lib/niches.js';
@@ -12,15 +12,8 @@ export default async function handler(req, res) {
   if (!theme && !PACKS[pack]) return res.status(400).json({ error: 'Unknown theme.' });
   if (theme && theme.length < 3) return res.status(400).json({ error: 'Type a theme of at least 3 characters.' });
   try {
-    if (req.query.raw) {
-      if (req.query.raw !== RAW_TOKEN) return res.status(403).json({ error: 'forbidden' });
-      const key = mapKey({ pack, theme });
-      let data = await storedMap(key);
-      if (!data) { data = await buildMap({ pack, theme, aiToken: gatewayToken(req) }); await saveMap(key, data); }
-      res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
-      return res.status(200).json(data);
-    }
-    const data = await getMap(req, { pack, theme });
+    if (req.query.raw) return res.status(410).json({ error: 'gone' });
+    const data = await getMap(req, { pack, theme, build: !!(req.query.rebuild && isPro(req)) });
     res.setHeader('Cache-Control', 'private, no-store');
     res.status(200).json(data);
   } catch (e) {

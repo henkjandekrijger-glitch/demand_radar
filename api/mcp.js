@@ -19,7 +19,7 @@ const TOOLS = [
   {
     name: 'demand_radar',
     description: 'Today\'s Demand Radar (rebuilt every night, learns daily): measured demand that is rising in the Netherlands, Germany and the US, per category (products, courses, books, services, apps, trips, money), plus what is unexpected, what people look for but does not exist yet, and moments coming up with last year\'s search curve. Each topic has monthly Google searches, growth vs last month and last year, whether it is still rising today, ad price per click, what people want and one idea to sell to it. Use this first to find demand; use check_demand to dig into one idea.',
-    inputSchema: { type: 'object', properties: { view: { type: 'string', enum: ['rise', 'now', 'products', 'courses', 'books', 'services', 'apps', 'trips', 'money', 'unexpected', 'missing', 'coming'], description: 'rise = predicted to rise in the coming months (the forecast, default); now = strongest measured growth; a category; unexpected; missing = does not exist yet; coming = coming up.' }, country: { type: 'string', enum: ['ALL', 'NL', 'DE', 'US'], description: 'Default ALL.' }, limit: { type: 'number', description: 'Max rows, default 15, max 50.' } } },
+    inputSchema: { type: 'object', properties: { view: { type: 'string', enum: ['rise', 'now', 'products', 'courses', 'books', 'services', 'apps', 'trips', 'money', 'unexpected', 'missing', 'coming'], description: 'rise = predicted to rise in the coming months (the forecast, default); now = strongest measured growth; a category; unexpected; missing = does not exist yet; coming = coming up.' }, country: { type: 'string', enum: ['ALL', 'NL', 'DE', 'US'], description: 'Default ALL.' }, limit: { type: 'number', description: 'Max rows, default 15, max 50.' }, refresh: { type: 'boolean', description: 'Rebuild the radar with fresh data first (costs about $2 of DataForSEO credit, takes 1-3 minutes). Only when the user asks for fresh data.' } } },
   },
   {
     name: 'report_outcome',
@@ -148,7 +148,7 @@ async function call(name, args, req) {
   }
   if (name === 'demand_radar') {
     const { presentDemand } = await import('../lib/demand.js');
-    const d = presentDemand(await getDemand(req));
+    const d = presentDemand(await getDemand(req, { build: args.refresh === true }));
     const c = String(args.country || 'ALL').toUpperCase();
     return demandText(d, String(args.view || 'rise'), ['NL', 'DE', 'US'].includes(c) ? c : 'ALL', Math.max(1, Math.min(50, +args.limit || 15)));
   }

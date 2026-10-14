@@ -19,17 +19,9 @@ async function learnedOrder() {
 
 export default async function handler(req, res) {
   try {
-    if (req.query.raw) {
-      if (req.query.raw !== RAW_TOKEN) return res.status(403).json({ error: 'forbidden' });
-      const day = String(req.query.d || demandDay()).slice(0, 10);
-      let d = await storedMap('demand', 8 * 864e5); const prev = d && d.items && d.items.length ? d : null;
-      if (d && d.day !== day) d = null;
-      if (!d) { const nd = await buildDemand({ aiToken: gatewayToken(req), day }); if (worthKeepingDemand(nd)) { d = nd; await saveMap('demand', nd); } else d = prev ? { ...prev, stale: true } : nd; }
-      res.setHeader('Cache-Control', worthKeepingDemand(d) && !d.stale ? 'public, s-maxage=93600' : 'no-store');
-      return res.status(200).json(d);
-    }
+    if (req.query.raw) return res.status(410).json({ error: 'gone' });
     // Eigenaar: ?rebuild=1&key=… bouwt vandaag opnieuw (na een update), anders één opbouw per dag.
-    if (req.query.rebuild && isPro(req)) { const nd = await buildDemand({ aiToken: gatewayToken(req), day: demandDay() }); if (worthKeepingDemand(nd)) await saveMap('demand', nd); return res.status(200).json({ rebuilt: true, ms: nd.ms, spent: nd.spent, items: (nd.items || []).length, rise: (nd.rise || []).length, errors: nd.errors, notes: nd.notes, aiErrors: nd.aiErrors }); }
+    if (req.query.rebuild && isPro(req)) { const nd = await getDemand(req, { build: true }); return res.status(200).json({ rebuilt: !nd.stale, day: nd.day, spent: nd.spent, items: (nd.items || []).length, rise: (nd.rise || []).length, note: nd.buildNote || null }); }
     const d = presentDemand(await getDemand(req));
     const order = await learnedOrder().catch(() => null);
     res.setHeader('Cache-Control', 'private, no-store');
