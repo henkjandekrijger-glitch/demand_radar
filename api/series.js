@@ -35,7 +35,7 @@ export default async function handler(req, res) {
   const seen = new Set(), kws = [];
   for (const x of pop) { const k = cleanKw(x.k); const core = x.core || k; if (!seen.has(core)) { seen.add(core); kws.push(k); } }
   const pick = kws.slice(offset, offset + 1000);
-  const ads = await searchVolume(pick, C, b);
+  const ads = await searchVolume(pick, C, b, { months: +req.query.months || 25 });
   const series = Object.fromEntries(Object.entries(ads).filter(([, a]) => a.monthly && a.monthly.length >= 20).map(([k, a]) => [k, { v: a.volume, cpc: a.cpc, m: [...a.monthly].sort((p, q) => p.y - q.y || p.m - q.m).map(x => [x.y, x.m, x.v]) }]));
   res.setHeader('Cache-Control', 'no-store');
   res.status(200).json({ cc, spent: b.spent, errors: b.errors, pool: pop.length, unique: kws.length, n: Object.keys(series).length, series });
