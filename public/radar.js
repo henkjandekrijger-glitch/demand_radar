@@ -92,7 +92,7 @@
     var f = x.forecast, pk = f.peak, ly = f.lastYear || [];
     var lyPeak = ly.reduce(function (a, b) { return b.v != null && (a == null || b.v > a.v) ? b : a; }, null);
     var path = f.months.map(function (m) { return MON[m.m - 1] + ' ' + num(m.v); }).join(' → ');
-    var link = h('a', { class: 'lname', href: checkUrl(x.name, x.cc), onclick: function () { ev('open', 'rise'); } }, x.name);
+    var nm = x.label2 || x.name, link = h('a', { class: 'lname', href: checkUrl(nm, x.cc), onclick: function () { ev('open', 'rise'); } }, nm);
     return h('div', { class: 'line' },
       h('div', { class: 'line-main' },
         h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: x.cc }), link), h('span', { class: 'badge p-early', text: '+' + Math.round((pk.v / Math.max(f.from.v, 1) - 1) * 100).toLocaleString('en-US') + '% by ' + MON[pk.m - 1] })),

@@ -251,3 +251,4 @@ code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6
 .ckseg button{font-size:14px;padding:8px 14px}
 .fcb{font-weight:600;color:var(--ok)}
 .meta.fc{color:var(--ok)}
+.spark .p{stroke:var(--ok);stroke-width:2.2;stroke-dasharray:3 3;opacity:1}
