@@ -83,7 +83,7 @@ test('mcp connector', async () => {
   const init = await run({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-06-18' } });
   assert.equal(init.body.result.serverInfo.name, 'demand-radar');
   const list = await run({ jsonrpc: '2.0', id: 2, method: 'tools/list' });
-  assert.equal(list.body.result.tools.length, 4);
+  assert.equal(list.body.result.tools.length, 5);
   const call = await run({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'check_demand', arguments: { idea: 'padel', market: 'NL', city: 'Gouda' } } });
   const text = call.body.result.content[0].text;
   assert.ok(text.includes('Demand check') && text.includes('LOCAL') && text.includes('Gouda'), text.slice(0, 300));
@@ -250,4 +250,24 @@ test('check: wrong Wikipedia articles are ignored, score comes from measured dat
   const hi = measuredScore({ last: 200000, yoy: 80, cpc: 2.5, forecast: { call: 'rise', from: { v: 100000 }, peak: { v: 300000 } } }, 'NL');
   const lo = measuredScore({ last: 300, yoy: -40, cpc: 0.1, forecast: { call: 'fall', from: { v: 300 } } }, 'NL');
   assert.ok(hi > 80 && lo < 25, `${hi} ${lo}`);
+});
+
+test('signals and 5-year enrichment', async () => {
+  const { memoryStore } = await import('../lib/store.js');
+  const S = await import('../lib/signals.js');
+  const store = memoryStore();
+  await S.feedback(store, { cc: 'NL', k: 'Kalender 2027', vote: -1 }); await S.feedback(store, { cc: 'NL', k: 'kalender 2027', vote: -1 }); await S.feedback(store, { cc: 'NL', k: 'airfryer', vote: 1 });
+  await S.checked(store, { cc: 'NL', q: 'thuisbatterij' }); await S.checked(store, { cc: 'NL', q: 'thuisbatterij' });
+  await S.outcome(store, { cc: 'NL', term: 'airfryer', clicks: 100, conversions: 3, spend: 8, revenue: 40 });
+  await S.aggregate(store);
+  const st = await S.loadSignals(store);
+  assert.equal(S.topChecks(st, 'NL')[0].q, 'thuisbatterij');
+  assert.ok(S.humanWeight(st, 'NL', ['kalender 2027']).block);
+  const hw = S.humanWeight(st, 'NL', ['airfryer']); assert.ok(hw.w > 1.3 && hw.proven.conversions === 3);
+  const F = await import('../lib/forecast.js');
+  const T = {}; for (let y = 2021; y <= 2026; y++) for (let m = 1; m <= 12; m++) T[`${y}-${String(m).padStart(2, '0')}`] = m === 11 ? 80 : 20;
+  assert.equal(F.stability(T, '2026-08', '2026-11').level, 'all');
+  const ser = []; for (let i = 0; i < 24; i++) { const d = new Date(Date.UTC(2024, 8 + i, 1)); ser.push({ y: d.getUTCFullYear(), m: d.getUTCMonth() + 1, v: d.getUTCMonth() === 10 ? 4000 : 1000 }); }
+  const fc = F.enrich(F.predict(ser, new Date(Date.UTC(2026, 9, 13))), ser, T, null, {});
+  assert.equal(fc.call, 'rise'); assert.equal(fc.confidence, 'high');
 });

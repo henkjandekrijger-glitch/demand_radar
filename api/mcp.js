@@ -22,6 +22,11 @@ const TOOLS = [
     inputSchema: { type: 'object', properties: { view: { type: 'string', enum: ['rise', 'now', 'products', 'courses', 'books', 'services', 'apps', 'trips', 'money', 'unexpected', 'missing', 'coming'], description: 'rise = predicted to rise in the coming months (the forecast, default); now = strongest measured growth; a category; unexpected; missing = does not exist yet; coming = coming up.' }, country: { type: 'string', enum: ['ALL', 'NL', 'DE', 'US'], description: 'Default ALL.' }, limit: { type: 'number', description: 'Max rows, default 15, max 50.' } } },
   },
   {
+    name: 'report_outcome',
+    description: 'Report the results of your own campaign for a search term or topic (clicks, conversions, spend, revenue), so the Demand Radar learns what really sells and ranks it higher. Call this after checking a campaign.',
+    inputSchema: { type: 'object', properties: { cc: { type: 'string', enum: ['NL', 'DE', 'US', 'WW'] }, term: { type: 'string', description: 'The search term or topic the campaign targeted.' }, network: { type: 'string' }, clicks: { type: 'number' }, conversions: { type: 'number' }, spend: { type: 'number', description: 'In dollars or euros.' }, revenue: { type: 'number' }, date: { type: 'string', description: 'YYYY-MM-DD' } }, required: ['cc', 'term'] },
+  },
+  {
     name: 'live_signals',
     description: 'The live Demand Radar overview: spikes right now (product spikes, Google trending searches, Wikipedia attention spikes), upcoming demand (shopping moments, public holidays, regulation deadlines, weather-driven demand, seasonal rises based on last year), products rising now, and App Store / Apple Books top charts. Filter by market.',
     inputSchema: { type: 'object', properties: { market: { type: 'string', enum: ['ALL', ...MK], description: 'Market filter, default ALL.' }, section: { type: 'string', enum: ['all', 'spikes', 'upcoming', 'rising', 'charts'], description: 'Which part, default all.' }, limit: { type: 'number', description: 'Max items per list, default 10.' } } },
@@ -114,7 +119,7 @@ export function demandText(d, view = 'now', country = 'ALL', n = 15) {
   if (view === 'rise') {
     const B = d.forecast && d.forecast.backtest;
     if (B) L.push(`Forecast method tested on ${B.series} searches: ${B.rise.right10}% of predicted rises rose >10%, ${B.rise.right25}% rose >25%.`);
-    (d.rise || []).filter(on).slice(0, n).forEach((x, i) => { const f = x.forecast; L.push(`${i + 1}. [${x.cc}] ${x.name} (${x.cat}) — ${x.what || ''} Now ${n0(f.from.v)}/month (${MN[f.from.m - 1]}); forecast ${f.months.map(m => `${MN[m.m - 1]} ${n0(m.v)}`).join(', ')}; last year ${f.lastYear.map(m => `${MN[m.m - 1]} ${n0(m.v)}`).join(', ')}${x.cpc != null ? `; $${x.cpc}/click` : ''}. Idea: ${x.idea || '-'}`); });
+    (d.rise || []).filter(on).slice(0, n).forEach((x, i) => { const f = x.forecast; L.push(`${i + 1}. [${x.cc}] ${x.name}${x.keyword && x.keyword !== x.name ? ` (search: "${x.keyword}")` : ''} (${x.cat}) — ${x.what || ''} Now ${n0(f.from.v)}/month (${MN[f.from.m - 1]}); forecast ${f.months.map(m => `${MN[m.m - 1]} ${n0(m.v)}`).join(', ')}; last year ${f.lastYear.map(m => `${MN[m.m - 1]} ${n0(m.v)}`).join(', ')}${x.cpc != null ? `; $${x.cpc}/click` : ''}. Idea: ${x.idea || '-'}`); });
   } else if (view === 'missing') {
     d.missing.filter(on).slice(0, n).forEach((m, i) => L.push(`${i + 1}. [${m.cc}] ${m.need} — ${m.exists === 'no' ? "doesn't exist yet" : 'only partly exists'}; ${m.volume ? `${n0(m.volume)} searches/month` : 'searches not measured'}. Gap: ${m.gap || '-'} Idea: ${m.idea || '-'} People typed: ${m.searches.map(s => `"${s.q}"`).join('; ')}`));
   } else if (view === 'coming') {
@@ -122,7 +127,7 @@ export function demandText(d, view = 'now', country = 'ALL', n = 15) {
   } else {
     let list = d.items.filter(on).filter(x => view === 'now' || (view === 'unexpected' ? x.unexpected : x.cat === view));
     if (view === 'unexpected') d.today.filter(on).forEach(t => L.push(`- TODAY [${t.cc}] ${t.name} (${t.traffic}): ${t.angle}. Idea: ${t.idea || '-'}${t.news && t.news.url ? ` <${t.news.url}>` : ''}`));
-    list.slice(0, n).forEach((x, i) => L.push(`${i + 1}. [${x.cc}] ${x.name} (${x.cat}) — ${x.what || ''} ${n0(x.last)} searches in ${x.period}, ${p0(x.mom)} vs previous month, ${p0(x.yoy)} vs a year ago, today: ${x.now ? x.now.status : 'unknown'}${x.cpc != null ? `, $${x.cpc}/click` : ''}. ${x.unexpected && x.why ? `Unexpected: ${x.why}. ` : ''}Idea: ${x.idea || '-'}${x.firstSeen ? ` (on radar since ${x.firstSeen})` : ''}`));
+    list.slice(0, n).forEach((x, i) => L.push(`${i + 1}. [${x.cc}] ${x.name}${x.keyword && x.keyword !== x.name ? ` (search: "${x.keyword}")` : ''} (${x.cat}) — ${x.what || ''} ${n0(x.last)} searches in ${x.period}, ${p0(x.mom)} vs previous month, ${p0(x.yoy)} vs a year ago, today: ${x.now ? x.now.status : 'unknown'}${x.cpc != null ? `, $${x.cpc}/click` : ''}. ${x.unexpected && x.why ? `Unexpected: ${x.why}. ` : ''}Idea: ${x.idea || '-'}${x.firstSeen ? ` (on radar since ${x.firstSeen})` : ''}`));
   }
   if (L.length === 1) L.push('Nothing for this selection today.');
   return L.join('\n');
@@ -142,9 +147,15 @@ async function call(name, args, req) {
     return mapText(d, ['NL', 'DE', 'US'].includes(c) ? c : 'ALL', Math.max(1, Math.min(40, +args.limit || 15)));
   }
   if (name === 'demand_radar') {
-    const d = await getDemand(req);
+    const { presentDemand } = await import('../lib/demand.js');
+    const d = presentDemand(await getDemand(req));
     const c = String(args.country || 'ALL').toUpperCase();
     return demandText(d, String(args.view || 'rise'), ['NL', 'DE', 'US'].includes(c) ? c : 'ALL', Math.max(1, Math.min(50, +args.limit || 15)));
+  }
+  if (name === 'report_outcome') {
+    const { outcome } = await import('../lib/signals.js'), { getStore } = await import('../lib/store.js');
+    const ok = await outcome(getStore(), args);
+    return ok ? `Saved: ${args.term} (${args.cc}). The radar uses it in tonight's learning round.` : 'Not saved: give cc (NL, DE, US or WW) and a term.';
   }
   if (name === 'live_signals') {
     const r = await getRadar(req);

@@ -1,5 +1,5 @@
 // GET /api/demand — de Demand Radar: wat mensen nu willen, per categorie en land. Eén keer per dag opgebouwd (en dan bijgeleerd).
-import { buildDemand, worthKeepingDemand } from '../lib/demand.js';
+import { buildDemand, worthKeepingDemand, presentDemand } from '../lib/demand.js';
 import { RAW_TOKEN } from '../lib/access.js';
 import { gatewayToken } from '../lib/ai.js';
 import { getDemand, storedMap, saveMap, demandDay } from '../lib/data.js';
@@ -28,7 +28,7 @@ export default async function handler(req, res) {
       res.setHeader('Cache-Control', worthKeepingDemand(d) ? 'public, s-maxage=93600' : 'no-store');
       return res.status(200).json(d);
     }
-    const d = await getDemand(req);
+    const d = presentDemand(await getDemand(req));
     const order = await learnedOrder().catch(() => null);
     res.setHeader('Cache-Control', 'private, no-store');
     // Voor tools en collega's: ?view=courses&cc=NL&limit=20 geeft een korte lijst; ?format=text geeft leesbare tekst.

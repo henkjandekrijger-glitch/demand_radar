@@ -41,6 +41,12 @@ GET /api/demand?view=courses&amp;cc=NL&amp;limit=20  one category, one country
 GET /api/demand?view=missing&amp;format=text      readable text</code></pre>
   <p>Views: <code>rise</code> (the forecast), <code>now</code>, <code>products</code>, <code>courses</code>, <code>books</code>, <code>services</code>, <code>apps</code>, <code>trips</code>, <code>money</code>, <code>unexpected</code>, <code>missing</code>, <code>coming</code>. Countries: <code>NL</code>, <code>DE</code>, <code>US</code>.</p>
 
+  <h2>3. Report campaign results</h2>
+  <p>Tell the radar what really sold, so it ranks that demand higher. From Claude: the tool <code>report_outcome</code>. As data:</p>
+  <pre><code>POST /api/outcome?key=TEAM_KEY
+{"cc":"NL","term":"thuisbatterij","network":"google ads","clicks":120,"conversions":3,"spend":45,"revenue":600,"date":"2026-10-13"}</code></pre>
+  <p>Results stay private: they only change the ranking, they are never shown on the site.</p>
+
   <h2>What the numbers mean</h2>
   <ul>
     <li><b>Searches</b>: Google searches in the latest month Google has released (usually one to two months back).</li>

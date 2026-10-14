@@ -5,6 +5,9 @@ import { buildCheck, MARKETS } from '../lib/core.js';
 import { isPro, canSee, maskCheck, RAW_TOKEN, OPEN } from '../lib/access.js';
 import { getCheck } from '../lib/data.js';
 import { gatewayToken, aiAvailable } from '../lib/ai.js';
+import { getStore } from '../lib/store.js';
+import { checked } from '../lib/signals.js';
+import { isBot } from '../lib/bots.js';
 
 export default async function handler(req, res) {
   const q = String(req.query.q || '').trim().replace(/\s+/g, ' ').slice(0, 80);
@@ -18,6 +21,7 @@ export default async function handler(req, res) {
       res.setHeader('Cache-Control', 'public, s-maxage=21600, stale-while-revalidate=86400');
       return res.status(200).json(data);
     }
+    if (!isBot(req)) checked(getStore(), { cc: m, q }).catch(() => {}); // wat mensen checken is zelf een vraagsignaal
     const pro = isPro(req);
     const data = await getCheck(req, q, m, { ai: pro && req.query.ai !== '0', city: c });
     data.q = q;

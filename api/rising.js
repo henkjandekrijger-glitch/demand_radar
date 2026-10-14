@@ -13,7 +13,10 @@ export default async function handler(req, res) {
       res.setHeader('Cache-Control', worthKeeping(d) ? 'public, s-maxage=86400, stale-while-revalidate=604800' : 'no-store');
       return res.status(200).json(d);
     }
-    const d = await getRising(req);
+    const r0 = await getRising(req);
+    const cap = t => { t = String(t || ''); return t.charAt(0).toUpperCase() + t.slice(1); };
+    const pr = x => ({ ...x, name: x.title || cap(x.name), keyword: x.name });
+    const d = r0 && r0.items ? { ...r0, items: { month: (r0.items.month || []).map(pr), year: (r0.items.year || []).map(pr) } } : r0;
     res.setHeader('Cache-Control', 'private, no-store');
     res.status(200).json(d);
   } catch (e) {

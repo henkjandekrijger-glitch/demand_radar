@@ -66,8 +66,8 @@
   function itemRow(x) {
     var nw = x.now && NOW[x.now.status], lbl = (LBL[x.label] || LBL.rising)[0];
     var useYear = !x.jump && x.grew;
-    var also = (x.members || []).map(function (m) { return m.k; }).filter(function (k) { return k !== x.name; }).slice(0, 4);
-    var link = h('a', { class: 'lname', href: checkUrl(x.name, x.cc), title: also.length ? 'Also searched: ' + also.join(', ') : 'Check this demand', onclick: function () { ev('open', x.cat); } }, x.name);
+    var also = (x.members || []).map(function (m) { return m.k; }).filter(function (k) { return k !== (x.keyword || x.name); }).slice(0, 4);
+    var link = h('a', { class: 'lname', href: checkUrl(x.keyword || x.name, x.cc), title: 'Searched as: ' + (x.keyword || x.name) + (also.length ? ' · also: ' + also.join(', ') : ''), onclick: function () { ev('open', x.cat); } }, x.name);
     var nums = [lbl, num(x.last) + ' searches in ' + mon(x.period)];
     if (!useYear) nums.push(pc(x.mom) + ' vs ' + prevMon(x.period));
     if (x.yoy != null) nums.push(pc(x.yoy) + ' vs last year');
@@ -83,8 +83,28 @@
         S.view === 'unexpected' && x.why ? h('p', { class: 'cu-why', text: x.why }) : null,
         h('p', { class: 'meta', text: nums.join(' · ') }),
         fcText(x.forecast) ? h('p', { class: 'meta fc', text: fcText(x.forecast) }) : null,
-        x.idea ? h('p', { class: 'cu-idea' }, h('b', null, 'Idea'), cap(x.idea)) : null),
+        x.idea ? h('p', { class: 'cu-idea' }, h('b', null, 'Idea'), cap(x.idea)) : null, vote(x)),
       spark((x.series || []).map(function (s) { return s.v; }), fcLine(x.forecast), fcGap(x.forecast)));
+  }
+
+  // Klopt / klopt niet: telt mee in de leerronde van vannacht.
+  function vote(x) {
+    var box = h('span', { class: 'vote' }), send = function (v) {
+      try { fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cc: x.cc, k: x.keyword || x.name, cat: x.cat, vote: v, view: S.view }), keepalive: true }); } catch (e) {}
+      box.replaceChildren(h('span', { class: 'lsub', text: v > 0 ? 'Thanks, noted' : 'Thanks, we will learn from this' }));
+    };
+    box.append(h('button', { type: 'button', class: 'vbtn', title: 'This is real demand', onclick: function () { send(1); } }, 'Useful'), h('button', { type: 'button', class: 'vbtn', title: 'This is not real demand', onclick: function () { send(-1); } }, 'Not real demand'));
+    return box;
+  }
+
+  // Onderbouwing in één regel: hoe vast het patroon is en wat weer of geld doet.
+  var DN = { temp: ['warmer', 'colder', '°C'], sun: ['sunnier', 'less sunny', ' h sun a day'], rain: ['wetter', 'drier', ' mm rain a day'], mortgage: ['higher mortgage rates', 'lower mortgage rates', ' pt'], energy: ['higher energy prices', 'lower energy prices', ''], confidence: ['more consumer confidence', 'less consumer confidence', ''] };
+  function why(f) {
+    var p = [], st = f.stability;
+    if (st) p.push(st.level === 'all' ? 'Rose in this period every year since ' + (new Date().getUTCFullYear() - st.years) : 'Rose in this period in ' + st.up + ' of the last ' + st.years + ' years');
+    var e = f.drivers && f.drivers.effects && f.drivers.effects.filter(function (x) { return x.ym <= new Date().toISOString().slice(0, 7); }).slice(-1)[0];
+    if (e && DN[e.name]) p.push(MON[+e.ym.slice(5) - 1] + ' is ' + (e.change > 0 ? DN[e.name][0] : DN[e.name][1]) + ' than last year (' + (e.pct > 0 ? '+' : '') + e.pct + '% on searches)');
+    return p.join(' · ');
   }
 
   // De voorspeller: wat de komende maanden gaat stijgen.
@@ -92,21 +112,22 @@
     var f = x.forecast, pk = f.peak, ly = f.lastYear || [];
     var lyPeak = ly.reduce(function (a, b) { return b.v != null && (a == null || b.v > a.v) ? b : a; }, null);
     var path = f.months.map(function (m) { return MON[m.m - 1] + ' ' + num(m.v); }).join(' → ');
-    var nm = x.label2 || x.name, link = h('a', { class: 'lname', href: checkUrl(nm, x.cc), onclick: function () { ev('open', 'rise'); } }, nm);
+    var link = h('a', { class: 'lname', href: checkUrl(x.keyword || x.name, x.cc), title: 'Searched as: ' + (x.keyword || x.name), onclick: function () { ev('open', 'rise'); } }, x.name);
     return h('div', { class: 'line' },
       h('div', { class: 'line-main' },
-        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: x.cc }), link), h('span', { class: 'badge p-early', text: '+' + Math.round((pk.v / Math.max(f.from.v, 1) - 1) * 100).toLocaleString('en-US') + '% by ' + MON[pk.m - 1] })),
+        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: x.cc }), link), h('div', { class: 'badges' }, f.confidence === 'high' ? h('span', { class: 'badge p-steady', title: 'Rose in this period in every year since 2021', text: 'Every year' }) : null, h('span', { class: 'badge p-early', text: '+' + Math.round((pk.v / Math.max(f.from.v, 1) - 1) * 100).toLocaleString('en-US') + '% by ' + MON[pk.m - 1] }))),
         x.what ? h('p', { class: 'cu-what', text: cap(x.what) }) : null,
         h('p', { class: 'meta' }, h('b', { class: 'fcb' }, 'Forecast '), path + ' searches a month'),
         h('p', { class: 'meta', text: 'Measured: ' + num(f.from.v) + ' in ' + MON[f.from.m - 1] + (lyPeak ? ' · last year ' + num(lyPeak.v) + ' in ' + MON[lyPeak.m - 1] : '') + (x.cpc != null ? ' · $' + Number(x.cpc).toFixed(2) + ' per click' : '') }),
-        x.idea ? h('p', { class: 'cu-idea' }, h('b', null, 'Idea'), cap(x.idea)) : null),
+        why(f) ? h('p', { class: 'meta', text: why(f) }) : null,
+        x.idea ? h('p', { class: 'cu-idea' }, h('b', null, 'Idea'), cap(x.idea)) : null, vote(x)),
       spark((x.series || []).map(function (s) { return s.v; }), fcLine(f), fcGap(f)));
   }
 
   function todayRow(t) {
     return h('div', { class: 'line one' },
       h('div', { class: 'line-main' },
-        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: t.cc }), h('a', { class: 'lname', href: checkUrl(t.name, t.cc), onclick: function () { ev('open', 'today'); } }, t.name)), h('span', { class: 'badge p-early', text: 'Today' })),
+        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: t.cc }), h('a', { class: 'lname', href: checkUrl(t.keyword || t.name, t.cc), onclick: function () { ev('open', 'today'); } }, t.name)), h('span', { class: 'badge p-early', text: 'Today' })),
         h('p', { class: 'cu-what', text: t.angle }),
         h('p', { class: 'meta' }, (t.traffic && t.traffic !== 'Bluesky' ? t.traffic + ' searches today' : t.traffic === 'Bluesky' ? 'Trending on Bluesky' : ''), t.news && t.news.url ? [' · ', h('a', { href: t.news.url, target: '_blank', rel: 'noopener' }, t.news.source || 'news')] : null),
         t.idea ? h('p', { class: 'cu-idea' }, h('b', null, 'Idea'), t.idea) : null));
@@ -130,6 +151,8 @@
       h('div', { class: 'line-main' },
         h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: m.cc }), h('span', { class: 'lname', text: m.name })), h('span', { class: 'badge ' + (m.status === 'open' ? 'p-early' : 'p-steady'), text: m.days === 0 ? 'Today' : 'In ' + m.days + ' days' })),
         h('p', { class: 'meta', text: line }),
+        m.kind === 'regulation' ? h('p', { class: 'meta' }, 'New rule · ' + (m.direction === 'less' ? 'less' : 'more') + ' demand' + (m.sources && m.sources[0] ? ' · ' : ''), m.sources && m.sources[0] ? (m.sources[0].site ? h('a', { href: m.sources[0].site, target: '_blank', rel: 'noopener' }, m.sources[0].source || 'source') : m.sources[0].source) : null) : null,
+        m.kind === 'school' && m.note ? h('p', { class: 'meta', text: 'School holidays ' + m.note.replace(' to ', ' to ') + ' (regions differ)' }) : null,
         m.terms && m.terms.length ? h('div', { class: 'tchips' }, m.terms.map(function (t) { return h('a', { class: 'tchip', href: checkUrl(t.k, m.cc), onclick: function () { ev('open', 'coming'); } }, t.k, h('span', { text: ' ' + (t.now === t.peak ? num(t.peak) : num(t.now) + '→' + num(t.peak)) })); })) : null,
         m.ideas && m.ideas.length ? h('p', { class: 'cu-idea' }, h('b', null, 'Sell'), m.ideas.join(', ')) : null));
   }

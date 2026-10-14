@@ -252,3 +252,6 @@ code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6
 .fcb{font-weight:600;color:var(--ok)}
 .meta.fc{color:var(--ok)}
 .spark .p{stroke:var(--ok);stroke-width:2.2;stroke-dasharray:3 3;opacity:1}
+.vote{display:flex;gap:6px;margin-top:8px}
+.vbtn{font-size:12px;border:1px solid var(--line);background:none;color:var(--muted);border-radius:999px;padding:2px 10px}
+.vbtn:hover{color:var(--ink);border-color:var(--line-strong)}
