@@ -45,7 +45,12 @@
       if (facts.length) parts.push(h('p', { class: 'ck-big', text: facts.join(' · ') }));
       var sp = spark((m.series || []).map(function (x) { return x.v; }), 600, 80); if (sp) parts.push(sp);
       var fc = m.forecast;
+      var DN = { temp: ['warmer', 'colder'], sun: ['sunnier', 'less sunny'], rain: ['wetter', 'drier'], mortgage: ['higher mortgage rates', 'lower mortgage rates'], energy: ['higher energy prices', 'lower energy prices'], confidence: ['more consumer confidence', 'less consumer confidence'] };
+      var notes = [];
+      if (fc && fc.stability) notes.push(fc.stability.level === 'all' ? 'This period rose in every one of the last ' + fc.stability.years + ' years' : 'This period rose in ' + fc.stability.up + ' of the last ' + fc.stability.years + ' years');
+      if (fc && fc.drivers && fc.drivers.sens && fc.drivers.sens.length) { var sn = fc.drivers.sens[0]; notes.push('Searches react to ' + ({ temp: 'temperature', sun: 'sunshine', rain: 'rain', mortgage: 'mortgage rates', energy: 'energy prices', confidence: 'consumer confidence' }[sn.name] || sn.name)); (fc.drivers.effects || []).slice(-2).forEach(function (e) { if (DN[e.name]) notes.push(MON[+e.ym.slice(5) - 1] + ' ' + (e.change > 0 ? DN[e.name][0] : DN[e.name][1]) + ' than last year: ' + (e.pct > 0 ? '+' : '') + e.pct + '%'); }); }
       if (fc && fc.months && fc.months.length) parts.push(h('p', { class: 'meta' + (fc.call === 'rise' ? ' fc' : '') }, h('b', { class: 'fcb' }, 'Forecast '), fc.months.map(function (x) { return MON[x.m - 1] + ' ' + num(x.v); }).join(' → ') + (fc.call === 'rise' ? ' · expected to rise' : fc.call === 'fall' ? ' · expected to drop' : ' · no clear change expected')));
+      if (notes.length) parts.push(h('p', { class: 'meta', text: notes.join(' · ') }));
       if (m.related && m.related.length) parts.push(h('div', { class: 'ck-list' }, m.related.slice(0, 6).map(function (r) { return row(r.k, num(r.volume) + ' / month' + (r.cpc != null ? ' · $' + Number(r.cpc).toFixed(2) : '')); })));
     } else {
       var sg = (c.suggest && c.suggest.google) || [];
