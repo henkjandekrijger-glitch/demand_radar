@@ -240,3 +240,14 @@ test('forecast: seasonal rise predicted, momentum not trusted, backtest numbers'
   assert.ok(bt.find(r => r.model === 'season').wape < bt.find(r => r.model === 'naive').wape);
   assert.ok(F.BACKTEST.rise.right10 > 70 && F.BACKTEST.momentum.right10 < 20);
 });
+
+test('check: wrong Wikipedia articles are ignored, score comes from measured data', async () => {
+  const { wikiMatch, measuredScore } = await import('../lib/core.js');
+  assert.equal(wikiMatch('ai receptionist', 'RingCentral'), false);
+  assert.equal(wikiMatch('chore chart', 'TikTok'), false);
+  assert.equal(wikiMatch('split expenses with friends', 'Split (2016 American film)'), false);
+  assert.equal(wikiMatch('air fryer', 'Air fryer'), true);
+  const hi = measuredScore({ last: 200000, yoy: 80, cpc: 2.5, forecast: { call: 'rise', from: { v: 100000 }, peak: { v: 300000 } } }, 'NL');
+  const lo = measuredScore({ last: 300, yoy: -40, cpc: 0.1, forecast: { call: 'fall', from: { v: 300 } } }, 'NL');
+  assert.ok(hi > 80 && lo < 25, `${hi} ${lo}`);
+});

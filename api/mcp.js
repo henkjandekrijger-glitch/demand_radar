@@ -51,10 +51,18 @@ const feed = (name, f) => (f ? `${name}: ${f.total}${f.capped ? '+' : ''} in 4 w
 
 function checkText(c) {
   const L = [];
-  L.push(`Demand check: "${c.q}" in ${MARKETS[c.market].name}${c.local && c.local.place ? `, ${c.local.place.name}` : ''}. Score ${c.score}/100, phase: ${c.phase}.`);
+  L.push(`Demand check: "${c.q}" in ${MARKETS[c.market].name}${c.local && c.local.place ? `, ${c.local.place.name}` : ''}. Score ${c.score}/100, phase: ${c.phase}. ${c.scoreBasis === 'measured' ? 'Score and phase are based on measured Google search volumes and the tested forecast.' : 'No measured search volume available: the score is a rough estimate from news and suggestions — treat it as weak.'}`);
   L.push(c.verdict);
+  const m = c.measured, MN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  if (m) {
+    L.push(`MEASURED (Google Ads): ${m.last != null ? `${m.last} searches in ${m.period}` : `${m.volume} searches/month`}${m.mom != null ? `, ${m.mom >= 0 ? '+' : ''}${m.mom}% vs previous month` : ''}${m.yoy != null ? `, ${m.yoy >= 0 ? '+' : ''}${m.yoy}% vs a year ago` : ''}${m.cpc != null ? `, $${m.cpc}/click` : ''}${m.competition != null ? `, competition ${m.competition}/100` : ''}.`);
+    if (m.series && m.series.length) L.push(`Last 13 months: ${m.series.map(x => `${MN[x.m - 1]} ${x.y} ${x.v}`).join(', ')}.`);
+    if (m.forecast) L.push(`Forecast (tested: ~8 in 10 predicted rises came true): ${m.forecast.call}; ${m.forecast.months.map(x => `${MN[x.m - 1]} ${x.v}`).join(', ')}.`);
+    if (m.local) L.push(`In ${m.local.city}: ${m.local.measured ? '' : 'about '}${m.local.volume} searches/month${m.local.measured ? '' : ' (estimate by population)'}.`);
+    if (m.related && m.related.length) L.push(`Related searches: ${m.related.map(r => `${r.k} ${r.volume}/month${r.cpc != null ? ` $${r.cpc}` : ''}`).join('; ')}.`);
+  }
   const w = c.wiki;
-  if (w) L.push(`Interest (Wikipedia ${w.lang}, "${w.article}" <${w.url}>): ${w.daily} views a day; last week vs the 4 weeks before ${pct(w.momentum)}; year on year ${pct(w.yoy)}; next 6 weeks last year ${pct(w.outlook)}; last year's peak ${w.peakInDays <= 3 ? 'was around now' : `came ${w.peakInDays} days after this date`}. Weekly views, last 26 weeks: ${w.weeks.join(',')}.`);
+  if (w) L.push(`Extra signal, Wikipedia ${w.lang}, "${w.article}" <${w.url}>): ${w.daily} views a day; last week vs the 4 weeks before ${pct(w.momentum)}; year on year ${pct(w.yoy)}; next 6 weeks last year ${pct(w.outlook)}; last year's peak ${w.peakInDays <= 3 ? 'was around now' : `came ${w.peakInDays} days after this date`}. Weekly views, last 26 weeks: ${w.weeks.join(',')}.`);
   L.push(feed('World news (GDELT)', c.news));
   L.push(feed('Google News', c.gnews));
   L.push(feed('Reddit', c.reddit) + (c.reddit && c.reddit.subs && c.reddit.subs.length ? `. Subreddits: ${c.reddit.subs.join(', ')}` : ''));

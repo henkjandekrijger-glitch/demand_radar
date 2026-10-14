@@ -24,7 +24,8 @@
     var ph = PH[c.phase] || PH.steady, m = c.measured, w = c.wiki, parts = [];
     parts.push(h('div', { class: 'ck-head' },
       h('div', { class: 'ck-score' }, String(c.score), h('small', null, '/100')),
-      h('div', null, h('span', { class: 'badge ' + ph[1], text: ph[0] }), h('p', { class: 'ck-verdict', text: c.verdict }))));
+      h('div', null, h('span', { class: 'badge ' + ph[1], text: ph[0] }), h('p', { class: 'ck-verdict', text: c.verdict }),
+        h('p', { class: 'meta', text: c.scoreBasis === 'measured' ? 'Score from measured Google searches: demand, growth, the forecast and ad price.' : 'No measured search data for this one, so the score is only a rough estimate from news and suggestions.' }))));
 
     if (m) {
       var facts = [];
@@ -43,6 +44,8 @@
       parts.push(h('h3', null, 'Searches in ' + CN));
       if (facts.length) parts.push(h('p', { class: 'ck-big', text: facts.join(' · ') }));
       var sp = spark((m.series || []).map(function (x) { return x.v; }), 600, 80); if (sp) parts.push(sp);
+      var fc = m.forecast;
+      if (fc && fc.months && fc.months.length) parts.push(h('p', { class: 'meta' + (fc.call === 'rise' ? ' fc' : '') }, h('b', { class: 'fcb' }, 'Forecast '), fc.months.map(function (x) { return MON[x.m - 1] + ' ' + num(x.v); }).join(' → ') + (fc.call === 'rise' ? ' · expected to rise' : fc.call === 'fall' ? ' · expected to drop' : ' · no clear change expected')));
       if (m.related && m.related.length) parts.push(h('div', { class: 'ck-list' }, m.related.slice(0, 6).map(function (r) { return row(r.k, num(r.volume) + ' / month' + (r.cpc != null ? ' · $' + Number(r.cpc).toFixed(2) : '')); })));
     } else {
       var sg = (c.suggest && c.suggest.google) || [];
