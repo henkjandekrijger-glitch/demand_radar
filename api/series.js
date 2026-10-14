@@ -24,6 +24,15 @@ export default async function handler(req, res) {
     // Compact: één datumlijst, per zoekterm alleen de waarden (anders te groot voor één antwoord).
     return res.status(200).json({ cc, spent: tb.spent, errors: tb.errors.slice(0, 5), dates: first ? first.map(x => x.d) : [], trends: Object.fromEntries(Object.entries(all).map(([k, a]) => [k, a.map(x => x.v)])) });
   }
+  // POST {keywords: [...]} met ?ads=1&months=48: Google Ads-maanddata voor een vaste lijst (opnieuw ophalen met langere historie).
+  if (req.method === 'POST' && req.query.ads) {
+    let body = req.body; if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
+    const kws = (body && body.keywords || []).slice(0, 3000), ab = budget(0.5), parts = [];
+    for (let i = 0; i < kws.length; i += 1000) parts.push(await searchVolume(kws.slice(i, i + 1000), C, ab, { months: +req.query.months || 48 }));
+    const all = Object.assign({}, ...parts);
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(200).json({ cc, spent: ab.spent, errors: ab.errors.slice(0, 5), n: Object.keys(all).length, series: Object.fromEntries(Object.entries(all).filter(([, a]) => a.monthly && a.monthly.length >= 15).map(([k, a]) => [k, { v: a.volume, cpc: a.cpc, m: [...a.monthly].sort((p, q) => p.y - q.y || p.m - q.m).map(x => [x.y, x.m, x.v]) }])) });
+  }
   const offset = +req.query.offset || 0;
   // mode=pop: populairste (geen groeifilter); mode=mid: middelgroot volume; mode=grow: wat de radar zou kiezen (hardst gegroeid)
   const mode = String(req.query.mode || 'pop');
