@@ -20,6 +20,11 @@ Een dienst van ADSFAIR B.V. Draait volledig op Vercel, zonder computer of Claude
 - **Inloggen**: persoonlijke sleutels in `lib/access.js` (`MEMBERS`, alleen hashes): Henkjan en Babita. Inloglink `/api/unlock?key=<sleutel>` of `/login`. Ingelogd: naam, knop Refresh radar (± $2, valt onder de dagrem), Sign out; dezelfde sleutel werkt voor de connector `/mcp?key=…`.
 - **Team-toegang**: connector `https://demandradar-ivory.vercel.app/mcp?key=<teamsleutel>`. Teamsleutel = `TEAM_KEY` als die in Vercel staat, anders de Project ID van dit Vercel-project (Settings → General). Data zonder sleutel: `/api/demand?view=courses&cc=NL&limit=20` of `&format=text`.
 - Niet bereikbaar vanaf Vercel: Reddit JSON/zoeken (wel RSS), Kickstarter, Etsy, Pushshift-alternatieven.
+- **Onderzoek beter voorspellen (14 okt)**, script `tools/forecast_backtest.py` (Python, LightGBM), eerlijke tijdsplitsing (leren op doelmaanden t/m apr 2026, toetsen op mei-aug 2026, 68.577 voorspellingen):
+  - Grootste lek: zoektermen waarvan het niveau verschuift t.o.v. vorig jaar (>50% erbij of >33% eraf) — ca. 30% van de gevallen maar ca. 43% van alle fout (fout 50-65%). Seizoenstermen met stabiel niveau gaan al goed (16%).
+  - Eén ML-model over alle zoektermen (LightGBM, kenmerken: niveau, laatste maanden, vorig jaar zelfde periode, jaar-op-jaar, spreiding): fout 27,3% → 23,5%; voorspelde stijgers 74% → 82% kwam uit (>10%). Geeft een eerlijke kans: "86% kans" kwam 85% uit. Top-300 kansen (zonder herstel na een dip): 92% steeg >25% tegen 72% met de huidige regel.
+  - Werkte niet: maanden invullen met 5 jaar weekdata van Trends (samenhang maar 0,2; te grof), meerjarig seizoen uit Trends (geen winst). Chronos-2 niet te toetsen hier (Hugging Face geblokkeerd).
+  - Volgende bronnen voor het lek (vooruitlopend): Wikipedia-paginaweergaven (gratis, dagelijks), GDELT nieuwsvolume (gratis), Google Trends dagdata + YouTube/Shopping-zoeken via DataForSEO (goedkoop), 48 maanden Ads-historie (zelfde prijs als 24), bol.com Retailer API zoektermen (vraagt verkopersaccount, niet het partneraccount), Google Merchant API bestsellers (gratis met Merchant Center), aanvraag Google Trends API (alpha).
 
 ## Hoe het werkt
 - `public/` — de site (index.html, styles.css, site.js). Zelfde huisstijl als outname.now.
