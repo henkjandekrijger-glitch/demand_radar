@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sign in · Demand Radar</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body class="clean">
+<div class="top"><div class="top-in"><a class="brand" href="/">demand<span>radar</span></a></div></div>
+<main>
+  <h1>Sign in.</h1>
+  <p class="lead">Use the personal key you received.</p>
+  <form class="ckform" action="/api/unlock" method="get" style="grid-template-columns:minmax(0,1fr) auto">
+    <input name="key" type="password" autocomplete="current-password" placeholder="Your key (starts with dr-)" aria-label="Your key" required>
+    <button class="cta" type="submit">Sign in</button>
+  </form>
+  <p class="status" id="msg"></p>
+</main>
+<script>if (/fail=1/.test(location.search)) document.getElementById('msg').textContent = 'That key did not work. Check it and try again.';</script>
+</body>
+</html>

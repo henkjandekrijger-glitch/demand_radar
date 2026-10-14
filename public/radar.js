@@ -238,6 +238,23 @@
     return 0;
   }
 
+  // Ingelogd (team): naam, radar verversen (kost ± $2 DataForSEO), uitloggen.
+  function account() {
+    fetch('/api/me', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (me) {
+      var bar = $('#dr-account'); if (!bar) return;
+      if (!me.signedIn) { bar.replaceChildren(h('a', { href: '/login', text: 'Sign in' })); return; }
+      var btn = h('button', { type: 'button', class: 'vbtn', text: 'Refresh radar' });
+      btn.onclick = function () {
+        btn.disabled = true; btn.textContent = 'Refreshing… 1 to 3 minutes';
+        fetch('/api/demand?rebuild=1', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (j) {
+          btn.textContent = j.rebuilt ? 'Done, reloading' : 'Not refreshed: ' + (j.note || 'try again later');
+          if (j.rebuilt) setTimeout(function () { location.reload(); }, 800);
+        }).catch(function () { btn.textContent = 'Failed, try again later'; btn.disabled = false; });
+      };
+      bar.replaceChildren(h('span', { class: 'lsub', text: 'Signed in as ' + me.name + ' · ' }), btn, h('a', { href: '/api/unlock?logout=1', class: 'lsub', style: 'margin-left:10px', text: 'Sign out' }));
+    }).catch(function () {});
+  }
+  account();
   draw();
   ev('view', 'page');
   fetch('/api/demand').then(function (r) { return r.json(); }).then(function (d) { S.d = d; draw(); })
