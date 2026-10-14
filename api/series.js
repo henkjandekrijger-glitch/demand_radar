@@ -15,7 +15,8 @@ export default async function handler(req, res) {
   if (req.method === 'POST' && req.query.trends) {
     let body = req.body; if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
     const kws = (body && body.keywords || []).slice(0, 600), groups = [];
-    for (let i = 0; i < kws.length; i += 5) groups.push(kws.slice(i, i + 5));
+    const per = Math.max(1, Math.min(5, +req.query.per || 5));
+    for (let i = 0; i < kws.length; i += per) groups.push(kws.slice(i, i + per));
     const tb = budget(1.5);
     const fn = req.query.src === 'google' ? googleTrends : longTrends;
     const parts = await pool(groups, 25, g => fn(g, C, tb));
