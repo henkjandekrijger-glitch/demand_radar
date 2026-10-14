@@ -219,9 +219,24 @@ test('demand radar: categories, missing, coming up, daily learning', async () =>
   assert.ok(d1.missing.length > 0 && d1.missing[0].searches.length > 0, 'missing');
   assert.ok(d1.coming.length > 0 && d1.coming.some(c => c.terms.length), 'coming up');
   assert.ok(d1.views.find(v => v.id === 'missing').n > 0 && d1.views.find(v => v.id === 'now').n === d1.items.length);
+  assert.ok(Array.isArray(d1.rise) && d1.views[0].id === 'rise' && d1.forecast && d1.forecast.backtest.series > 4000);
   assert.equal(d1.learning.day, 1); assert.ok(d1.learning.saved);
   assert.equal(d2.learning.day, 2);
   assert.ok(d2.learning.checked > 0, 'yesterday graded');
   assert.ok(d2.items.some(i => i.firstSeen === '2026-10-13' && i.seen === 2), 'remembered');
   assert.ok(!d2.items.some(i => / vs /.test(i.name)), 'sports filtered');
+});
+
+test('forecast: seasonal rise predicted, momentum not trusted, backtest numbers', async () => {
+  const F = await import('../lib/forecast.js');
+  const shape = [100, 100, 100, 100, 100, 100, 100, 100, 120, 300, 800, 200]; // jan..dec: piek in november
+  const ser = []; for (let i = 0; i < 24; i++) { const d = new Date(Date.UTC(2024, 8 + i, 1)); ser.push({ y: d.getUTCFullYear(), m: d.getUTCMonth() + 1, v: Math.round(shape[d.getUTCMonth()] * (i >= 12 ? 1.1 : 1)) }); }
+  const p = F.predict(ser, new Date(Date.UTC(2026, 9, 13)));
+  assert.equal(p.call, 'rise'); assert.equal(p.peak.m, 11); assert.ok(p.peak.v > p.from.v * 3);
+  assert.deepEqual(p.months.map(m => m.m), [10, 11, 12]);
+  const flat = ser.map(x => ({ ...x, v: 500 }));
+  assert.equal(F.predict(flat, new Date(Date.UTC(2026, 9, 13))).call, 'flat');
+  const bt = F.backtest([{ y: ser.map(x => x.v) }], { horizons: [2] });
+  assert.ok(bt.find(r => r.model === 'season').wape < bt.find(r => r.model === 'naive').wape);
+  assert.ok(F.BACKTEST.rise.right10 > 70 && F.BACKTEST.momentum.right10 < 20);
 });

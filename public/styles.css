@@ -249,3 +249,5 @@ code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6
 @media (max-width:720px){.ckform{grid-template-columns:auto 1fr}.ckform #q{grid-column:1/-1}.ckform .cta{grid-column:1/-1}}
 .ckseg{margin:0;padding:3px;height:46px;align-items:center}
 .ckseg button{font-size:14px;padding:8px 14px}
+.fcb{font-weight:600;color:var(--ok)}
+.meta.fc{color:var(--ok)}

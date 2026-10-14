@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   var $ = function (s) { return document.querySelector(s); };
-  var S = { d: null, mk: 'ALL', view: 'now', n: 12 };
+  var S = { d: null, mk: 'ALL', view: 'rise', n: 12 };
   var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var ORDER = ['NL', 'DE', 'US'];
   var MKN = { NL: 'Netherlands', DE: 'Germany', US: 'United States', WW: 'Worldwide' };
@@ -20,14 +20,32 @@
   function ev(k, c) { try { var u = '/api/e?x=radar&k=' + k + '&v=A&c=' + encodeURIComponent(c || '-'); if (navigator.sendBeacon) navigator.sendBeacon(u); else fetch(u, { keepalive: true }); } catch (e) {} }
   function save() { try { localStorage.setItem('dr-view', JSON.stringify({ mk: S.mk, view: S.view })); } catch (e) {} }
   function checkUrl(q, cc) { return '/check?q=' + encodeURIComponent(q) + '&m=' + (cc === 'WW' ? 'US' : cc) + '#check'; }
-  function spark(v) {
+  // Lijn: gemeten maanden; stippellijn: voorspelling (f = voorspelde waarden, aansluitend na een gat van de achterstand).
+  function spark(v, f, gap) {
     if (!v || v.length < 4) return null;
-    var w = 120, hg = 32, mx = Math.max.apply(null, v.concat([1]));
-    var pts = v.map(function (x, i) { return ((i / (v.length - 1)) * (w - 4) + 2).toFixed(1) + ',' + (hg - 3 - (x / mx) * (hg - 6)).toFixed(1); });
+    f = f || []; gap = gap || 0;
+    var all = v.concat(f), n = v.length + (f.length ? gap + f.length : 0), w = 120, hg = 32, mx = Math.max.apply(null, all.concat([1]));
+    var X = function (i) { return ((i / (n - 1)) * (w - 4) + 2).toFixed(1); }, Y = function (x) { return (hg - 3 - (x / mx) * (hg - 6)).toFixed(1); };
+    var pts = v.map(function (x, i) { return X(i) + ',' + Y(x); });
     var NS = 'http://www.w3.org/2000/svg', s = document.createElementNS(NS, 'svg'); s.setAttribute('viewBox', '0 0 ' + w + ' ' + hg); s.setAttribute('width', w); s.setAttribute('height', hg); s.setAttribute('class', 'spark'); s.setAttribute('aria-hidden', 'true');
     var p = document.createElementNS(NS, 'polyline'); p.setAttribute('class', 'h'); p.setAttribute('points', pts.join(' ')); s.append(p);
-    var l = pts[pts.length - 1].split(','), c = document.createElementNS(NS, 'circle'); c.setAttribute('class', 'e'); c.setAttribute('cx', l[0]); c.setAttribute('cy', l[1]); c.setAttribute('r', 2.6); s.append(c);
+    if (f.length) {
+      var fp = [pts[pts.length - 1]].concat(f.map(function (x, i) { return X(v.length + gap + i) + ',' + Y(x); }));
+      var q = document.createElementNS(NS, 'polyline'); q.setAttribute('class', 'p'); q.setAttribute('points', fp.join(' ')); s.append(q);
+      var le = fp[fp.length - 1].split(','), ce = document.createElementNS(NS, 'circle'); ce.setAttribute('class', 'e'); ce.setAttribute('cx', le[0]); ce.setAttribute('cy', le[1]); ce.setAttribute('r', 2.6); s.append(ce);
+    } else {
+      var l = pts[pts.length - 1].split(','), c = document.createElementNS(NS, 'circle'); c.setAttribute('class', 'e'); c.setAttribute('cx', l[0]); c.setAttribute('cy', l[1]); c.setAttribute('r', 2.6); s.append(c);
+    }
     return s;
+  }
+  function fcLine(fc) { return fc && fc.months && fc.months.length ? fc.months.map(function (m) { return m.v; }) : null; }
+  function fcGap(fc) { return fc && fc.months && fc.months.length ? fc.months[0].h - 1 : 0; }
+  // Korte voorspelzin voor een rij.
+  function fcText(fc) {
+    if (!fc) return null;
+    if (fc.call === 'rise' && fc.peak) return 'Expected to rise to ' + num(fc.peak.v) + ' in ' + MON[fc.peak.m - 1];
+    if (fc.call === 'fall' && fc.low) return 'Expected to drop to ' + num(fc.low.v) + ' by ' + MON[fc.low.m - 1];
+    return null;
   }
   function byCountry(list) { return list.filter(function (x) { return S.mk === 'ALL' || x.cc === S.mk; }); }
   // Alle landen: om en om de beste per land, zodat Nederland niet wegvalt onder grote Amerikaanse aantallen.
@@ -60,12 +78,29 @@
           h('div', null, h('span', { class: 'mk', text: x.cc }), link),
           h('div', { class: 'badges' },
             x.fresh ? h('span', { class: 'badge p-early', text: 'New' }) : null,
-            nw && x.now.status !== 'quiet' ? h('span', { class: 'badge ' + nw[1], text: nw[0] }) : null)),
+            x.forecast && x.forecast.call === 'rise' ? h('span', { class: 'badge p-early', text: 'Will rise' }) : x.forecast && x.forecast.call === 'fall' ? h('span', { class: 'badge p-falling', text: 'Will drop' }) : nw && x.now.status !== 'quiet' ? h('span', { class: 'badge ' + nw[1], text: nw[0] }) : null)),
         x.what ? h('p', { class: 'cu-what', text: cap(x.what) }) : null,
         S.view === 'unexpected' && x.why ? h('p', { class: 'cu-why', text: x.why }) : null,
         h('p', { class: 'meta', text: nums.join(' · ') }),
+        fcText(x.forecast) ? h('p', { class: 'meta fc', text: fcText(x.forecast) }) : null,
         x.idea ? h('p', { class: 'cu-idea' }, h('b', null, 'Idea'), cap(x.idea)) : null),
-      spark((x.series || []).map(function (s) { return s.v; })));
+      spark((x.series || []).map(function (s) { return s.v; }), fcLine(x.forecast), fcGap(x.forecast)));
+  }
+
+  // De voorspeller: wat de komende maanden gaat stijgen.
+  function riseRow(x) {
+    var f = x.forecast, pk = f.peak, ly = f.lastYear || [];
+    var lyPeak = ly.reduce(function (a, b) { return b.v != null && (a == null || b.v > a.v) ? b : a; }, null);
+    var path = f.months.map(function (m) { return MON[m.m - 1] + ' ' + num(m.v); }).join(' → ');
+    var link = h('a', { class: 'lname', href: checkUrl(x.name, x.cc), onclick: function () { ev('open', 'rise'); } }, x.name);
+    return h('div', { class: 'line' },
+      h('div', { class: 'line-main' },
+        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: x.cc }), link), h('span', { class: 'badge p-early', text: '+' + Math.round((pk.v / Math.max(f.from.v, 1) - 1) * 100).toLocaleString('en-US') + '% by ' + MON[pk.m - 1] })),
+        x.what ? h('p', { class: 'cu-what', text: cap(x.what) }) : null,
+        h('p', { class: 'meta' }, h('b', { class: 'fcb' }, 'Forecast '), path + ' searches a month'),
+        h('p', { class: 'meta', text: 'Measured: ' + num(f.from.v) + ' in ' + MON[f.from.m - 1] + (lyPeak ? ' · last year ' + num(lyPeak.v) + ' in ' + MON[lyPeak.m - 1] : '') + (x.cpc != null ? ' · $' + Number(x.cpc).toFixed(2) + ' per click' : '') }),
+        x.idea ? h('p', { class: 'cu-idea' }, h('b', null, 'Idea'), cap(x.idea)) : null),
+      spark((x.series || []).map(function (s) { return s.v; }), fcLine(f), fcGap(f)));
   }
 
   function todayRow(t) {
@@ -115,7 +150,9 @@
     if (d.generatedAt) p.push('Updated ' + new Date(d.generatedAt).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }));
     p.push(byCountry(d.items || []).length + ' topics');
     if (L.day) p.push('learning day ' + L.day);
-    if (L.yesterday && L.yesterday.checked) p.push(Math.round(100 * L.yesterday.hits / L.yesterday.checked) + '% of yesterday’s picks held up');
+    var FB = d.forecast && d.forecast.backtest, FL = d.forecast && d.forecast.live;
+    if (FL && FL.n >= 20) p.push(Math.round(100 * FL.hit10 / FL.n) + '% of predicted rises came true (' + FL.n + ' checked)');
+    else if (FB) p.push('forecasts tested on ' + FB.series.toLocaleString('en-US') + ' searches: ' + Math.round(FB.rise.right10 / 10) + ' in 10 predicted rises came true');
     $('#dr-status').textContent = p.join(' · ');
     var q = [];
     if (L.tracked) q.push(L.tracked + ' topics remembered');
@@ -140,7 +177,7 @@
     var tabs = $('#dr-views'); tabs.replaceChildren();
     views.forEach(function (v) {
       var n = countFor(v.id);
-      if (!n && v.id !== 'now' && v.id !== S.view) return; // lege categorieën verbergen: rustiger
+      if (!n && v.id !== 'now' && v.id !== 'rise' && v.id !== S.view) return; // lege categorieën verbergen: rustiger
       tabs.append(h('button', { class: 'tab', type: 'button', role: 'tab', 'aria-selected': String(S.view === v.id), onclick: function () { S.view = v.id; S.n = 12; save(); ev('open', 'tab-' + v.id); draw(); } }, v.name, h('span', { class: 'cnt', text: String(n) })));
     });
     var cur = views.filter(function (v) { return v.id === S.view; })[0] || views[0];
@@ -160,6 +197,9 @@
     } else if (S.view === 'missing') {
       var ms = interleave(byCountry(d.missing || []));
       if (!ms.length) empty(box, 'No unmet wishes found for this selection today.'); else more(ms, box, needRow);
+    } else if (S.view === 'rise') {
+      var rl = interleave(byCountry(d.rise || []));
+      if (!rl.length) empty(box, 'No clear rises predicted for this selection.'); else more(rl, box, riseRow);
     } else if (S.view === 'coming') {
       var cm = byCountry(d.coming || []).slice().sort(function (a, b) { return a.days - b.days; });
       if (!cm.length) empty(box, 'Nothing coming up for this selection.'); else more(cm, box, comingRow);
@@ -170,6 +210,7 @@
     if (ITEM_VIEWS[id]) return byCountry(d.items || []).filter(function (x) { return id === 'now' ? !(x.now && (x.now.status === 'gone' || x.now.status === 'fading')) : x.cat === id; }).length;
     if (id === 'unexpected') return byCountry(d.items || []).filter(function (x) { return x.unexpected; }).length + byCountry(d.today || []).length;
     if (id === 'missing') return byCountry(d.missing || []).length;
+    if (id === 'rise') return byCountry(d.rise || []).length;
     if (id === 'coming') return byCountry(d.coming || []).length;
     return 0;
   }

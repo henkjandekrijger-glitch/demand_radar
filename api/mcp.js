@@ -19,7 +19,7 @@ const TOOLS = [
   {
     name: 'demand_radar',
     description: 'Today\'s Demand Radar (rebuilt every night, learns daily): measured demand that is rising in the Netherlands, Germany and the US, per category (products, courses, books, services, apps, trips, money), plus what is unexpected, what people look for but does not exist yet, and moments coming up with last year\'s search curve. Each topic has monthly Google searches, growth vs last month and last year, whether it is still rising today, ad price per click, what people want and one idea to sell to it. Use this first to find demand; use check_demand to dig into one idea.',
-    inputSchema: { type: 'object', properties: { view: { type: 'string', enum: ['now', 'products', 'courses', 'books', 'services', 'apps', 'trips', 'money', 'unexpected', 'missing', 'coming'], description: 'now = strongest across all categories (default); a category; unexpected; missing = does not exist yet; coming = coming up.' }, country: { type: 'string', enum: ['ALL', 'NL', 'DE', 'US'], description: 'Default ALL.' }, limit: { type: 'number', description: 'Max rows, default 15, max 50.' } } },
+    inputSchema: { type: 'object', properties: { view: { type: 'string', enum: ['rise', 'now', 'products', 'courses', 'books', 'services', 'apps', 'trips', 'money', 'unexpected', 'missing', 'coming'], description: 'rise = predicted to rise in the coming months (the forecast, default); now = strongest measured growth; a category; unexpected; missing = does not exist yet; coming = coming up.' }, country: { type: 'string', enum: ['ALL', 'NL', 'DE', 'US'], description: 'Default ALL.' }, limit: { type: 'number', description: 'Max rows, default 15, max 50.' } } },
   },
   {
     name: 'live_signals',
@@ -102,7 +102,12 @@ export function demandText(d, view = 'now', country = 'ALL', n = 15) {
   if (!d || !d.ready) return 'The Demand Radar has no measured data right now.';
   const on = x => country === 'ALL' || x.cc === country;
   const L = [`Demand Radar ${d.day} (search volumes for ${d.period}; "today" = daily trend up to today). View: ${view}. Country: ${country}.`];
-  if (view === 'missing') {
+  const MN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  if (view === 'rise') {
+    const B = d.forecast && d.forecast.backtest;
+    if (B) L.push(`Forecast method tested on ${B.series} searches: ${B.rise.right10}% of predicted rises rose >10%, ${B.rise.right25}% rose >25%.`);
+    (d.rise || []).filter(on).slice(0, n).forEach((x, i) => { const f = x.forecast; L.push(`${i + 1}. [${x.cc}] ${x.name} (${x.cat}) — ${x.what || ''} Now ${n0(f.from.v)}/month (${MN[f.from.m - 1]}); forecast ${f.months.map(m => `${MN[m.m - 1]} ${n0(m.v)}`).join(', ')}; last year ${f.lastYear.map(m => `${MN[m.m - 1]} ${n0(m.v)}`).join(', ')}${x.cpc != null ? `; $${x.cpc}/click` : ''}. Idea: ${x.idea || '-'}`); });
+  } else if (view === 'missing') {
     d.missing.filter(on).slice(0, n).forEach((m, i) => L.push(`${i + 1}. [${m.cc}] ${m.need} — ${m.exists === 'no' ? "doesn't exist yet" : 'only partly exists'}; ${m.volume ? `${n0(m.volume)} searches/month` : 'searches not measured'}. Gap: ${m.gap || '-'} Idea: ${m.idea || '-'} People typed: ${m.searches.map(s => `"${s.q}"`).join('; ')}`));
   } else if (view === 'coming') {
     d.coming.filter(on).slice(0, n).forEach((m, i) => L.push(`${i + 1}. [${m.cc}] ${m.name} on ${m.date} (in ${m.days} days; ${m.status === 'open' ? 'demand open now' : `demand opens in ${m.opensIn} days`}). Last year: ${n0(m.lastYear.now)} → ${n0(m.lastYear.peak)} searches (${p0(m.lastYear.rise)}). Terms: ${m.terms.map(t => `${t.k} ${n0(t.now)}→${n0(t.peak)}`).join('; ') || '-'}. Sell: ${m.ideas.join(', ')}`));
@@ -131,7 +136,7 @@ async function call(name, args, req) {
   if (name === 'demand_radar') {
     const d = await getDemand(req);
     const c = String(args.country || 'ALL').toUpperCase();
-    return demandText(d, String(args.view || 'now'), ['NL', 'DE', 'US'].includes(c) ? c : 'ALL', Math.max(1, Math.min(50, +args.limit || 15)));
+    return demandText(d, String(args.view || 'rise'), ['NL', 'DE', 'US'].includes(c) ? c : 'ALL', Math.max(1, Math.min(50, +args.limit || 15)));
   }
   if (name === 'live_signals') {
     const r = await getRadar(req);
