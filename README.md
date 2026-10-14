@@ -17,6 +17,7 @@ Een dienst van ADSFAIR B.V. Draait volledig op Vercel, zonder computer of Claude
 - **Titels**: AI geeft per onderwerp een nette Engelse titel; API/MCP geven die als `name` en de echte zoekterm als `keyword`.
 - **Getest en afgevallen als bron** (13 okt): Amazon bestsellers/movers (botcheck vanaf Vercel), Pinterest Trends-website (botcheck), TikTok Creative Center (geen toegang), eBay/Etsy/Kickstarter (403). Kandidaten met eigen sleutel: bol.com partner-API, Pinterest API v5 trends, YouTube Data API, Adzuna (vacatures), DataForSEO Amazon-zoekvolumes (betaald).
 - **LLM-vraag**: geen enkele AI-aanbieder deelt wat gebruikers vragen. Wel te koop: Profound (gelicenseerde gesprekken ChatGPT/Gemini/Claude/Perplexity, vooral VS), Semrush Prompt Research, Evertune. DataForSEO heeft "AI search volume" (een schatting, o.a. uit Google 'Mensen vragen ook', $0,01 per aanroep).
+- **Inloggen**: persoonlijke sleutels in `lib/access.js` (`MEMBERS`, alleen hashes): Henkjan en Babita. Inloglink `/api/unlock?key=<sleutel>` of `/login`. Ingelogd: naam, knop Refresh radar (± $2, valt onder de dagrem), Sign out; dezelfde sleutel werkt voor de connector `/mcp?key=…`.
 - **Team-toegang**: connector `https://demandradar-ivory.vercel.app/mcp?key=<teamsleutel>`. Teamsleutel = `TEAM_KEY` als die in Vercel staat, anders de Project ID van dit Vercel-project (Settings → General). Data zonder sleutel: `/api/demand?view=courses&cc=NL&limit=20` of `&format=text`.
 - Niet bereikbaar vanaf Vercel: Reddit JSON/zoeken (wel RSS), Kickstarter, Etsy, Pushshift-alternatieven.
 
