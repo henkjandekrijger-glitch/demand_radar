@@ -22,10 +22,10 @@ export default async function handler(req, res) {
     if (req.query.raw) {
       if (req.query.raw !== RAW_TOKEN) return res.status(403).json({ error: 'forbidden' });
       const day = String(req.query.d || demandDay()).slice(0, 10);
-      let d = await storedMap('demand');
+      let d = await storedMap('demand', 8 * 864e5); const prev = d && d.items && d.items.length ? d : null;
       if (d && d.day !== day) d = null;
-      if (!d) { d = await buildDemand({ aiToken: gatewayToken(req), day }); if (worthKeepingDemand(d)) await saveMap('demand', d); }
-      res.setHeader('Cache-Control', worthKeepingDemand(d) ? 'public, s-maxage=93600' : 'no-store');
+      if (!d) { const nd = await buildDemand({ aiToken: gatewayToken(req), day }); if (worthKeepingDemand(nd)) { d = nd; await saveMap('demand', nd); } else d = prev ? { ...prev, stale: true } : nd; }
+      res.setHeader('Cache-Control', worthKeepingDemand(d) && !d.stale ? 'public, s-maxage=93600' : 'no-store');
       return res.status(200).json(d);
     }
     // Eigenaar: ?rebuild=1&key=… bouwt vandaag opnieuw (na een update), anders één opbouw per dag.
