@@ -33,5 +33,5 @@ export default async function handler(req, res) {
   ]);
   let radar = null;
   try { const r = await getRadar(req); radar = { generatedAt: r.generatedAt, buildMs: r.ms, watch: r.watch.length, rising: r.rising.length, productSpikes: r.spikes.products.length, search: r.spikes.search.map(g => `${g.geo}:${g.items.length}`), attention: r.spikes.attention.map(g => `${g.lang}:${g.items.length}`), calendar: r.upcoming.calendar.length, seasonal: r.upcoming.seasonal.length, weather: (r.upcoming.weather || []).length, charts: (r.charts || []).length }; } catch (e) { radar = { error: String(e.message || e) }; }
-  res.status(200).json({ app: 'demand-radar', at: new Date().toISOString(), sourcesOk: `${checks.filter(c => c.ok).length}/${checks.length}`, sources: checks, radar, setup: { storage: !!getStore(), mail: mailReady(), ai: aiAvailable(req) } });
+  res.status(200).json({ app: 'demand-radar', at: new Date().toISOString(), sourcesOk: `${checks.filter(c => c.ok).length}/${checks.length}`, sources: checks, radar, setup: { storage: !!getStore(), mail: mailReady(), ai: aiAvailable(req), storageVars: Object.keys(process.env).filter(n => /BLOB|READ_WRITE_TOKEN/.test(n)) } });
 }
