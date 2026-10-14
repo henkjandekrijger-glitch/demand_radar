@@ -9,6 +9,7 @@ export default async function handler(req, res) {
   if (!isPro(req)) return res.status(403).json({ error: 'forbidden' });
   const cc = String(req.query.cc || 'NL').toUpperCase(), C = COUNTRIES[cc];
   if (!C) return res.status(400).json({ error: 'cc' });
+  if (req.query.drivers) { const { allDrivers } = await import('../lib/drivers.js'); return res.status(200).json(await allDrivers(cc)); }
   const b = budget(1), min = { NL: 300, DE: 1000, US: 3000 }[cc];
   // POST {keywords: [...]} met ?trends=1: 5 jaar weekdata per zoekterm (gegroepeerd per 5, in de aangeleverde volgorde).
   if (req.method === 'POST' && req.query.trends) {
