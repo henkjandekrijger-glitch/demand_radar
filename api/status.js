@@ -37,5 +37,7 @@ export default async function handler(req, res) {
   let storageTest = null;
   const st = getStore();
   if (st) { try { const v = new Date().toISOString(); await st.put('health/status.json', JSON.stringify({ v }), 'application/json'); const back = await st.get('health/status.json'); storageTest = back && back.includes(v) ? 'ok' : 'read mismatch'; } catch (e) { storageTest = String(e.message || e).slice(0, 160); } }
-  res.status(200).json({ storageTest, app: 'demand-radar', at: new Date().toISOString(), sourcesOk: `${checks.filter(c => c.ok).length}/${checks.length}`, sources: checks, radar, setup: { storage: !!getStore(), mail: mailReady(), ai: aiAvailable(req), storageVars: Object.keys(process.env).filter(n => /BLOB|READ_WRITE_TOKEN/.test(n)) } });
+  let dataBudget = null;
+  try { const { spentToday, dailyCap, lastBalance } = await import('../lib/dfs.js'); const sp = await spentToday(); dataBudget = { spentTodayUTC: Math.round(sp * 100) / 100, dailyCap: dailyCap(), balance: lastBalance() != null ? Math.round(lastBalance() * 100) / 100 : null }; } catch {}
+  res.status(200).json({ dataBudget, storageTest, app: 'demand-radar', at: new Date().toISOString(), sourcesOk: `${checks.filter(c => c.ok).length}/${checks.length}`, sources: checks, radar, setup: { storage: !!getStore(), mail: mailReady(), ai: aiAvailable(req), storageVars: Object.keys(process.env).filter(n => /BLOB|READ_WRITE_TOKEN/.test(n)) } });
 }

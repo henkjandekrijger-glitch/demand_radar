@@ -25,7 +25,7 @@
     parts.push(h('div', { class: 'ck-head' },
       h('div', { class: 'ck-score' }, String(c.score), h('small', null, '/100')),
       h('div', null, h('span', { class: 'badge ' + ph[1], text: ph[0] }), h('p', { class: 'ck-verdict', text: c.verdict }),
-        h('p', { class: 'meta', text: c.scoreBasis === 'measured' ? 'Score from measured Google searches: demand, growth, the forecast and ad price.' : 'No measured search data for this one, so the score is only a rough estimate from news and suggestions.' }))));
+        h('p', { class: 'meta', text: c.budgetReached ? 'Measured search data is paused until tomorrow (daily data budget reached), so this is only a rough estimate.' : c.scoreBasis === 'measured' ? 'Score from measured Google searches: demand, growth, the forecast and ad price.' : 'No measured search data for this one, so the score is only a rough estimate from news and suggestions.' }))));
 
     if (m) {
       var facts = [];
