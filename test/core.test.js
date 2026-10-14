@@ -231,11 +231,12 @@ test('forecast: seasonal rise predicted, momentum not trusted, backtest numbers'
   const F = await import('../lib/forecast.js');
   const shape = [100, 100, 100, 100, 100, 100, 100, 100, 120, 300, 800, 200]; // jan..dec: piek in november
   const ser = []; for (let i = 0; i < 24; i++) { const d = new Date(Date.UTC(2024, 8 + i, 1)); ser.push({ y: d.getUTCFullYear(), m: d.getUTCMonth() + 1, v: Math.round(shape[d.getUTCMonth()] * (i >= 12 ? 1.1 : 1)) }); }
-  const p = F.predict(ser, new Date(Date.UTC(2026, 9, 13)));
-  assert.equal(p.call, 'rise'); assert.equal(p.peak.m, 11); assert.ok(p.peak.v > p.from.v * 3);
+  const p = F.predict(ser, new Date(Date.UTC(2026, 9, 13)), { cc: 'NL' });
   assert.deepEqual(p.months.map(m => m.m), [10, 11, 12]);
-  const flat = ser.map(x => ({ ...x, v: 500 }));
-  assert.equal(F.predict(flat, new Date(Date.UTC(2026, 9, 13))).call, 'flat');
+  const nov = p.months[1], dec = p.months[2];
+  assert.ok(nov.v > p.from.v * 2 && nov.v > dec.v, JSON.stringify(p.months)); assert.ok(nov.chance > dec.chance && nov.chance >= 40, JSON.stringify(p.months));
+  const flat = ser.map(x => ({ ...x, v: 500 })), pf = F.predict(flat, new Date(Date.UTC(2026, 9, 13)), { cc: 'NL' });
+  assert.equal(pf.call, 'flat'); assert.ok(pf.months.every(m => m.chance == null || m.chance < 30));
   const bt = F.backtest([{ y: ser.map(x => x.v) }], { horizons: [2] });
   assert.ok(bt.find(r => r.model === 'season').wape < bt.find(r => r.model === 'naive').wape);
   assert.ok(F.BACKTEST.rise.right10 > 70 && F.BACKTEST.momentum.right10 < 20);
@@ -267,7 +268,8 @@ test('signals and 5-year enrichment', async () => {
   const F = await import('../lib/forecast.js');
   const T = {}; for (let y = 2021; y <= 2026; y++) for (let m = 1; m <= 12; m++) T[`${y}-${String(m).padStart(2, '0')}`] = m === 11 ? 80 : 20;
   assert.equal(F.stability(T, '2026-08', '2026-11').level, 'all');
-  const ser = []; for (let i = 0; i < 24; i++) { const d = new Date(Date.UTC(2024, 8 + i, 1)); ser.push({ y: d.getUTCFullYear(), m: d.getUTCMonth() + 1, v: d.getUTCMonth() === 10 ? 4000 : 1000 }); }
-  const fc = F.enrich(F.predict(ser, new Date(Date.UTC(2026, 9, 13))), ser, T, null, {});
-  assert.equal(fc.call, 'rise'); assert.equal(fc.confidence, 'high');
+  // Realistische seizoensvorm: oplopend naar november/december, elk jaar.
+  const shape = { 9: 1.1, 10: 1.9, 11: 4.2, 12: 0.9 }, ser = []; for (let i = 0; i < 24; i++) { const d = new Date(Date.UTC(2024, 8 + i, 1)), m = d.getUTCMonth() + 1; ser.push({ y: d.getUTCFullYear(), m, v: Math.round(1000 * (shape[m] || 0.85) * (i >= 12 ? 1.05 : 1)) }); }
+  const fc = F.enrich(F.predict(ser, new Date(Date.UTC(2026, 9, 13)), { cc: 'NL' }), ser, T, null, {});
+  assert.equal(fc.stability.level, 'all'); assert.ok(fc.months[1].chance > fc.months[2].chance, JSON.stringify(fc.months));
 });

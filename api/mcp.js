@@ -62,7 +62,7 @@ function checkText(c) {
   if (m) {
     L.push(`MEASURED (Google Ads): ${m.last != null ? `${m.last} searches in ${m.period}` : `${m.volume} searches/month`}${m.mom != null ? `, ${m.mom >= 0 ? '+' : ''}${m.mom}% vs previous month` : ''}${m.yoy != null ? `, ${m.yoy >= 0 ? '+' : ''}${m.yoy}% vs a year ago` : ''}${m.cpc != null ? `, $${m.cpc}/click` : ''}${m.competition != null ? `, competition ${m.competition}/100` : ''}.`);
     if (m.series && m.series.length) L.push(`Last 13 months: ${m.series.map(x => `${MN[x.m - 1]} ${x.y} ${x.v}`).join(', ')}.`);
-    if (m.forecast) L.push(`Forecast (tested: ~8 in 10 predicted rises came true): ${m.forecast.call}; ${m.forecast.months.map(x => `${MN[x.m - 1]} ${x.v}`).join(', ')}.`);
+    if (m.forecast) L.push(`Forecast (learning model, tested: ~8 in 10 predicted rises came true): ${m.forecast.call}${m.forecast.chance != null ? ` (${m.forecast.chance}% chance of ≥40% more searches by ${MN[m.forecast.peak.m - 1]})` : ''}; ${m.forecast.months.map(x => `${MN[x.m - 1]} ${x.v}${x.chance != null ? ` (${x.chance}% chance of ≥40% vs now)` : ''}`).join(', ')}.`);
     if (m.local) L.push(`In ${m.local.city}: ${m.local.measured ? '' : 'about '}${m.local.volume} searches/month${m.local.measured ? '' : ' (estimate by population)'}.`);
     if (m.related && m.related.length) L.push(`Related searches: ${m.related.map(r => `${r.k} ${r.volume}/month${r.cpc != null ? ` $${r.cpc}` : ''}`).join('; ')}.`);
   }
@@ -118,8 +118,8 @@ export function demandText(d, view = 'now', country = 'ALL', n = 15) {
   const MN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   if (view === 'rise') {
     const B = d.forecast && d.forecast.backtest;
-    if (B) L.push(`Forecast method tested on ${B.series} searches: ${B.rise.right10}% of predicted rises rose >10%, ${B.rise.right25}% rose >25%.`);
-    (d.rise || []).filter(on).slice(0, n).forEach((x, i) => { const f = x.forecast; L.push(`${i + 1}. [${x.cc}] ${x.name}${x.keyword && x.keyword !== x.name ? ` (search: "${x.keyword}")` : ''} (${x.cat}) — ${x.what || ''} Now ${n0(f.from.v)}/month (${MN[f.from.m - 1]}); forecast ${f.months.map(m => `${MN[m.m - 1]} ${n0(m.v)}`).join(', ')}; last year ${f.lastYear.map(m => `${MN[m.m - 1]} ${n0(m.v)}`).join(', ')}${x.cpc != null ? `; $${x.cpc}/click` : ''}. Idea: ${x.idea || '-'}`); });
+    if (B) L.push(`Forecast method (learning model) tested on ${B.series} searches: ${B.rise.right10}% of predicted rises rose >10%, ${B.rise.right25}% rose >25%${B.rise.right40 ? `, ${B.rise.right40}% rose ≥40%` : ''}. Each row shows its own chance.`);
+    (d.rise || []).filter(on).slice(0, n).forEach((x, i) => { const f = x.forecast; L.push(`${i + 1}. [${x.cc}] ${x.name}${x.keyword && x.keyword !== x.name ? ` (search: "${x.keyword}")` : ''} (${x.cat}) — ${x.what || ''} Now ${n0(f.from.v)}/month (${MN[f.from.m - 1]});${f.chance != null && f.peak ? ` ${f.chance}% chance of ≥40% more searches by ${MN[f.peak.m - 1]};` : ''} forecast ${f.months.map(m => `${MN[m.m - 1]} ${n0(m.v)}`).join(', ')}; last year ${f.lastYear.map(m => `${MN[m.m - 1]} ${n0(m.v)}`).join(', ')}${x.cpc != null ? `; $${x.cpc}/click` : ''}. Idea: ${x.idea || '-'}`); });
   } else if (view === 'missing') {
     d.missing.filter(on).slice(0, n).forEach((m, i) => L.push(`${i + 1}. [${m.cc}] ${m.need} — ${m.exists === 'no' ? "doesn't exist yet" : 'only partly exists'}; ${m.volume ? `${n0(m.volume)} searches/month` : 'searches not measured'}. Gap: ${m.gap || '-'} Idea: ${m.idea || '-'} People typed: ${m.searches.map(s => `"${s.q}"`).join('; ')}`));
   } else if (view === 'coming') {

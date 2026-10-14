@@ -115,7 +115,7 @@
     var link = h('a', { class: 'lname', href: checkUrl(x.keyword || x.name, x.cc), title: 'Searched as: ' + (x.keyword || x.name), onclick: function () { ev('open', 'rise'); } }, x.name);
     return h('div', { class: 'line' },
       h('div', { class: 'line-main' },
-        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: x.cc }), link), h('div', { class: 'badges' }, f.confidence === 'high' ? h('span', { class: 'badge p-steady', title: 'Rose in this period in every year since 2021', text: 'Every year' }) : null, h('span', { class: 'badge p-early', text: '+' + Math.round((pk.v / Math.max(f.from.v, 1) - 1) * 100).toLocaleString('en-US') + '% by ' + MON[pk.m - 1] }))),
+        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: x.cc }), link), h('div', { class: 'badges' }, (f.stability ? f.stability.level === 'all' : f.confidence === 'high') ? h('span', { class: 'badge p-steady', title: 'Rose in this period in every year since 2021', text: 'Every year' }) : null, f.chance != null ? h('span', { class: 'badge p-early', title: 'Chance that searches in ' + MON[pk.m - 1] + ' are at least 40% higher than now. Tested: of the rises we predicted, ' + 79 + '% came true.', text: '+40% by ' + MON[pk.m - 1] + ' · ' + f.chance + '% chance' }) : h('span', { class: 'badge p-early', text: '+' + Math.round((pk.v / Math.max(f.from.v, 1) - 1) * 100).toLocaleString('en-US') + '% by ' + MON[pk.m - 1] }))),
         x.what ? h('p', { class: 'cu-what', text: cap(x.what) }) : null,
         h('p', { class: 'meta' }, h('b', { class: 'fcb' }, 'Forecast '), path + ' searches a month'),
         h('p', { class: 'meta', text: 'Measured: ' + num(f.from.v) + ' in ' + MON[f.from.m - 1] + (lyPeak ? ' · last year ' + num(lyPeak.v) + ' in ' + MON[lyPeak.m - 1] : '') + (x.cpc != null ? ' · $' + Number(x.cpc).toFixed(2) + ' per click' : '') }),
@@ -175,7 +175,7 @@
     if (L.day) p.push('learning day ' + L.day);
     var FB = d.forecast && d.forecast.backtest, FL = d.forecast && d.forecast.live;
     if (FL && FL.n >= 20) p.push(Math.round(100 * FL.hit10 / FL.n) + '% of predicted rises came true (' + FL.n + ' checked)');
-    else if (FB) p.push('forecasts tested on ' + FB.series.toLocaleString('en-US') + ' searches: ' + Math.round(FB.rise.right10 / 10) + ' in 10 predicted rises came true');
+    else if (FB) p.push('forecasts tested on ' + FB.series.toLocaleString('en-US') + ' searches: ' + Math.round((FB.rise.right40 || FB.rise.right10) / 10) + ' in 10 predicted rises came true');
     $('#dr-status').textContent = p.join(' · ');
     var q = [];
     if (L.tracked) q.push(L.tracked + ' topics remembered');
