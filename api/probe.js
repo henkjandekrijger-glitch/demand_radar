@@ -11,6 +11,11 @@ export default async function handler(req, res) {
     let out;
     if (t === 'dfs') out = await call(req.query.path, JSON.parse(req.query.task || '{}'), b);
     else if (t === 'locs') { const { adsLocations } = await import('../lib/dfs.js'); const all = await adsLocations(req.query.cc || 'NL'); out = all.filter(l => !req.query.f || l.name.toLowerCase().includes(String(req.query.f).toLowerCase())).slice(0, 30).concat([{ total: all.length }]); }
+    else if (t === 'balance') {
+      const r = await fetch('https://api.dataforseo.com/v3/appendix/user_data', { headers: { Authorization: `Basic ${Buffer.from(`${process.env.DFS_LOGIN}:${process.env.DFS_PASSWORD}`).toString('base64')}` } });
+      const j = await r.json(); const u = (((j.tasks || [])[0] || {}).result || [])[0] || {};
+      out = { balance: u.money && u.money.balance, total: u.money && u.money.total, limits: u.money && u.money.limits, spentToday: u.money && u.money.statistics && u.money.statistics.day, rates: u.rates && u.rates.statistics && u.rates.statistics.day };
+    }
     else if (t === 'url') out = await get(req.query.u, { text: true, timeout: 12000 }).then(x => String(x).slice(0, +(req.query.n || 4000)));
     res.status(200).json({ ms: Date.now() - t0, spent: b.spent, errors: b.errors, out: req.query.full ? out : JSON.stringify(out).slice(0, 6000), loc: C && C.loc });
   } catch (e) { res.status(200).json({ error: String(e.message || e), errors: b.errors }); }
