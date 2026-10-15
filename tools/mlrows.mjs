@@ -5,6 +5,8 @@ import { feats, FEATS } from '../lib/ml.js';
 import { blend, riseCall, WEIGHTS } from '../lib/forecast.js';
 
 const all = JSON.parse(fs.readFileSync(process.argv[2]));
+// optioneel: Wikipedia-maanddata per zoekterm (uit /api/collect?src=wiki) → op dezelfde maanden als de Ads-reeks
+const wiki = process.argv[3] ? JSON.parse(fs.readFileSync(process.argv[3])) : {};
 const ym = (y, m) => `${y}-${String(m).padStart(2, '0')}`;
 // Oude regel (tot 14 okt 2026): seizoensstijging vorig jaar ≥ 40% en gemiddelde van 'vorig jaar' en 'nu' ≥ 20% boven nu.
 const oldRise = (y, t, h, h0) => { const v = blend(y, t, h, WEIGHTS), n = blend(y, t, h0, WEIGHTS); return riseCall(y, t, h) === 1 && v >= n * 1.2 && v > y[t] * 1.2 ? 1 : 0; };
@@ -15,12 +17,15 @@ for (const [sid, s] of Object.entries(all)) {
   if (ser.length < 15) continue;
   const cc = sid.split('|')[0], y = ser.map(x => x[2]), keys = ser.map(x => ym(x[0], x[1]));
   const sidq = JSON.stringify(sid);
+  const wm = wiki[sid] && wiki[sid].m && wiki[sid].m.length ? new Map(wiki[sid].m.map(x => [ym(x[0], x[1]), x[2]])) : null;
+  const w = wm ? keys.map(k => (wm.has(k) ? wm.get(k) : NaN)) : null;
+  const wn = t => (wm && t + 1 < keys.length && wm.has(keys[t + 1]) ? wm.get(keys[t + 1]) : NaN);
   for (let t = 12; t < y.length - 1; t++) for (let h = 1; h <= 4 && t + h < y.length; h++) {
     // value: waarde van maand t+h
-    if (!(y[t] < 50 && y[t + h] < 50)) out.push([sidq, cc, 'value', keys[t + h], y[t], y[t], y[t + h], Math.round(blend(y, t, h, WEIGHTS)), ...feats(y, t, h, cc, 0).map(num)].join(','));
+    if (!(y[t] < 50 && y[t + h] < 50)) out.push([sidq, cc, 'value', keys[t + h], y[t], y[t], y[t + h], Math.round(blend(y, t, h, WEIGHTS)), ...feats(y, t, h, cc, 0, w, wn(t)).map(num)].join(','));
     // rise: stijgt t+h ≥ 40% boven "nu" (t+h0), h0 = 1..3 maanden achterstand van de data
     for (let h0 = 1; h0 < h; h0++) if (y[t + h0] >= 100) // label in train_forecast.py: act ≥ 1,4 × nu
-      out.push([sidq, cc, 'rise', keys[t + h], y[t], y[t + h0], y[t + h], oldRise(y, t, h, h0), ...feats(y, t, h, cc, h0).map(num)].join(','));
+      out.push([sidq, cc, 'rise', keys[t + h], y[t], y[t + h0], y[t + h], oldRise(y, t, h, h0), ...feats(y, t, h, cc, h0, w, wn(t)).map(num)].join(','));
   }
 }
 process.stdout.write(out.join('\n') + '\n');

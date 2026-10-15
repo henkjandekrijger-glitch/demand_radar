@@ -5,7 +5,11 @@
 import sys, json, math, datetime, numpy as np, pandas as pd, lightgbm as lgb
 rows, cut, outp = sys.argv[1], sys.argv[2], sys.argv[3]
 df = pd.read_csv(rows)
-FEATS = ['ly0','r1','r2','rs','rsh','rshn','yoy3','yoy1','spike','cv','rs2','rsh2','rs3','msh','ccn','h','h0','rsn','rsn2','rsn3']
+import os
+FEATS = list(df.columns[df.columns.get_loc('old') + 1:])  # alles na 'old' (zelfde volgorde als lib/ml.js FEATS)
+DROP = [f for f in os.environ.get('DROP', '').split(',') if f]  # kenmerken uitzetten om bronnen te vergelijken (ontbrekend in productie = NaN)
+for f in DROP: df[f] = np.nan
+print('features', len(FEATS), 'dropped', DROP)
 V, R = df[df.kind == 'value'].copy(), df[df.kind == 'rise'].copy()
 V['y'] = np.log((V.act + 10) / (V.y0 + 10)); R['y'] = (R.act >= 1.4 * R.ynow).astype(int)  # sterke stijging: ≥ 40% boven nu (één Google-Ads-trede is al ±22%)
 PV = dict(objective='l1', n_estimators=300, learning_rate=0.05, num_leaves=31, min_child_samples=50, subsample=0.8, subsample_freq=1, colsample_bytree=0.8, verbose=-1)
@@ -30,6 +34,11 @@ for lo, hi in [(0.7, 0.75), (0.75, 0.8), (0.8, 0.85), (0.85, 0.9), (0.9, 0.95), 
     if k.sum() >= 30: cal.append([round(float(p[k].mean()), 4), round(float(yt[k].mean()), 4), int(k.sum())])
 k = p >= 0.7; test['callsAvgChance'] = round(float(np.interp(p[k], [c[0] for c in cal], [c[1] for c in cal]).mean() * 100), 1)
 test['calibration'] = cal
+# deelverzameling met Wikipedia-artikel (daar kan die bron iets toevoegen)
+hv, hr = vte['wy0'].notna().values if 'wy0' in vte else None, rte['wy0'].notna().values if 'wy0' in rte else None
+if hv is not None and hv.any():
+    test['wiki_subset'] = dict(value_n=int(hv.sum()), wape_old=round(wape(vte.old.values[hv], vte[hv]), 1), wape_new=round(wape(fv.values[hv] if hasattr(fv, 'values') else fv[hv], vte[hv]), 1),
+                               rise=st((p >= 0.7) & hr), rise_old=st(o & hr))
 print(json.dumps(test, indent=1))
 # ---- 2) definitief ----
 def compact(booster):

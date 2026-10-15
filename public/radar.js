@@ -98,7 +98,7 @@
   }
 
   // Onderbouwing in één regel: hoe vast het patroon is en wat weer of geld doet.
-  var DN = { temp: ['warmer', 'colder', '°C'], sun: ['sunnier', 'less sunny', ' h sun a day'], rain: ['wetter', 'drier', ' mm rain a day'], mortgage: ['higher mortgage rates', 'lower mortgage rates', ' pt'], energy: ['higher energy prices', 'lower energy prices', ''], confidence: ['more consumer confidence', 'less consumer confidence', ''] };
+  var DN = { temp: ['warmer', 'colder', '°C'], sun: ['sunnier', 'less sunny', ' kWh/m² sunlight a day'], rain: ['wetter', 'drier', ' mm rain a day'], mortgage: ['higher mortgage rates', 'lower mortgage rates', ' pt'], energy: ['higher energy prices', 'lower energy prices', ''], confidence: ['more consumer confidence', 'less consumer confidence', ''] };
   function why(f) {
     var p = [], st = f.stability;
     if (st) p.push(st.level === 'all' ? 'Rose in this period every year since ' + (new Date().getUTCFullYear() - st.years) : 'Rose in this period in ' + st.up + ' of the last ' + st.years + ' years');
