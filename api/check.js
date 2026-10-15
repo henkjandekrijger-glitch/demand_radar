@@ -25,6 +25,7 @@ export default async function handler(req, res) {
     const pro = isPro(req);
     const data = await getCheck(req, q, m, { ai: pro && req.query.ai !== '0', city: c });
     data.q = q;
+    if (data && !data.advice && data.measured !== undefined) { try { const { advise } = await import('../lib/advice.js'); data.advice = advise(data); } catch {} } // ook voor oudere, bewaarde checks
     res.setHeader('Cache-Control', 'private, no-store');
     const see = canSee(req);
     res.status(200).json({ pro: see, open: OPEN, aiEnabled: pro && aiAvailable(req), ...(see ? data : maskCheck(data)) });

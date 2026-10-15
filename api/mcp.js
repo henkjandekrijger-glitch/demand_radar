@@ -139,6 +139,7 @@ async function call(name, args, req) {
     const q = String(args.idea || '').trim().slice(0, 80), m = String(args.market || 'NL').toUpperCase();
     if (q.length < 2 || !MARKETS[m]) throw new Error('Give an idea (2-80 characters) and a market: NL, US, DE or WW.');
     const c = await getCheck(req, q, m, { ai: false, city: args.city || '' });
+    if (c && !c.advice) { try { const { advise } = await import('../lib/advice.js'); c.advice = advise(c); } catch {} }
     c.q = q;
     return checkText(c);
   }
