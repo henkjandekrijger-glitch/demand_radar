@@ -8,7 +8,8 @@ df = pd.read_csv(rows)
 import os
 FEATS = list(df.columns[df.columns.get_loc('old') + 1:])  # alles na 'old' (zelfde volgorde als lib/ml.js FEATS)
 DROP = [f for f in os.environ.get('DROP', '').split(',') if f]  # kenmerken uitzetten om bronnen te vergelijken (ontbrekend in productie = NaN)
-HAS_WIKI = df['wy0'].notna().values if 'wy0' in df else None  # vóór het uitzetten, voor een eerlijke vergelijking
+SUB = os.environ.get('SUBSET', 'wy0')  # deelverzameling waar een bron aanwezig is (wy0 = Wikipedia, uy0 = VS)
+HAS_WIKI = (df[SUB].notna() & (df['uyoy'].notna() if SUB == 'uy0' else True)).values if SUB in df else None  # vóór het uitzetten
 for f in DROP: df[f] = np.nan
 print('features', len(FEATS), 'dropped', DROP)
 V, R = df[df.kind == 'value'].copy(), df[df.kind == 'rise'].copy()

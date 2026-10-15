@@ -26,6 +26,7 @@ Een dienst van ADSFAIR B.V. Draait volledig op Vercel, zonder computer of Claude
   - Wikipedia-paginaweergaven (4 jaar, 4.371 zoektermen, 1.453 met artikel): geen winst → niet in het model (`lib/attention.js`, kenmerken staan klaar in `lib/ml.js`).
   - Griepactiviteit (ECDC voor NL/DE, CDC via Delphi voor US) en Indeed-vacatures als drijver: voorspelling werd slechter → verzameld maar niet gebruikt.
   - Eurostat "grote aankopen komende 12 maanden" (NL/DE): kleine winst bij geldonderwerpen → gebruikt als drijver `purchases`.
+  - Dezelfde zoekterm in de VS als voorloper voor NL/DE (2.886 zoektermen, 4 jaar): bij de ene toets +0,4 punt, bij de andere niets → niet gebruikt.
   - GDELT nieuwsvolume: Vercel krijgt 429 (te veel verzoeken) → niet bruikbaar vanaf Vercel.
   - Weer: Open-Meteo vervangen door NASA POWER (gemeten) + MET Norway (verwachting), want de gratis Open-Meteo is alleen niet-commercieel; steden via OpenStreetMap Nominatim. Getoetst: zelfde winst als voorheen.
 - **Onderzoek beter voorspellen (14 okt)**, script `tools/forecast_backtest.py` (Python, LightGBM), eerlijke tijdsplitsing (leren op doelmaanden t/m apr 2026, toetsen op mei-aug 2026, 68.577 voorspellingen):
