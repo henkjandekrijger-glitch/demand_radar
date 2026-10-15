@@ -62,7 +62,7 @@ function checkText(c) {
   if (m) {
     L.push(`MEASURED (Google Ads): ${m.last != null ? `${m.last} searches in ${m.period}` : `${m.volume} searches/month`}${m.mom != null ? `, ${m.mom >= 0 ? '+' : ''}${m.mom}% vs previous month` : ''}${m.yoy != null ? `, ${m.yoy >= 0 ? '+' : ''}${m.yoy}% vs a year ago` : ''}${m.cpc != null ? `, $${m.cpc}/click` : ''}${m.competition != null ? `, competition ${m.competition}/100` : ''}.`);
     if (m.series && m.series.length) L.push(`Last 13 months: ${m.series.map(x => `${MN[x.m - 1]} ${x.y} ${x.v}`).join(', ')}.`);
-    if (m.forecast) L.push(`Forecast (learning model, tested: ~8 in 10 predicted rises came true): ${m.forecast.call}${m.forecast.chance != null ? ` (${m.forecast.chance}% chance of ≥40% more searches by ${MN[m.forecast.peak.m - 1]})` : ''}; ${m.forecast.months.map(x => `${MN[x.m - 1]} ${x.v}${x.chance != null ? ` (${x.chance}% chance of ≥40% vs now)` : ''}`).join(', ')}.`);
+    if (m.forecast) L.push(`Forecast (learning model, tested: ~9 in 10 predicted rises came true): ${m.forecast.call}${m.forecast.chance != null ? ` (${m.forecast.chance}% chance of ≥40% more searches by ${MN[m.forecast.peak.m - 1]})` : ''}; ${m.forecast.months.map(x => `${MN[x.m - 1]} ${x.v}${x.chance != null ? ` (${x.chance}% chance of ≥40% vs now)` : ''}`).join(', ')}.`);
     if (m.local) L.push(`In ${m.local.city}: ${m.local.measured ? '' : 'about '}${m.local.volume} searches/month${m.local.measured ? '' : ' (estimate by population)'}.`);
     if (m.related && m.related.length) L.push(`Related searches: ${m.related.map(r => `${r.k} ${r.volume}/month${r.cpc != null ? ` $${r.cpc}` : ''}`).join('; ')}.`);
   }
