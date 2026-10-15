@@ -8,6 +8,7 @@ df = pd.read_csv(rows)
 import os
 FEATS = list(df.columns[df.columns.get_loc('old') + 1:])  # alles na 'old' (zelfde volgorde als lib/ml.js FEATS)
 DROP = [f for f in os.environ.get('DROP', '').split(',') if f]  # kenmerken uitzetten om bronnen te vergelijken (ontbrekend in productie = NaN)
+HAS_WIKI = df['wy0'].notna().values if 'wy0' in df else None  # vóór het uitzetten, voor een eerlijke vergelijking
 for f in DROP: df[f] = np.nan
 print('features', len(FEATS), 'dropped', DROP)
 V, R = df[df.kind == 'value'].copy(), df[df.kind == 'rise'].copy()
@@ -35,7 +36,7 @@ for lo, hi in [(0.7, 0.75), (0.75, 0.8), (0.8, 0.85), (0.85, 0.9), (0.9, 0.95), 
 k = p >= 0.7; test['callsAvgChance'] = round(float(np.interp(p[k], [c[0] for c in cal], [c[1] for c in cal]).mean() * 100), 1)
 test['calibration'] = cal
 # deelverzameling met Wikipedia-artikel (daar kan die bron iets toevoegen)
-hv, hr = vte['wy0'].notna().values if 'wy0' in vte else None, rte['wy0'].notna().values if 'wy0' in rte else None
+hv, hr = (HAS_WIKI[vte.index] if HAS_WIKI is not None else None), (HAS_WIKI[rte.index] if HAS_WIKI is not None else None)
 if hv is not None and hv.any():
     test['wiki_subset'] = dict(value_n=int(hv.sum()), wape_old=round(wape(vte.old.values[hv], vte[hv]), 1), wape_new=round(wape(fv.values[hv] if hasattr(fv, 'values') else fv[hv], vte[hv]), 1),
                                rise=st((p >= 0.7) & hr), rise_old=st(o & hr))
