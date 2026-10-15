@@ -161,7 +161,7 @@
     var c = (S.d.charts && S.d.charts[kind]) || [];
     c = c.filter(function (g) { return S.mk === 'ALL' || g.cc === S.mk || g.cc === 'WW'; });
     if (!c.length) return null;
-    return h('div', { class: 'chartsbox' }, h('h3', null, kind === 'books' ? 'In the book charts today' : 'In the app charts today'),
+    return h('div', { class: 'chartsbox' }, h('h3', null, kind === 'books' ? 'In the book charts today' : kind === 'apps' ? 'In the app charts today' : 'Selling most in the shops today'),
       h('div', { class: 'chartgrid' }, c.map(function (g) {
         return h('div', { class: 'card chartcard' }, h('p', { class: 'eyebrow', style: 'margin:12px 0 6px', text: g.label + (g.cc !== 'WW' ? ' · ' + g.cc : '') }),
           h('ol', { class: 'chart' }, g.list.slice(0, 10).map(function (x) { return h('li', null, h('a', { href: x.url, target: '_blank', rel: 'noopener' }, x.title), x.by ? h('span', { class: 'lsub', text: ' · ' + x.by }) : null, x.isNew ? h('span', { class: 'badge p-early mini', text: 'new' }) : null); })));
@@ -211,7 +211,7 @@
       var list = byCountry(d.items || []).filter(function (x) { return S.view === 'now' ? !(x.now && (x.now.status === 'gone' || x.now.status === 'fading')) : x.cat === S.view; });
       list = interleave(list.sort(function (a, b) { return b.score - a.score; }));
       if (!list.length) empty(box, 'Nothing measured in this category for this selection today.'); else more(list, box, itemRow);
-      if (S.view === 'books' || S.view === 'apps') { var c = charts(S.view); if (c) extra.append(c); }
+      if (S.view === 'books' || S.view === 'apps' || S.view === 'products') { var c = charts(S.view); if (c) extra.append(c); }
     } else if (S.view === 'unexpected') {
       var u = interleave(byCountry(d.items || []).filter(function (x) { return x.unexpected; }));
       var td = interleave(byCountry(d.today || []));
