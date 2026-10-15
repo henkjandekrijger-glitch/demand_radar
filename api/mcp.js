@@ -57,6 +57,7 @@ const feed = (name, f) => (f ? `${name}: ${f.total}${f.capped ? '+' : ''} in 4 w
 function checkText(c) {
   const L = [];
   L.push(`Demand check: "${c.q}" in ${MARKETS[c.market].name}${c.local && c.local.place ? `, ${c.local.place.name}` : ''}. Score ${c.score}/100, phase: ${c.phase}. ${c.scoreBasis === 'measured' ? 'Score and phase are based on measured Google search volumes and the tested forecast.' : 'No measured search volume available: the score is a rough estimate from news and suggestions — treat it as weak.'}`);
+  if (c.advice) L.push(`WHAT TO DO: ${c.advice.label}. ${c.advice.headline}${c.advice.when ? ` When: ${c.advice.when}` : ''}${(c.advice.steps || []).length ? ` Next steps: ${c.advice.steps.join(' ')}` : ''}${(c.advice.angles || []).length ? ` Cheaper angles: ${c.advice.angles.map(a => `${a.k} (${a.volume}/mo${a.cpc != null ? `, $${a.cpc}` : ''})`).join(', ')}.` : ''}`);
   L.push(c.verdict);
   const m = c.measured, MN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   if (m) {

@@ -27,6 +27,19 @@
       h('div', null, h('span', { class: 'badge ' + ph[1], text: ph[0] }), h('p', { class: 'ck-verdict', text: c.verdict }),
         h('p', { class: 'meta', text: c.budgetReached ? 'Measured search data is paused until tomorrow (daily data budget reached), so this is only a rough estimate.' : c.scoreBasis === 'measured' ? 'Score from measured Google searches: demand, growth, the forecast and ad price.' : 'No measured search data for this one, so the score is only a rough estimate from news and suggestions.' }))));
 
+    // Advies: wat te doen (uit gemeten cijfers en de voorspelling, zie lib/advice.js)
+    var ad = c.advice;
+    if (ad) {
+      var DC = { go: 'p-early', prepare: 'p-rising', test: 'p-peak', wait: 'p-steady', skip: 'p-falling' };
+      parts.push(h('div', { class: 'card advice' },
+        h('p', { class: 'eyebrow', text: 'What to do' }),
+        h('p', { class: 'adv-head' }, h('span', { class: 'badge ' + (DC[ad.decision] || 'p-steady'), text: ad.label }), h('b', { text: ' ' + ad.headline })),
+        ad.when ? h('p', { class: 'meta' }, h('b', null, 'When '), ad.when) : null,
+        (ad.why || []).length ? h('ul', { class: 'adv-list' }, ad.why.map(function (x) { return h('li', { text: x }); })) : null,
+        (ad.steps || []).length ? h('div', null, h('p', { class: 'adv-sub', text: 'Next steps' }), h('ol', { class: 'adv-list' }, ad.steps.map(function (x) { return h('li', { text: x.charAt(0).toUpperCase() + x.slice(1) }); }))) : null,
+        (ad.angles || []).length ? h('p', { class: 'meta' }, h('b', null, 'Cheaper angles '), ad.angles.map(function (a) { return a.k + ' (' + num(a.volume) + '/mo' + (a.cpc != null ? ', $' + Number(a.cpc).toFixed(2) : '') + ')'; }).join(' · ')) : null));
+    }
+
     if (m) {
       var facts = [];
       if (m.last != null) facts.push(num(m.last) + ' searches in ' + MON[+m.period.split('-')[1] - 1]);
