@@ -8,6 +8,7 @@ import { gatewayToken, aiAvailable } from '../lib/ai.js';
 import { getStore } from '../lib/store.js';
 import { checked } from '../lib/signals.js';
 import { isBot } from '../lib/bots.js';
+import { planOf, PLANS, usage, useOne } from '../lib/account.js';
 
 export default async function handler(req, res) {
   const q = String(req.query.q || '').trim().replace(/\s+/g, ' ').slice(0, 80);
@@ -22,13 +23,20 @@ export default async function handler(req, res) {
       return res.status(200).json(data);
     }
     if (!isBot(req)) checked(getStore(), { cc: m, q }).catch(() => {}); // wat mensen checken is zelf een vraagsignaal
-    const pro = isPro(req);
+    // Abonnement: aantal checks per maand (bezoeker/gratis 3, Pro 300, Business 2000, team onbeperkt).
+    const store = getStore(), p = await planOf(req, store), lim = PLANS[p.plan].checks;
+    if (Number.isFinite(lim) && store) {
+      const u = await usage(store, p.id);
+      if (u.n >= lim) return res.status(402).json({ limit: true, plan: p.plan, used: u.n, max: lim, signedIn: !!p.email, error: p.plan === 'anon' || p.plan === 'free' ? `You used your ${lim} free checks this month.` : `You reached the ${lim} checks of your plan this month.` });
+    }
+    const pro = !!PLANS[p.plan].ai;
     const data = await getCheck(req, q, m, { ai: pro && req.query.ai !== '0', city: c });
+    if (Number.isFinite(lim) && store && !data.budgetReached) await useOne(store, p.id);
     data.q = q;
     if (data && !data.advice && data.measured !== undefined) { try { const { advise } = await import('../lib/advice.js'); data.advice = advise(data); } catch {} } // ook voor oudere, bewaarde checks
     res.setHeader('Cache-Control', 'private, no-store');
     const see = canSee(req);
-    res.status(200).json({ pro: see, open: OPEN, aiEnabled: pro && aiAvailable(req), ...(see ? data : maskCheck(data)) });
+    res.status(200).json({ pro: see, open: OPEN, aiEnabled: pro && aiAvailable(req), plan: p.plan, ...(see ? data : maskCheck(data)) });
   } catch (e) {
     res.status(500).json({ error: 'The check failed. Try again in a minute.' });
   }

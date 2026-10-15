@@ -273,3 +273,22 @@ test('signals and 5-year enrichment', async () => {
   const fc = F.enrich(F.predict(ser, new Date(Date.UTC(2026, 9, 13)), { cc: 'NL' }), ser, T, null, {});
   assert.equal(fc.stability.level, 'all'); assert.ok(fc.months[1].chance > fc.months[2].chance, JSON.stringify(fc.months));
 });
+
+test('accounts: sign-in token, Paddle signature, plan limits', async () => {
+  const A = await import('../lib/account.js');
+  const { createHmac } = await import('node:crypto');
+  const t = A.token('Test@Example.com', 60000);
+  assert.equal(A.readToken(t), 'test@example.com');
+  assert.equal(A.readToken(t.slice(0, -2) + 'zz'), null);
+  assert.equal(A.readToken(A.token('a@b.co', -1000)), null);
+  const raw = '{"event_type":"subscription.created"}', ts = Math.floor(Date.now() / 1000), sec = 'pdl_ntfset_test';
+  const h1 = createHmac('sha256', sec).update(`${ts}:${raw}`).digest('hex');
+  assert.ok(A.paddleSigned(raw, `ts=${ts};h1=${h1}`, sec));
+  assert.ok(!A.paddleSigned(raw + ' ', `ts=${ts};h1=${h1}`, sec));
+  assert.equal(A.planOfPrice({ prices: { pro_month: 'pri_1', business_year: 'pri_4' } }, 'pri_4'), 'business');
+  assert.ok(A.PLANS.free.checks === 3 && A.PLANS.pro.checks === 300 && A.PLANS.team.checks === Infinity);
+  const { advise } = await import('../lib/advice.js');
+  const ad = advise({ market: 'NL', measured: { last: 14800, cpc: 0.9, competition: 80, yoy: 5, series: [], related: [], forecast: { call: 'rise', chance: 98, peak: { m: 12, v: 230304 } } } });
+  assert.equal(ad.decision, 'go'); assert.match(ad.headline, /Dec/);
+  assert.equal(advise({ market: 'NL', budgetReached: true, measured: null }), null);
+});

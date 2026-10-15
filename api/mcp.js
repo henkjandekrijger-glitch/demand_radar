@@ -2,6 +2,8 @@
 // Daarna kun je in elke chat vragen: "check de vraag naar thuisbatterijen in Gouda". Zonder geldige sleutel: geen toegang.
 import { MARKETS } from '../lib/core.js';
 import { cookieFor } from '../lib/access.js';
+import { planOf, PLANS, usage, useOne } from '../lib/account.js';
+import { getStore } from '../lib/store.js';
 import { getRadar, getCheck, getMap, getDemand } from '../lib/data.js';
 
 const MK = ['NL', 'US', 'DE', 'WW'];
@@ -138,7 +140,10 @@ async function call(name, args, req) {
   if (name === 'check_demand') {
     const q = String(args.idea || '').trim().slice(0, 80), m = String(args.market || 'NL').toUpperCase();
     if (q.length < 2 || !MARKETS[m]) throw new Error('Give an idea (2-80 characters) and a market: NL, US, DE or WW.');
+    const lim = PLANS[req.plan.plan].checks, st = getStore();
+    if (Number.isFinite(lim) && st && (await usage(st, req.plan.id)).n >= lim) throw new Error(`Monthly check limit reached (${lim}). It resets on the 1st.`);
     const c = await getCheck(req, q, m, { ai: false, city: args.city || '' });
+    if (Number.isFinite(lim) && st) await useOne(st, req.plan.id);
     if (c && !c.advice) { try { const { advise } = await import('../lib/advice.js'); c.advice = advise(c); } catch {} }
     c.q = q;
     return checkText(c);
@@ -183,7 +188,9 @@ async function handle(msg, req) {
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
-  if (!cookieFor(req.query.key)) return res.status(401).json({ jsonrpc: '2.0', id: null, error: { code: -32001, message: 'Add ?key=<your Demand Radar key> to the connector URL.' } });
+  // Toegang: teamsleutel, of de API-sleutel van een Business-abonnement (telt mee in het maandgebruik).
+  req.plan = cookieFor(req.query.key) ? { plan: 'team', id: 'team' } : await planOf(req, getStore()).catch(() => ({ plan: 'anon' }));
+  if (!PLANS[req.plan.plan] || !PLANS[req.plan.plan].api) return res.status(401).json({ jsonrpc: '2.0', id: null, error: { code: -32001, message: 'Add ?key=<your Demand Radar key> to the connector URL (Business plan or team key).' } });
   if (req.method === 'GET') { res.setHeader('Allow', 'POST'); return res.status(405).end(); }
   if (req.method === 'DELETE') return res.status(200).end();
   let body = req.body;

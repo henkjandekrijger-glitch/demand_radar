@@ -242,7 +242,14 @@
   function account() {
     fetch('/api/me', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (me) {
       var bar = $('#dr-account'); if (!bar) return;
-      if (!me.signedIn) { bar.replaceChildren(h('a', { href: '/login', text: 'Sign in' })); return; }
+      if (!me.signedIn) {
+        // Klant (e-mail) of bezoeker: plan en gebruik via /api/account
+        fetch('/api/account?op=me', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (u) {
+          if (u.email) bar.replaceChildren(h('span', { class: 'lsub', text: 'Signed in as ' + u.email + ' · ' + u.name + ' plan · ' + (u.limit ? u.used + ' of ' + u.limit + ' checks used · ' : '') }), h('a', { href: '/pricing', text: 'Account' }));
+          else bar.replaceChildren(h('a', { href: '/pricing', text: 'Pricing' }), h('span', { class: 'lsub', text: ' · ' }), h('a', { href: '/pricing#signin', text: 'Sign in' }));
+        }).catch(function () { bar.replaceChildren(h('a', { href: '/pricing', text: 'Pricing' })); });
+        return;
+      }
       var btn = h('button', { type: 'button', class: 'vbtn', text: 'Refresh radar' });
       btn.onclick = function () {
         btn.disabled = true; btn.textContent = 'Refreshing… 1 to 3 minutes';

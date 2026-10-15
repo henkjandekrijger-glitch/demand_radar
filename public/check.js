@@ -104,6 +104,7 @@
     fetch('/api/check?m=' + m + '&c=' + encodeURIComponent(city) + '&q=' + encodeURIComponent(q), { credentials: 'same-origin' })
       .then(function (r) { return r.json(); })
       .then(function (c) {
+        if (c.limit) { $('#result').replaceChildren(h('div', { class: 'card advice' }, h('p', { class: 'eyebrow', text: 'Monthly limit' }), h('p', { class: 'adv-head' }, h('b', { text: c.error })), h('p', { class: 'meta', text: c.plan === 'anon' || c.plan === 'free' ? 'Pro gives you 300 checks a month with advice and the AI analysis.' : 'Your checks reset on the 1st of the month.' }), h('p', null, h('a', { class: 'scan', href: '/pricing', text: 'See plans' })))); note.textContent = ''; return; }
         if (c.error) throw new Error(c.error);
         render(c); note.textContent = '“' + q + '” · ' + ({ NL: 'Netherlands', DE: 'Germany', US: 'United States' })[m] + (city ? ' · ' + city : '');
         try { history.replaceState(null, '', '/check?q=' + encodeURIComponent(q) + '&m=' + m + (city ? '&c=' + encodeURIComponent(city) : '')); } catch (_) {}

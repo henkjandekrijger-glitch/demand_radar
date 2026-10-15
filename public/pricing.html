@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#2B47C4">
+<link rel="stylesheet" href="/styles.css">
+<title>Pricing · Demand Radar</title>
+<meta name="description" content="Demand Radar plans: check any idea against measured search demand and a tested forecast for the Netherlands, Germany and the US. Free to start, no card needed.">
+</head>
+<body class="clean">
+<div class="top"><div class="top-in">
+  <a class="brand" href="/">demand<span>radar</span></a>
+  <a class="scan" href="/check#check">Check an idea<span aria-hidden="true">&rarr;</span></a>
+</div></div>
+<main>
+  <h1>Know what people will want, before you spend.</h1>
+  <p class="lead">Measured Google searches and a tested forecast for the Netherlands, Germany and the US, with clear advice: go, wait or skip. In our honest backtest, 9 in 10 predicted rises came true.</p>
+  <p class="status" id="acct">&nbsp;</p>
+
+  <div class="seg billing" id="cycle" role="group" aria-label="Billing"><button type="button" data-c="month" aria-pressed="true">Monthly</button><button type="button" data-c="year" aria-pressed="false">Yearly · 2 months free</button></div>
+
+  <div class="plans">
+    <div class="card plan">
+      <p class="eyebrow">Free</p>
+      <p class="price">€0</p>
+      <ul>
+        <li>3 idea checks a month</li>
+        <li>Advice on every check: go, wait or skip</li>
+        <li>The full demand radar and forecasts</li>
+        <li>No card needed</li>
+      </ul>
+      <a class="scan ghost" href="/check#check">Check an idea</a>
+    </div>
+    <div class="card plan best">
+      <p class="eyebrow">Pro</p>
+      <p class="price"><span data-p="pro">€29</span><small data-u>/month</small></p>
+      <ul>
+        <li>300 idea checks a month</li>
+        <li>City-level demand and local gaps</li>
+        <li>AI analysis: what drives demand, risks, first step</li>
+        <li>Everything in Free</li>
+      </ul>
+      <button class="scan" data-buy="pro">Choose Pro</button>
+    </div>
+    <div class="card plan">
+      <p class="eyebrow">Business</p>
+      <p class="price"><span data-p="business">€99</span><small data-u>/month</small></p>
+      <ul>
+        <li>2,000 idea checks a month</li>
+        <li>API key and connector for your AI assistant</li>
+        <li>Everything in Pro</li>
+      </ul>
+      <button class="scan" data-buy="business">Choose Business</button>
+    </div>
+  </div>
+  <p class="meta center">Prices include VAT where it applies. Cancel any time from your account; you keep access until the end of the paid period. 14-day money-back guarantee.</p>
+
+  <div class="card signin" id="signin" hidden>
+    <p class="eyebrow">Sign in</p>
+    <p class="meta">We email you a sign-in link. No password.</p>
+    <form id="sform" class="ckform" novalidate><input id="email" type="email" autocomplete="email" placeholder="you@company.com" aria-label="Email"><button class="scan" id="sgo">Send link</button></form>
+    <p class="meta" id="snote"></p>
+  </div>
+  <div class="card signin" id="keybox" hidden><p class="eyebrow">Your API key</p><p class="meta">Shown once. Use it as ?key=… on /api/mcp (connector) or /api/check.</p><p><code id="keyval"></code></p></div>
+
+  <section class="faq">
+    <h2>Questions</h2>
+    <details><summary>How accurate is it?</summary><p>We test the forecast on the past: the model learns from data up to a month and is graded on the months after. Of the rises it predicted for May to September 2026, 94% rose by more than 10% and 90% by 40% or more. Every prediction shows its own chance, and that chance matched what happened.</p></details>
+    <details><summary>Where does the data come from?</summary><p>Monthly Google search volumes (four years per search), Google Trends, weather, economic indicators, school holidays and news. Search data comes through DataForSEO. We never use personal data to forecast.</p></details>
+    <details><summary>How is this different from Exploding Topics?</summary><p>Local, measured searches for the Netherlands and Germany (also per city) instead of global trends; a published, tested hit rate; a chance per month for the next 1 to 4 months; and advice on what to do: when to start, what a test costs and cheaper search terms.</p></details>
+    <details><summary>Can I cancel?</summary><p>Yes, any time, from your account in one click. You keep access until the end of the period you paid for. Not happy in the first 14 days? You get your money back.</p></details>
+    <details><summary>Who are you?</summary><p>Demand Radar is made by ADSFAIR B.V. in Gouda, the Netherlands. Payments are handled by Paddle, our reseller and Merchant of Record.</p></details>
+  </section>
+</main>
+<footer class="site"><div class="in"><p class="legal-links"><a href="/pricing">Pricing</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds</a></p><div class="co">Demand Radar is a service of ADSFAIR B.V., Albert Plesmanplein 20, 2805 AB Gouda, the Netherlands · VAT NL853775485B01 · henkjan@adsfair.xyz</div></div></footer>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); }, cycle = 'month', cfg = null, me = null;
+  function txt(el, t) { if (el) el.textContent = t; }
+  function setCycle(c) {
+    cycle = c; [].forEach.call(document.querySelectorAll('#cycle button'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-c') === c)); });
+    if (!cfg) return;
+    ['pro', 'business'].forEach(function (p) { var e = cfg.plans[p].eur; txt(document.querySelector('[data-p="' + p + '"]'), '€' + (c === 'year' ? e.year : e.month)); });
+    [].forEach.call(document.querySelectorAll('[data-u]'), function (u) { u.textContent = c === 'year' ? '/year' : '/month'; });
+  }
+  [].forEach.call(document.querySelectorAll('#cycle button'), function (b) { b.addEventListener('click', function () { setCycle(b.getAttribute('data-c')); }); });
+  function link(href, t, fn) { var a = document.createElement('a'); a.href = href; a.textContent = t; if (fn) a.onclick = fn; return a; }
+  function account() {
+    var a = $('#acct');
+    if (!me || !me.email) {
+      if (me && me.plan === 'team') { a.textContent = 'Signed in with a team key: unlimited checks.'; return; }
+      a.replaceChildren(link('#signin', 'Sign in', function () { $('#signin').hidden = false; }), document.createTextNode(me && me.limit ? ' · ' + me.used + ' of ' + me.limit + ' free checks used this month' : ''));
+      return;
+    }
+    var parts = ['Signed in as ' + me.email, me.name + ' plan', (me.limit ? me.used + ' of ' + me.limit + ' checks used this month' : 'unlimited checks')];
+    if (me.cancelAt) parts.push('ends ' + new Date(me.cancelAt).toLocaleDateString('en-GB'));
+    else if (me.nextBilledAt) parts.push('renews ' + new Date(me.nextBilledAt).toLocaleDateString('en-GB'));
+    a.replaceChildren(document.createTextNode(parts.join(' · ') + ' · '));
+    if (me.plan === 'pro' || me.plan === 'business') a.append(link('/api/account?op=portal', 'Manage or cancel'), document.createTextNode(' · '));
+    if (me.plan === 'business') a.append(link('#', me.hasApiKey ? 'New API key' : 'Create API key', function (e) {
+      e.preventDefault();
+      fetch('/api/account?op=apikey', { method: 'POST' }).then(function (r) { return r.json(); }).then(function (j) { $('#keybox').hidden = false; txt($('#keyval'), j.key || j.error); });
+    }), document.createTextNode(' · '));
+    a.append(link('/api/account?op=logout', 'Sign out'));
+  }
+  function buy(plan) {
+    if (!cfg || !cfg.paddle) { $('#signin').hidden = false; txt($('#snote'), 'Payments open soon. Sign in now and start with the free checks.'); $('#signin').scrollIntoView({ behavior: 'smooth' }); return; }
+    if ((!me || !me.email) && cfg.signIn) { $('#signin').hidden = false; $('#signin').scrollIntoView({ behavior: 'smooth' }); txt($('#snote'), 'Sign in first, then choose your plan.'); return; }
+    var price = cfg.paddle.prices[plan + '_' + cycle];
+    Paddle.Checkout.open({ items: [{ priceId: price, quantity: 1 }], customer: me && me.email ? { email: me.email } : undefined, customData: me && me.email ? { email: me.email } : undefined, settings: { successUrl: location.origin + '/pricing?paid=1' } });
+  }
+  [].forEach.call(document.querySelectorAll('[data-buy]'), function (b) { b.addEventListener('click', function () { buy(b.getAttribute('data-buy')); }); });
+  $('#sform').addEventListener('submit', function (e) {
+    e.preventDefault(); var em = $('#email').value.trim(); $('#sgo').disabled = true; txt($('#snote'), 'Sending…');
+    fetch('/api/account?op=login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: em, next: '/pricing' }) })
+      .then(function (r) { return r.json(); }).then(function (j) { txt($('#snote'), j.ok ? 'Check your inbox for the sign-in link.' : (j.error || 'Something went wrong.')); })
+      .catch(function () { txt($('#snote'), 'Something went wrong. Try again.'); }).then(function () { $('#sgo').disabled = false; });
+  });
+  var q = new URLSearchParams(location.search);
+  if (q.get('paid')) txt($('#acct'), 'Thank you! Your plan is being activated; refresh in a minute.');
+  if (q.get('link') === 'expired') { $('#signin').hidden = false; txt($('#snote'), 'That link expired. Send a new one.'); }
+  if (location.hash === '#signin') $('#signin').hidden = false;
+  Promise.all([fetch('/api/account?op=config').then(function (r) { return r.json(); }), fetch('/api/account?op=me', { credentials: 'same-origin' }).then(function (r) { return r.json(); })]).then(function (x) {
+    cfg = x[0]; me = x[1]; setCycle(cycle); if (!q.get('paid')) account();
+    if (cfg.paddle && window.Paddle) { if (cfg.paddle.env === 'sandbox') Paddle.Environment.set('sandbox'); Paddle.Initialize({ token: cfg.paddle.token }); }
+  }).catch(function () {});
+})();
+</script>
+</body>
+</html>
