@@ -44,6 +44,9 @@
     },
     "api/series.js": {
       "maxDuration": 120
+    },
+    "api/collect.js": {
+      "maxDuration": 300
     }
   },
   "crons": [
