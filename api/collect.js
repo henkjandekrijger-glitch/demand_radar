@@ -12,8 +12,11 @@ export default async function handler(req, res) {
   const t0 = Date.now(), errors = [];
   const out = {};
   if (src === 'wiki') {
-    await pool(kws, 12, async k => {
-      try { const title = await wikiArticle(k, cc); out[k] = title ? { title, m: await wikiMonthly(title, cc) } : { title: null, m: [] }; }
+    // Wikipedia vraagt om rustig ophalen: weinig tegelijk, bij 429 even wachten en opnieuw.
+    const retry = async fn => { for (let i = 0; ; i++) { try { return await fn(); } catch (e) { if (i >= 3 || !/429/.test(String(e.message))) throw e; await new Promise(r => setTimeout(r, 2000 * (i + 1))); } } };
+    await pool(kws, +(req.query.conc || 3), async k => {
+      if (Date.now() - t0 > 270000) return;
+      try { const title = await retry(() => wikiArticle(k, cc)); out[k] = title ? { title, m: await retry(() => wikiMonthly(title, cc)) } : { title: null, m: [] }; }
       catch (e) { errors.push(String(e.message || e).slice(0, 80)); }
     });
   } else if (src === 'gdelt') {
