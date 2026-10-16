@@ -292,3 +292,26 @@ test('accounts: sign-in token, Paddle signature, plan limits', async () => {
   assert.equal(ad.decision, 'go'); assert.match(ad.headline, /Dec/);
   assert.equal(advise({ market: 'NL', budgetReached: true, measured: null }), null);
 });
+
+test('early signals: breakout rule, filters, scoring and storage', async () => {
+  const E = await import('../lib/early.js'), D = await import('../lib/earlydata.js'), { memoryStore, getJSON } = await import('../lib/store.js');
+  // 48 maanden: vlak op 1.000, laatste 9 maanden geleidelijk omhoog (nog geen 2× vorig jaar)
+  const mk = f => { const s = []; for (let i = 0; i < 48; i++) { const d = new Date(Date.UTC(2022, 9 + i, 1)); s.push([d.getUTCFullYear(), d.getUTCMonth() + 1, Math.round(f(i))]); } return s; };
+  const climb = mk(i => (i < 39 ? 1000 : 1000 * (1 + 0.05 * (i - 38))));
+  const flat = mk(() => 1000), spike = mk(i => (i === 40 ? 90000 : 1000)), doubled = mk(i => (i < 30 ? 1000 : 2600));
+  assert.equal(E.brokeOut(doubled.map(x => x[2]), 200)[35], true); // en een jaar later niet meer (dan is 2.600 het gewone niveau)
+  assert.equal(E.brokeOut(spike.map(x => x[2]), 200).some(Boolean), false); // één piekmaand is geen doorbraak
+  assert.ok(E.oneOffJumps(spike.map(x => x[2])));
+  assert.equal(E.earlySignal(doubled, 'NL', 'iets').skip, 'already');
+  assert.equal(E.earlySignal(flat, 'NL', 'psv ajax uitslag').skip, 'noise');
+  const c = E.earlySignal(climb, 'NL', 'warmtepomp'), f = E.earlySignal(flat, 'NL', 'warmtepomp');
+  assert.ok(c.p > f.p, `${c.p} > ${f.p}`); assert.equal(c.tier, 'hidden'); assert.ok(c.reasons.length >= 1);
+  assert.equal(E.earlyFeats(climb.map(x => x[2]), 47, 'NL').length, E.EFEATS.length);
+  const store = memoryStore();
+  await D.seedEarly(store, 'NL', { warmtepomp: { m: climb }, rustig: { m: flat } });
+  await D.queueEarlyTerms(store, 'NL', ['warmtepomp', 'nieuw woord']);
+  assert.deepEqual(Object.keys(await getJSON(store, 'early/pending-NL.json')), ['nieuw woord']);
+  const r = await D.scoreEarly(store);
+  assert.equal(r.counts.NL.terms, 2); assert.equal(r.month, '2026-09');
+  const L = await D.latestEarly(store); assert.ok(Array.isArray(L.items));
+});

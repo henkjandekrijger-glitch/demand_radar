@@ -22,7 +22,7 @@
       "maxDuration": 300
     },
     "api/loop.js": {
-      "maxDuration": 60
+      "maxDuration": 300
     },
     "api/learn.js": {
       "maxDuration": 30
@@ -46,6 +46,9 @@
       "maxDuration": 120
     },
     "api/collect.js": {
+      "maxDuration": 300
+    },
+    "api/early.js": {
       "maxDuration": 300
     }
   },

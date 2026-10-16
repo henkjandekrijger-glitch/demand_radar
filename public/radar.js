@@ -124,6 +124,19 @@
       spark((x.series || []).map(function (s) { return s.v; }), fcLine(f), fcGap(f)));
   }
 
+  // Vroege signalen: nog niet doorgebroken, wel het patroon van termen die daarna doorbraken.
+  function earlyRow(x) {
+    var st = x.tier === 'starting';
+    var link = h('a', { class: 'lname', href: checkUrl(x.keyword || x.name, x.cc), title: 'Searched as: ' + (x.keyword || x.name), onclick: function () { ev('open', 'early'); } }, x.name);
+    return h('div', { class: 'line' },
+      h('div', { class: 'line-main' },
+        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: x.cc }), link), h('div', { class: 'badges' },
+          h('span', { class: 'badge ' + (st ? 'p-rising' : 'p-early'), title: 'Chance of a lasting breakout (searches at least double last year for 3 months) within 6 months, measured in our test on 4 years of data', text: (st ? 'Starting' : 'Not visible yet') + ' · ' + x.chance + '% chance' }))),
+        h('p', { class: 'meta', text: 'Measured: ' + num(x.now.v) + ' in ' + MON[x.now.m - 1] + ' · same month last year ' + num(x.lastYear) + (x.cpc != null ? ' · $' + Number(x.cpc).toFixed(2) + ' per click' : '') }),
+        (x.reasons || []).length ? h('p', { class: 'meta', text: x.reasons.join(' · ') }) : null),
+      spark((x.series || []).map(function (s) { return s.v; })));
+  }
+
   function todayRow(t) {
     return h('div', { class: 'line one' },
       h('div', { class: 'line-main' },
@@ -223,6 +236,9 @@
     } else if (S.view === 'rise') {
       var rl = interleave(byCountry(d.rise || []));
       if (!rl.length) empty(box, 'No clear rises predicted for this selection.'); else more(rl, box, riseRow);
+    } else if (S.view === 'early') {
+      var el = interleave(byCountry(d.early || []));
+      if (!el.length) empty(box, 'No early signals for this selection yet.'); else more(el, box, earlyRow);
     } else if (S.view === 'coming') {
       var cm = byCountry(d.coming || []).slice().sort(function (a, b) { return a.days - b.days; });
       if (!cm.length) empty(box, 'Nothing coming up for this selection.'); else more(cm, box, comingRow);
@@ -234,6 +250,7 @@
     if (id === 'unexpected') return byCountry(d.items || []).filter(function (x) { return x.unexpected; }).length + byCountry(d.today || []).length;
     if (id === 'missing') return byCountry(d.missing || []).length;
     if (id === 'rise') return byCountry(d.rise || []).length;
+    if (id === 'early') return byCountry(d.early || []).length;
     if (id === 'coming') return byCountry(d.coming || []).length;
     return 0;
   }
