@@ -7,7 +7,9 @@ import { COUNTRIES } from '../lib/niches.js';
 
 export default async function handler(req, res) {
   if (!isPro(req)) return res.status(403).json({ error: 'forbidden' });
-  const cc = String(req.query.cc || 'NL').toUpperCase(), C = COUNTRIES[cc];
+  // Extra landen alleen voor onderzoek (toets 'loopt een ander land voor?'); de radar zelf bouwt alleen NL/DE/US.
+  const EXTRA = { GB: { name: 'United Kingdom', lang: 'en', loc: 2826 }, BE: { name: 'Belgium', lang: 'nl', loc: 2056 }, SE: { name: 'Sweden', lang: 'sv', loc: 2752 }, FR: { name: 'France', lang: 'fr', loc: 2250 } };
+  const cc = String(req.query.cc || 'NL').toUpperCase(), C = COUNTRIES[cc] || (req.query.ads ? EXTRA[cc] : null);
   if (!C) return res.status(400).json({ error: 'cc' });
   if (req.query.drivers) { const { allDrivers } = await import('../lib/drivers.js'); return res.status(200).json(await allDrivers(cc, /^\d{4}-\d\d-\d\d$/.test(req.query.from || '') ? req.query.from : undefined)); }
   const b = budget(1), min = { NL: 300, DE: 1000, US: 3000 }[cc];
