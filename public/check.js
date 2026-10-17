@@ -74,6 +74,8 @@
 
     var more = [];
     if (w) more.push(row('Interest (Wikipedia)', pct1(w.momentum) + ' this week · ' + pct1(w.yoy) + ' vs last year'));
+    var yv = c.youtube;
+    if (yv) more.push(row('YouTube creators', (yv.recent >= 50 ? '50+' : yv.recent) + ' new videos in 30 days (' + (yv.lastYear >= 50 ? '50+' : yv.lastYear) + ' a year earlier' + (yv.growth != null ? ', ' + yv.growth + '×' : '') + ') · ' + num(yv.views) + ' views'));
     if (c.news && c.news.total) more.push(row('In the news', c.news.total + (c.news.capped ? '+' : '') + ' articles in 4 weeks'));
     (c.calendar || []).slice(0, 2).forEach(function (e) { more.push(row(e.name, e.date + ' · ' + (e.status === 'open' ? 'demand open now' : 'opens in ' + e.opensIn + ' days'))); });
     if (more.length) { parts.push(h('h3', null, 'Signals')); parts.push(h('div', { class: 'ck-list' }, more)); }

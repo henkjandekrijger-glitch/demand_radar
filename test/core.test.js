@@ -316,3 +316,19 @@ test('early signals: breakout rule, filters, scoring and storage', async () => {
   assert.equal(r.counts.NL.terms, 2); assert.equal(r.month, '2026-09');
   const L = await D.latestEarly(store); assert.ok(Array.isArray(L.items));
 });
+
+test('youtube creators: counts, growth, views, quota and cache', async () => {
+  const Y = await import('../lib/youtube.js'), { memoryStore } = await import('../lib/store.js');
+  const real = globalThis.fetch; let calls = 0;
+  process.env.YOUTUBE_API_KEY = 'test';
+  globalThis.fetch = async url => { calls++; const u = new URL(url);
+    const body = u.pathname.endsWith('/search') ? (Date.parse(u.searchParams.get('publishedBefore')) > Date.now() - 864e5
+      ? { items: Array.from({ length: 12 }, (_, i) => ({ id: { videoId: 'v' + i } })), pageInfo: { totalResults: 300 } } : { items: [{ id: { videoId: 'old' } }, { id: { videoId: 'old2' } }], pageInfo: { totalResults: 40 } })
+      : { items: u.searchParams.get('id').split(',').map((id, i) => ({ id, snippet: { title: 'T' + i, channelTitle: 'C', publishedAt: '2026-10-01T00:00:00Z' }, statistics: { viewCount: String(1000 * (i + 1)) } })) };
+    return new Response(JSON.stringify(body), { status: 200 }); };
+  try {
+    const store = memoryStore(), y = await Y.ytActivity('thuisbatterij', 'NL', store);
+    assert.equal(y.recent, 12); assert.equal(y.lastYear, 2); assert.equal(y.growth, 4.3); assert.equal(y.views, 78000); assert.equal(y.top[0].views, 12000);
+    const n = calls; await Y.ytActivity('thuisbatterij', 'NL', store); assert.equal(calls, n); // zelfde dag: uit de bewaarde uitkomst
+  } finally { globalThis.fetch = real; delete process.env.YOUTUBE_API_KEY; }
+});
