@@ -448,3 +448,22 @@ test('productfeed: Google-velden, korting, verzendkosten, escapen', async () => 
   assert.ok(x.includes('<g:link>https://yoo.rs/product/oc_1</g:link>') && x.includes('<g:additional_image_link>https://cdn/y.jpg') && x.includes('<g:price>6.45 EUR</g:price></g:shipping>'));
   assert.ok(x.includes('Lamp &amp; kap &lt;groot&gt;') && !x.includes('Pass'));
 });
+
+test('feedtitels: slimme zoekterm kiezen en titels schrijven', async () => {
+  const { bestPhrase, feedTitles } = await import('../lib/feedopt.js');
+  const { setAiFetch } = await import('../lib/ai.js');
+  const { memoryStore, putJSON, getJSON } = await import('../lib/store.js');
+  assert.equal(bestPhrase(['a', 'b', 'c'], { a: { v: 1000, c: 100 }, b: { v: 800, c: 0 }, c: { v: 0, c: 0 } }).p, 'b');
+  assert.equal(bestPhrase(['x'], { x: { v: 0 } }), null);
+  const store = memoryStore();
+  await putJSON(store, 'feed/yoors-items-NL.json', [{ id: 'oc_1', title: 'Muziekdoos hout', brand: 'Art', cat: 'hobby', sub: 'diy', price: 30 }]);
+  await putJSON(store, 'feed/yoors-opt-NL.json', { phrases: {}, vol: { '3d puzzel hout': { v: 2400, c: 40 }, 'houten muziekdoos': { v: 900, c: 10 }, 'puzzel volwassenen': { v: 0, c: 0 } }, pick: {} });
+  setAiFetch(async (u, o) => { const p = JSON.parse(o.body).messages[0].content;
+    const text = p.includes('Google searches') ? JSON.stringify({ p: { oc_1: ['3D puzzel hout', 'houten muziekdoos', 'puzzel volwassenen'] } }) : JSON.stringify({ t: { oc_1: '3D puzzel hout: muziekdoos Circus Troupe | Art Bizniz' } });
+    return { ok: true, json: async () => ({ content: [{ type: 'text', text }] }) }; });
+  const r = await feedTitles(store, 'yoors', 'NL', { token: 't' });
+  assert.equal(r.titles, 1);
+  assert.equal((await getJSON(store, 'feed/yoors-titles-NL.json')).oc_1, '3D puzzel hout: muziekdoos Circus Troupe | Art Bizniz');
+  assert.equal((await getJSON(store, 'feed/yoors-opt-NL.json')).pick.oc_1.p, '3d puzzel hout');
+  setAiFetch(fetch);
+});
