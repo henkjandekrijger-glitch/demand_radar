@@ -432,3 +432,11 @@ test('mijn bedrijf: website lezen, profiel, eigen vraag en matchen', async () =>
   const n = calls; await dailyMine(store, rec, { token: 't', getDemand: async () => d }); assert.equal(calls, n); // dag-cache
   setAiFetch(fetch);
 });
+
+test('amazon gekocht vorige maand: optellen uit resultaten', async () => {
+  const { salesFrom } = await import('../lib/amazonsales.js');
+  const r = salesFrom([{ type: 'amazon_serp', data_asin: 'A', title: 'Anker', bought_past_month: 2000, price_from: 499 }, { type: 'amazon_paid', data_asin: 'P', bought_past_month: 9999 },
+    { type: 'editorial_recommendations', items: [{ type: 'amazon_serp_element', data_asin: 'B', title: 'Zendure', bought_past_month: 500, price_from: 899 }, { type: 'amazon_serp_element', data_asin: 'A', bought_past_month: 2000 }] },
+    { type: 'amazon_serp', data_asin: 'C', title: 'x', price_from: 99 }]);
+  assert.equal(r.units, 2500); assert.equal(r.products, 3); assert.equal(r.withData, 2); assert.equal(r.top[0].title, 'Anker'); assert.equal(r.price, 499);
+});

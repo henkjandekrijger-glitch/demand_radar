@@ -41,6 +41,12 @@ export default async function handler(req, res) {
         const v = await amazonVolume(String(req.query.q || 'airfryer').split(',').map(x => x.trim()).filter(Boolean), COUNTRIES[cc], b);
         return res.status(200).json({ cc, spent: b.spent, errors: b.errors, volumes: v });
       }
+      if (op === 'amzsales') { // Amazon gekocht vorige maand (eigenaar): stand, of &cc=NL&month=2026-10 voor de cijfers
+        const { getJSON } = await import('../lib/store.js'), { salesFor } = await import('../lib/amazonsales.js');
+        if (req.query.cc) return res.status(200).json(await salesFor(store, String(req.query.cc).toUpperCase(), String(req.query.month || new Date().toISOString().slice(0, 7))));
+        const st = (await getJSON(store, 'amzsales/state.json', null).catch(() => null)) || {};
+        return res.status(200).json({ ...st, open: Object.keys(st.open || {}).length });
+      }
       if (op === 'meta') { // Meta Ad Library testen (eigenaar): ?op=meta&q=...&cc=NL
         const { metaAds, metaReady } = await import('../lib/meta.js');
         if (!metaReady()) return res.status(200).json({ ready: false, how: 'META_AD_TOKEN in Vercel (user token van een account met bevestigde identiteit)' });

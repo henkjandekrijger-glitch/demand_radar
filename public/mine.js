@@ -40,13 +40,13 @@
       h('p', { class: 'meta' }, meta.join(' · '), meta.length && q ? ' · ' : '', q ? h('a', { href: '/check?q=' + encodeURIComponent(q) + '&m=' + String(m.cc).split('/')[0] + '#check', text: 'Check "' + q + '"' }) : null));
   }
   function ownBlock(cc, o) {
-    var top = (o.terms || []).slice(0, 8), rest = (o.terms || []).slice(8);
-    var row = function (t) { return h('tr', null, h('td', null, t.k, t.early ? h('span', { class: 'badge p-early m-eb', text: 'Early signal ' + t.early.chance + '%' }) : null), h('td', { class: 'n', text: num(t.v) }), h('td', { class: 'n ' + (t.yoy == null ? '' : t.yoy >= 10 ? 'up' : t.yoy <= -10 ? 'down' : ''), text: pc(t.yoy) }), h('td', { class: 'sp' }, spark(t.spark))); };
+    var top = (o.terms || []).slice(0, 8), rest = (o.terms || []).slice(8), hasAmz = (o.terms || []).some(function (t) { return t.amazon; });
+    var row = function (t) { return h('tr', null, h('td', null, t.k, t.early ? h('span', { class: 'badge p-early m-eb', text: 'Early signal ' + t.early.chance + '%' }) : null), h('td', { class: 'n', text: num(t.v) }), hasAmz ? h('td', { class: 'n', text: t.amazon ? num(t.amazon.units) : '–', title: t.amazon && t.amazon.top ? 'Best seller: ' + t.amazon.top : '' }) : null, h('td', { class: 'n ' + (t.yoy == null ? '' : t.yoy >= 10 ? 'up' : t.yoy <= -10 ? 'down' : ''), text: pc(t.yoy) }), h('td', { class: 'sp' }, spark(t.spark))); };
     var tb = h('tbody', null, top.map(row));
     return h('div', { class: 'm-own' },
       h('div', { class: 'm-own-h' }, h('span', { class: 'mk', text: cc }), h('b', { text: CCN[cc] }), o.spark && o.spark.length > 3 ? spark(o.spark) : null),
       o.total ? h('p', { class: 'meta', text: num(o.total) + ' searches in ' + (o.month ? MON[+o.month.slice(5) - 1] : 'the last month') + (o.yoy != null ? ' · ' + pc(o.yoy) + ' on last year (last 3 months)' : '') }) : null,
-      top.length ? h('table', { class: 'm-tab' }, h('thead', null, h('tr', null, h('th', { text: 'Search' }), h('th', { class: 'n', text: 'A month' }), h('th', { class: 'n', text: 'vs last year' }), h('th', { text: '' }))), tb) : null,
+      top.length ? h('table', { class: 'm-tab' }, h('thead', null, h('tr', null, h('th', { text: 'Search' }), h('th', { class: 'n', text: 'A month' }), hasAmz ? h('th', { class: 'n', text: 'Bought on Amazon' }) : null, h('th', { class: 'n', text: 'vs last year' }), h('th', { text: '' }))), tb) : null,
       rest.length ? h('button', { class: 'chip', type: 'button', style: 'margin-top:8px', text: 'Show ' + rest.length + ' more', onclick: function (e) { rest.forEach(function (t) { tb.append(row(t)); }); e.target.remove(); } }) : null,
       o.waiting && o.waiting.length ? h('p', { class: 'meta', text: (top.length ? 'Still collecting 4 years of data for ' + o.waiting.length + ' more searches' : 'Collecting 4 years of data for ' + o.waiting.length + ' searches') + '; ready within a day.' }) : null,
       o.rare && o.rare.length ? h('p', { class: 'meta', text: 'Too few searches to measure: ' + o.rare.join(', ') + '.' }) : null);
