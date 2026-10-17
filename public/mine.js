@@ -48,7 +48,8 @@
       o.total ? h('p', { class: 'meta', text: num(o.total) + ' searches in ' + (o.month ? MON[+o.month.slice(5) - 1] : 'the last month') + (o.yoy != null ? ' · ' + pc(o.yoy) + ' on last year (last 3 months)' : '') }) : null,
       top.length ? h('table', { class: 'm-tab' }, h('thead', null, h('tr', null, h('th', { text: 'Search' }), h('th', { class: 'n', text: 'A month' }), h('th', { class: 'n', text: 'vs last year' }), h('th', { text: '' }))), tb) : null,
       rest.length ? h('button', { class: 'chip', type: 'button', style: 'margin-top:8px', text: 'Show ' + rest.length + ' more', onclick: function (e) { rest.forEach(function (t) { tb.append(row(t)); }); e.target.remove(); } }) : null,
-      o.waiting && o.waiting.length ? h('p', { class: 'meta', text: (top.length ? 'Still collecting 4 years of data for ' + o.waiting.length + ' more searches' : 'Collecting 4 years of data for ' + o.waiting.length + ' searches') + '; ready within a day.' }) : null);
+      o.waiting && o.waiting.length ? h('p', { class: 'meta', text: (top.length ? 'Still collecting 4 years of data for ' + o.waiting.length + ' more searches' : 'Collecting 4 years of data for ' + o.waiting.length + ' searches') + '; ready within a day.' }) : null,
+      o.rare && o.rare.length ? h('p', { class: 'meta', text: 'Too few searches to measure: ' + o.rare.join(', ') + '.' }) : null);
   }
   function follow(id) {
     $('#m-h').textContent = 'Loading your business';
