@@ -136,6 +136,6 @@
     show(stepHead(4, 4, 'Anything else you sell, or plan to sell?'), h('p', { class: 'meta', text: 'Optional. It helps us spot demand right next to what you do.' }), t, h('div', { class: 'm-btns' }, go), note);
   }
 
-  var m = location.pathname.match(/^\/mine\/([a-z0-9]{6,16})\/?$/);
-  if (m) follow(m[1]); else start();
+  var m = location.pathname.match(/^\/mine\/([a-z0-9]{6,16})\/?$/), qid = new URLSearchParams(location.search).get('id');
+  if (m || (qid && /^[a-z0-9]{6,16}$/.test(qid))) follow(m ? m[1] : qid); else start();
 })();
