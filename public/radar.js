@@ -8,8 +8,10 @@
   var MKN = { NL: 'Netherlands', DE: 'Germany', US: 'United States', WW: 'Worldwide' };
   var LBL = { new: ['New demand'], seasonal: ['Seasonal'], rising: ['Growing'], steady: ['Steady demand'] };
   var NOW = { rising: ['Rising today', 'p-early'], steady: ['Holding', 'p-steady'], fading: ['Fading', 'p-falling'], gone: ['Over', 'p-falling'], quiet: ['', ''] };
-  var TAG = { rise: 'Forecast, with the odds', early: 'Before anyone sees it', wild: 'Bold calls + track record', coming: 'Buying moments ahead', now: 'Fastest growth today', unexpected: 'Nobody saw it coming', missing: 'Wanted, not found' };
-  var KEEP = { rise: 1, early: 1, wild: 1, now: 1 };
+  // Rustig: vier hoofdtegels (vooruitkijken), de rest als één regel tekstlinks met korte namen.
+  var TAG = { rise: 'Forecast, with the odds', early: 'Before anyone sees it', wild: 'Bold calls, checked', coming: 'Moments ahead' };
+  var SHORT = { now: 'Rising now', unexpected: 'Unexpected', missing: 'Not made yet', products: 'Products', courses: 'Courses', services: 'Services', books: 'Books', apps: 'Apps & AI', trips: 'Trips', money: 'Money' };
+  var KEEP = { rise: 1, early: 1, wild: 1, coming: 1, now: 1 };
   var ITEM_VIEWS = { now: 1, products: 1, courses: 1, books: 1, services: 1, apps: 1, trips: 1, money: 1 };
   try { var saved = JSON.parse(localStorage.getItem('dr-view') || 'null'); if (saved) { S.mk = saved.mk || S.mk; S.view = saved.view || S.view; } } catch (e) {}
 
@@ -243,19 +245,19 @@
     if (!d.ready) { empty($('#dr-list'), 'Measured data is not connected yet.'); return; }
     status();
     // categorieën (volgorde: geleerd uit wat bezoekers openen, anders vast)
-    var views = (d.views || []).slice();
+    var views = (d.views || []).filter(function (v, i, a) { return a.findIndex(function (x) { return x.id === v.id; }) === i; });
     if (d.order && d.order.length) views.sort(function (a, b) { var ia = d.order.indexOf(a.id), ib = d.order.indexOf(b.id); return (a.id === 'now' ? -1 : b.id === 'now' ? 1 : 0) || (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
-    // Tegels (alles in één oogopslag, niet zijwaarts scrollen): grote tegels voor de hoofdweergaven, kleine voor de categorieën.
-    var box0 = $('#dr-views'), big = h('div', { class: 'tiles' }), small = h('div', { class: 'cats' }, h('span', { class: 'cats-l', text: 'By category' }));
-    var tk = Object.keys(TAG); // hoofdtegels in vaste volgorde: eerst vooruitkijken, dan nu
-    views.filter(function (v) { return TAG[v.id]; }).sort(function (a, b) { return tk.indexOf(a.id) - tk.indexOf(b.id); }).concat(views.filter(function (v) { return !TAG[v.id]; })).forEach(function (v) {
+    // Vier tegels zonder tellers; daaronder één regel links (lege verborgen).
+    var box0 = $('#dr-views'), big = h('div', { class: 'tiles' }), small = h('div', { class: 'vlinks' });
+    var tk = Object.keys(TAG), sk = Object.keys(SHORT);
+    views.filter(function (v) { return TAG[v.id]; }).sort(function (a, b) { return tk.indexOf(a.id) - tk.indexOf(b.id); }).concat(views.filter(function (v) { return SHORT[v.id]; }).sort(function (a, b) { return sk.indexOf(a.id) - sk.indexOf(b.id); })).forEach(function (v) {
       var n = countFor(v.id), sel = String(S.view === v.id);
-      if (!n && !KEEP[v.id] && v.id !== S.view) return; // lege categorieën verbergen: rustiger
+      if (!n && !KEEP[v.id] && v.id !== S.view) return;
       var go = function () { S.view = v.id; S.n = 12; save(); ev('open', 'tab-' + v.id); draw(); };
-      if (TAG[v.id]) big.append(h('button', { class: 'tile', type: 'button', 'aria-pressed': sel, onclick: go }, h('span', { class: 'tn' }, h('span', { text: v.name }), h('span', { class: 'cnt', text: String(n) })), h('span', { class: 'tt', text: TAG[v.id] })));
-      else small.append(h('button', { class: 'ctile', type: 'button', 'aria-pressed': sel, onclick: go }, v.name, h('span', { class: 'cnt', text: String(n) })));
+      if (TAG[v.id]) big.append(h('button', { class: 'tile', type: 'button', 'aria-pressed': sel, onclick: go }, h('span', { class: 'tn', text: v.name }), h('span', { class: 'tt', text: TAG[v.id] })));
+      else small.append(h('button', { class: 'vlink', type: 'button', 'aria-pressed': sel, title: v.desc || '', onclick: go, text: SHORT[v.id] }));
     });
-    box0.replaceChildren(big); if (small.children.length > 1) box0.append(small);
+    box0.replaceChildren(big); if (small.children.length) box0.append(small);
     var cur = views.filter(function (v) { return v.id === S.view; })[0] || views[0];
     if (cur) S.view = cur.id;
     $('#dr-desc').textContent = cur ? cur.desc : '';

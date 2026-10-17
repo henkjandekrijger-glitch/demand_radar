@@ -336,3 +336,16 @@ code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6
 .m-eb{margin-left:8px;font-size:11px;padding:1px 7px}
 .m-foot{margin-top:30px}
 @media (max-width:560px){.m-tab .sp{display:none}.m-own-h .m-spark{display:none}}
+
+/* Rustiger (17 okt): vier tegels, daaronder tekstlinks */
+.bar{justify-content:flex-end;margin-top:24px}
+.tiles{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.tile{padding:14px 16px;gap:4px;border-color:var(--line)}
+.tile .tn{font-size:16px;font-weight:650}
+.tile .tt{font-size:13px}
+.views{margin-top:10px;padding-bottom:12px}
+.vlinks{display:flex;flex-wrap:wrap;gap:2px 18px;margin-top:14px}
+.vlink{border:0;background:none;padding:4px 0;font:inherit;font-size:15px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent}
+.vlink:hover{color:var(--ink)}
+.vlink[aria-pressed="true"]{color:var(--ink);font-weight:600;border-bottom-color:var(--accent)}
+@media (max-width:720px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.vlinks{gap:2px 14px}.vlink{font-size:14px}}
