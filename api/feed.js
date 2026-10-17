@@ -8,6 +8,11 @@ export default async function handler(req, res) {
   const shop = String(req.query.shop || 'yoors'), cc = String(req.query.cc || 'NL').toUpperCase();
   if (!store || !SHOPS[shop] || !/^[A-Z]{2}$/.test(cc)) return res.status(404).send('not found');
   try {
+    if (req.query.probe && isPro(req)) { // eigenaar: zoals Google een productpagina ziet (uitgelogd)
+      const r = await fetch(SHOPS[shop].link(String(req.query.probe)), { headers: { 'user-agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)' }, redirect: 'follow', signal: AbortSignal.timeout(15000) });
+      const h = await r.text(), g = re => { const m = h.match(re); return m ? m[1].trim().slice(0, 160) : null; };
+      return res.status(200).json({ status: r.status, url: r.url, title: g(/<title[^>]*>([\s\S]*?)<\/title>/i), productLd: /"@type"\s*:\s*"Product"/.test(h), price: g(/"price"\s*:\s*"?([\d.,]+)/), game: /lollipop|yoors points|silver league/i.test(h), login: /log ?in|inloggen|sign in/i.test(g(/<title[^>]*>([\s\S]*?)<\/title>/i) || '') });
+    }
     const f = await getFeed(store, shop, cc, { force: !!(req.query.refresh && isPro(req)) });
     if (req.query.info && isPro(req)) return res.status(200).json({ at: f.at, products: f.n, skipped: f.skipped, bytes: f.xml.length, items: (f.xml.match(/<item>/g) || []).length });
     res.setHeader('Content-Type', 'application/xml; charset=utf-8');
