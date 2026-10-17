@@ -74,6 +74,8 @@
 
     var more = [];
     if (w) more.push(row('Interest (Wikipedia)', pct1(w.momentum) + ' this week · ' + pct1(w.yoy) + ' vs last year'));
+    var az = m && m.amazon;
+    if (az && az.volume != null) more.push(row('Amazon searches', num(az.volume) + ' a month on Amazon itself' + (az.ratio != null ? ' (' + (az.ratio >= 1 ? az.ratio.toFixed(1) + '× ' : Math.round(az.ratio * 100) + '% of ') + 'Google)' : '') + (az.ratio != null && az.ratio >= 0.5 ? ' · people go to Amazon to buy this' : '')));
     var bg = c.bing;
     if (bg && bg.change4w != null) more.push(row('Bing searches, weekly', (bg.change4w > 0 ? '+' : '') + bg.change4w + '% in the last 4 weeks vs the 4 before (fresher than Google\'s monthly data; direction only)'));
     var yv = c.youtube;
