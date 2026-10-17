@@ -31,7 +31,7 @@ export default async function handler(req, res) {
       if (op === 'drivers') { // nieuwe oorzaak-bronnen testen (eigenaar): ?op=drivers&cc=NL
         const D = await import('../lib/drivers.js'), cc = String(req.query.cc || 'NL').toUpperCase(), out = {};
         for (const [k, f] of Object.entries({ power: D.powerMonthly, fuel: D.fuelMonthly, retail: D.retailMonthly, now: D.energyNow })) {
-          try { const v = await f(cc); out[k] = k === 'now' ? v : Object.fromEntries(Object.entries(v || {}).map(([n, o]) => [n, Object.entries(o || {}).slice(-4)])); } catch (e) { out[k] = { error: String(e.message || e).slice(0, 160) }; }
+          try { const v = await f(cc); out[k] = k === 'now' ? v : Object.fromEntries(Object.entries(v || {}).map(([n, o]) => [n, Object.entries(o || {}).sort().slice(req.query.all ? 0 : -4)])); } catch (e) { out[k] = { error: String(e.message || e).slice(0, 160) }; }
         }
         return res.status(200).json(out);
       }
