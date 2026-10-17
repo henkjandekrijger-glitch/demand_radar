@@ -75,7 +75,8 @@ test('radar + check end to end on mock data', async () => {
 test('mcp connector', async () => {
   setFetch(mockFetch);
   const { default: mcp } = await import('../api/mcp.js');
-  const run = (body, key = 'dr-362d937ce815868c78') => new Promise(resolve => {
+  process.env.PRO_KEYS = 'dr-test-only-key'; // nooit een echte sleutel in deze (openbare) repo
+  const run = (body, key = 'dr-test-only-key') => new Promise(resolve => {
     const res = { headers: {}, statusCode: 200, setHeader(k, v) { this.headers[k] = v; }, status(c) { this.statusCode = c; return this; }, json(o) { resolve({ code: this.statusCode, body: o }); }, send(t) { resolve({ code: this.statusCode, body: JSON.parse(t) }); }, end() { resolve({ code: this.statusCode }); } };
     mcp({ method: 'POST', query: { key }, headers: { host: 'localhost:1' }, body }, res);
   });
