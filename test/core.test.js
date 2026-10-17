@@ -445,7 +445,7 @@ test('productfeed: Google-velden, korting, verzendkosten, escapen', async () => 
   const { feedXml } = await import('../lib/feed.js');
   const x = feedXml('yoors', [{ id: 'oc_1', title: 'Lamp & kap <groot>', price: 20, original_price: 25, brand: 'Mica', photos: [{ src: 'https://cdn/x.jpg' }, { src: 'https://cdn/y.jpg' }], type: 'physical', in_stock: true, delivery_days: 4, shipping_cost: 6.45, shop_category: 'home', shop_sub: 'lighting' }, { id: 'v1', title: 'Pass', price: 5, photos: [{ src: 'a' }], type: 'virtual' }], { cc: 'NL', titles: { oc_1: 'Hanglamp met kap' } });
   assert.ok(x.includes('<g:title>Hanglamp met kap</g:title>') && x.includes('<g:price>25.00 EUR</g:price>') && x.includes('<g:sale_price>20.00 EUR</g:sale_price>'));
-  assert.ok(x.includes('<g:link>https://yoo.rs/product/oc_1</g:link>') && x.includes('<g:additional_image_link>https://cdn/y.jpg') && x.includes('<g:price>6.45 EUR</g:price></g:shipping>'));
+  assert.ok(x.includes('<g:link>https://yoo.rs/product/oc_1?lang=nl</g:link>') && x.includes('<g:additional_image_link>https://cdn/y.jpg') && x.includes('<g:price>6.45 EUR</g:price></g:shipping>'));
   assert.ok(x.includes('Lamp &amp; kap &lt;groot&gt;') && !x.includes('Pass'));
 });
 
