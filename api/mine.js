@@ -63,7 +63,13 @@ export default async function handler(req, res) {
     }
     const out = await dailyMine(store, rec, { token, force: !!(req.query.refresh && isPro(req)), debug: !!(req.query.debug && isPro(req)), getDemand: async () => presentDemand(await getDemand(req)) });
     const { owner, ...pub } = rec;
-    return res.status(200).json({ ...pub, ...out });
+    // Eigen winkel met productfeed (nu Yoors Shop): stand van Google Shopping / Merchant Center, dagelijks ververst
+    let shopping = null;
+    if (/(^|\/\/|\.)yoo\.rs\/shop/.test(String(rec.url || ''))) {
+      const { getJSON } = await import('../lib/store.js'), f = await getJSON(store, 'feed/yoors-NL.json', null).catch(() => null), t = (await getJSON(store, 'feed/yoors-titles-NL.json', null).catch(() => null)) || {};
+      if (f) shopping = { feed: 'https://demandradar-ivory.vercel.app/api/feed?shop=yoors&cc=NL', products: f.n, at: f.at, titles: Object.keys(t).length, merchant: 'Yoors (5875752564)', fetch: 'every day at 00:00' };
+    }
+    return res.status(200).json({ ...pub, ...out, shopping });
   } catch (e) {
     res.status(500).json({ error: String(e.message || e).slice(0, 200) });
   }

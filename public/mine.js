@@ -56,7 +56,7 @@
     if (!c || c.error) return [err((c && c.error) || 'Could not map competitors right now.')];
     var out = [], n = (c.terms || []).length;
     (c.gaps || []).forEach(function (g) {
-      out.push(h('div', { class: 'line wild' }, h('b', { class: 'wild-t', text: g.title }), h('p', { class: 'wild-claim', text: g.why }), g.action ? h('p', { class: 'm-act' }, h('b', { text: 'This week: ' }), g.action) : null,
+      out.push(h('div', { class: 'line wild' }, h('b', { class: 'wild-t', text: g.title }), h('p', { class: 'wild-claim', text: g.why }), g.action ? h('p', { class: 'm-act' }, h('b', { text: 'This week: ' }), String(g.action).replace(/^this week,?\s*/i, '').replace(/^./, function (c) { return c.toUpperCase(); })) : null,
         g.terms && g.terms.length ? h('div', { class: 'm-chips' }, g.terms.slice(0, 4).map(function (t) { return h('span', { class: 'm-chip', text: t }); })) : null));
     });
     if (c.note) out.push(err(c.note));
@@ -90,6 +90,8 @@
         l.forEach(function (m) { parts.push(matchRow(m)); });
       });
       if (!any && !d.note) parts.push(h('p', { class: 'meta', text: 'Nothing on today\'s radar touches your business directly. We check again every day.' }));
+      if (d.shopping) parts.push(h('h2', { class: 'm-sec', text: 'Google Shopping' }), h('div', { class: 'record' }, h('div', { class: 'rec' }, h('b', { text: String(d.shopping.products) }), h('span', { text: 'products in the feed' })), h('div', { class: 'rec' }, h('b', { text: String(d.shopping.titles) }), h('span', { text: 'titles rewritten with search terms' })), h('div', { class: 'rec' }, h('b', { text: day(d.shopping.at) }), h('span', { text: 'feed refreshed' }))),
+        h('p', { class: 'meta', text: 'Merchant Center account ' + d.shopping.merchant + ' fetches the feed ' + d.shopping.fetch + '. Titles are rewritten every hour until all products are done.' }));
       var cbox = h('div', { id: 'm-compete' }, h('p', { class: 'loading', text: 'Mapping your competitors' }));
       parts.push(h('h2', { class: 'm-sec', text: 'Competitors and your gaps' }), cbox);
       parts.push(h('h2', { class: 'm-sec', text: 'Demand for what you sell' }));
