@@ -74,6 +74,10 @@
 
     var more = [];
     if (w) more.push(row('Interest (Wikipedia)', pct1(w.momentum) + ' this week · ' + pct1(w.yoy) + ' vs last year'));
+    var sh = c.aiShelf;
+    if (sh && (sh.shops.length || sh.brands.length)) more.push(row('AI assistants recommend', (sh.shops.length ? sh.shops.slice(0, 5).map(function (x) { return x.name + ' ' + x.n + '/' + sh.asked; }).join(', ') : '') + (sh.brands.length ? (sh.shops.length ? ' · brands: ' : 'brands: ') + sh.brands.slice(0, 4).map(function (x) { return x.name + ' ' + x.n + '/' + sh.asked; }).join(', ') : '')));
+    var en = c.energyNow;
+    if (en && (en.power || en.petrol)) more.push(row('Energy prices', [en.power ? 'power ' + en.power.now + ' €/MWh (' + (en.power.change > 0 ? '+' : '') + en.power.change + '% on last year)' : null, en.petrol ? 'petrol €' + en.petrol.now.toFixed(2) + '/l (' + (en.petrol.change > 0 ? '+' : '') + en.petrol.change + '%)' : null].filter(Boolean).join(' · ')));
     var az = m && m.amazon;
     if (az && az.volume != null) more.push(row('Amazon searches', num(az.volume) + ' a month on Amazon itself' + (az.ratio != null ? ' (' + (az.ratio >= 1 ? az.ratio.toFixed(1) + '× ' : Math.round(az.ratio * 100) + '% of ') + 'Google)' : '') + (az.ratio != null && az.ratio >= 0.5 ? ' · people go to Amazon to buy this' : '')));
     var bg = c.bing;

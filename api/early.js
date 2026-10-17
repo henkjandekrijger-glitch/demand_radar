@@ -17,6 +17,10 @@ export default async function handler(req, res) {
         return res.status(200).json(await seedEarly(store, cc, body && body.series));
       }
       if (op === 'score') return res.status(200).json(await scoreEarly(store));
+      if (op === 'shelf') { // AI-schap testen (eigenaar): ?op=shelf&q=...&cc=NL
+        const { aiShelf } = await import('../lib/aishelf.js');
+        return res.status(200).json(await aiShelf(String(req.query.q || 'airfryer'), String(req.query.cc || 'NL').toUpperCase(), null, { req }));
+      }
       if (op === 'models') { // AI Gateway: beschikbare modellen (eigenaar)
         const { gatewayToken } = await import('../lib/ai.js');
         const r = await fetch('https://ai-gateway.vercel.sh/v1/models', { headers: { authorization: `Bearer ${gatewayToken(req)}` }, signal: AbortSignal.timeout(15000) });

@@ -355,3 +355,14 @@ test('handover: notes, tasks and text', async () => {
   const txt = H.toText({ at: 'nu', site: 's', repo: 'r', deploy: {}, setup: { bing: true }, recentCommits: [] }, h, '');
   assert.match(txt, /LOGBOEK/); assert.match(txt, /Bing gekoppeld/); assert.match(txt, /HOE JE MEEWERKT/);
 });
+
+test('ai shelf: asks several models, tallies shops and brands', async () => {
+  const S = await import('../lib/aishelf.js'), { memoryStore } = await import('../lib/store.js');
+  const real = globalThis.fetch;
+  globalThis.fetch = async (url, o) => { const m = JSON.parse(o.body).model; const shops = m.startsWith('google') ? ['bol', 'MediaMarkt'] : ['bol.com', 'Coolblue'];
+    return new Response(JSON.stringify({ choices: [{ message: { content: `Tekst...\n{"shops":${JSON.stringify(shops)},"brands":["Philips"]}` } }] }), { status: 200 }); };
+  try {
+    const v = await S.aiShelf('airfryer', 'NL', memoryStore(), { token: 't' });
+    assert.equal(v.asked, S.SHELF_MODELS.length); assert.equal(v.shops[0].name.toLowerCase(), 'bol'); assert.equal(v.shops[0].n, S.SHELF_MODELS.length); assert.equal(v.brands[0].name, 'Philips');
+  } finally { globalThis.fetch = real; }
+});
