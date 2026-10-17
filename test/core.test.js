@@ -397,3 +397,35 @@ test('wildcards: meetlatten, nakijken en vroege lijst volgen', async () => {
   W = await wildList(store);
   assert.equal(W.record.hit, 1); assert.equal(W.record.made, WILD.length); assert.equal(W.items.find(x => x.id === 'p3').note, 'NL 60 vs 40');
 });
+
+test('mijn bedrijf: website lezen, profiel, eigen vraag en matchen', async () => {
+  const { safeUrl, pageText, makeProfile, saveProfile, getProfile, ownDemand, candidates, matchAI, dailyMine } = await import('../lib/mine.js');
+  const { setAiFetch } = await import('../lib/ai.js');
+  const { memoryStore, putJSON } = await import('../lib/store.js');
+  assert.equal(safeUrl('localhost:3000'), null); assert.equal(safeUrl('http://10.0.0.1/x'), null); assert.equal(safeUrl('shop.nl'), 'https://shop.nl/');
+  const t = pageText('<html lang="nl"><head><title>Zonnig</title><meta name="description" content="Thuisbatterijen"><script>x()</script></head><body><h1>Batterij &amp; zon</h1></body></html>');
+  assert.equal(t.lang, 'nl'); assert.ok(t.text.includes('Thuisbatterijen') && t.text.includes('Batterij & zon') && !t.text.includes('x()'));
+  let calls = 0;
+  setAiFetch(async (u, o) => { calls++; const b = JSON.parse(o.body), p = b.messages[0].content;
+    const text = p.includes('Demand Radar items') ? JSON.stringify({ matches: [{ id: 'r0', kind: 'direct', fit: 3, say: 'More people want batteries.' }, { id: 'zz', kind: 'direct', fit: 3, say: 'x' }, { id: 'n0', kind: 'nonsense', fit: 2, say: 'y' }] })
+      : JSON.stringify({ name: 'Zonnig', summary: 'Sells home batteries to Dutch homeowners.', sells: ['home batteries'], audience: 'consumers', countries: ['NL', 'XX'], themes: ['energy'], terms: { NL: ['Thuisbatterij', 'thuisbatterij', 'x'], DE: ['heimspeicher'], US: [] }, question: { q: 'Do you install?', options: ['Yes', 'No'] } });
+    return { ok: true, json: async () => ({ content: [{ type: 'text', text }] }) }; });
+  const p = await makeProfile({ url: 'https://zonnig.example', text: t.text, token: 't' });
+  assert.deepEqual(p.countries, ['NL']); assert.deepEqual(p.terms.NL, ['thuisbatterij']); assert.equal(p.question.q, 'Do you install?');
+  const store = memoryStore();
+  const rec = await saveProfile(store, { url: 'https://zonnig.example', profile: p, answers: { countries: ['NL'] }, owner: 'team' });
+  assert.ok((await getProfile(store, rec.id)).profile.terms.NL.includes('zonnig'));
+  const m = []; for (let i = 0; i < 30; i++) m.push([2024 + Math.floor((i + 3) / 12), ((i + 3) % 12) + 1, 1000 + i * 100]);
+  const own = ownDemand(rec, { NL: { kw: { thuisbatterij: { m } } } });
+  assert.equal(own.NL.terms[0].k, 'thuisbatterij'); assert.ok(own.NL.yoy > 0); assert.deepEqual(own.NL.waiting, ['zonnig']);
+  const d = { rise: [{ cc: 'NL', name: 'Home batteries', what: 'x', keyword: 'thuisbatterij', forecast: { chance: 80 } }, { cc: 'US', name: 'Skip me', what: 'y' }], items: [{ cc: 'NL', name: 'iPhone', what: 'z' }] };
+  const c = candidates(d, [], { items: [] }, ['NL']);
+  assert.deepEqual(c.map(x => x.id), ['r0', 'n0']);
+  const mt = await matchAI(rec, c, 't');
+  assert.equal(mt.length, 1); assert.equal(mt[0].q, 'thuisbatterij'); assert.equal(mt[0].chance, 80);
+  await putJSON(store, 'early/series-NL.json', { kw: { thuisbatterij: { m } } });
+  const out = await dailyMine(store, rec, { token: 't', getDemand: async () => d });
+  assert.equal(out.matches.length, 1); assert.equal(out.own.NL.terms.length, 1);
+  const n = calls; await dailyMine(store, rec, { token: 't', getDemand: async () => d }); assert.equal(calls, n); // dag-cache
+  setAiFetch(fetch);
+});

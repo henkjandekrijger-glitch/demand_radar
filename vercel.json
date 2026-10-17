@@ -112,6 +112,10 @@
       "destination": "/api/learn?key=:key&html=1"
     },
     {
+      "source": "/mine/:id",
+      "destination": "/mine.html"
+    },
+    {
       "source": "/overdracht",
       "destination": "/api/handover"
     },
