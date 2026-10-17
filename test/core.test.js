@@ -421,6 +421,9 @@ test('mijn bedrijf: website lezen, profiel, eigen vraag en matchen', async () =>
   const d = { rise: [{ cc: 'NL', name: 'Home batteries', what: 'x', keyword: 'thuisbatterij', forecast: { chance: 80 } }, { cc: 'US', name: 'Skip me', what: 'y' }], items: [{ cc: 'NL', name: 'iPhone', what: 'z' }] };
   const c = candidates(d, [], { items: [] }, ['NL']);
   assert.deepEqual(c.map(x => x.id), ['r0', 'n0']);
+  setAiFetch(async () => ({ ok: true, json: async () => ({ content: [{ type: 'text', text: '```json\n{"matches":[{"id":"r0","kind":"direct","fit":3,"say":"Ok."},{"id":"n0","kind":"thr' }] }) }));
+  assert.equal((await matchAI(rec, c, 't')).length, 1);
+  setAiFetch(async (u, o) => { calls++; const text = JSON.stringify({ matches: [{ id: 'r0', kind: 'direct', fit: 3, say: 'More people want batteries.' }, { id: 'zz', kind: 'direct', fit: 3, say: 'x' }, { id: 'n0', kind: 'nonsense', fit: 2, say: 'y' }] }); return { ok: true, json: async () => ({ content: [{ type: 'text', text }] }) }; });
   const mt = await matchAI(rec, c, 't');
   assert.equal(mt.length, 1); assert.equal(mt[0].q, 'thuisbatterij'); assert.equal(mt[0].chance, 80);
   await putJSON(store, 'early/series-NL.json', { kw: { thuisbatterij: { m } } });
