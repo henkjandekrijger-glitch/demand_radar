@@ -25,7 +25,7 @@ export default async function handler(req, res) {
       if (op === 'yt') { // YouTube-koppeling testen (eigenaar): ?op=yt&q=...&cc=NL
         const { ytActivity, ytReady } = await import('../lib/youtube.js');
         try { return res.status(200).json({ ready: ytReady(), v: await ytActivity(String(req.query.q || 'thuisbatterij'), String(req.query.cc || 'NL').toUpperCase(), store) }); }
-        catch (e) { return res.status(200).json({ ready: ytReady(), error: String(e.message || e).slice(0, 200) }); }
+        catch (e) { return res.status(200).json({ ready: ytReady(), error: String(e.message || e).slice(0, 300) }); }
       }
       if (op === 'refresh') return res.status(200).json(await refreshEarly(store, { max: Math.min(3, +(req.query.max || 1.5)) }));
       return res.status(400).json({ error: 'unknown op' });
