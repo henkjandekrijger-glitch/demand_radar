@@ -21,7 +21,7 @@ export default async function handler(req, res) {
       if (op === 'done') return res.status(200).json({ ok: true, todo: await doneTodo(store, a) });
       return res.status(400).json({ error: 'op must be note, todo or done' });
     }
-    const [st, h] = await Promise.all([liveStatus(store, { owner: isPro(req) }), readHandover(store)]);
+    const [st, h] = await Promise.all([liveStatus(store, { owner: isPro(req), req }), readHandover(store)]);
     const f = String(req.query.format || '');
     if (f === 'json') return res.status(200).json({ how: HOW, status: st, ...h });
     const text = toText(st, h, f === 'short' ? '' : readme());

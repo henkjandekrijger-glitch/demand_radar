@@ -180,7 +180,7 @@ async function call(name, args, req) {
   if (name === 'handover' || name === 'handover_note') {
     if (!req.plan || req.plan.plan !== 'team') return 'The handover is only for the Demand Radar team (team key).';
     const H = await import('../lib/handover.js'), { getStore } = await import('../lib/store.js'), store = getStore();
-    if (name === 'handover') { const [st, h] = await Promise.all([H.liveStatus(store, { owner: true }), H.readHandover(store)]); return H.toText(st, h, args.short ? '' : H.readme()); }
+    if (name === 'handover') { const [st, h] = await Promise.all([H.liveStatus(store, { owner: true, req }), H.readHandover(store)]); return H.toText(st, h, args.short ? '' : H.readme()); }
     if (args.done) { const t = await H.doneTodo(store, { id: args.done, text: args.text, who: args.who }); return `Task ${t.id} closed.`; }
     if (args.todo) { const t = await H.addTodo(store, args); return `Task ${t.id} added.`; }
     await H.addNote(store, args); return 'Note added to the handover log.';
