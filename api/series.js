@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     const tb = budget(1.5);
     const fn = req.query.src === 'google' ? googleTrends : longTrends;
     // ?range=past_7_days|past_30_days|past_90_days|past_12_months (alleen met src=google): dag- of weekdata voor korte toetsen
-    const range = ['past_7_days', 'past_30_days', 'past_90_days', 'past_12_months', 'past_5_years'].includes(String(req.query.range)) ? String(req.query.range) : null;
+    const range = ['past_7_days', 'past_30_days', 'past_90_days', 'past_12_months', 'past_5_years'].includes(String(req.query.range)) || /^\d{4}-\d{2}-\d{2}:\d{4}-\d{2}-\d{2}$/.test(String(req.query.range)) ? String(req.query.range) : null;
     const parts = await pool(groups, 25, g => (range && fn === googleTrends ? fn(g, C, tb, range) : fn(g, C, tb)));
     const all = Object.assign({}, ...parts.filter(Boolean)), first = Object.values(all)[0];
     // Compact: één datumlijst, per zoekterm alleen de waarden (anders te groot voor één antwoord).
