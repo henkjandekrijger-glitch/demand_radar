@@ -70,6 +70,7 @@ export default async function handler(req, res) {
     const j = await dfsGet(`business_data/${src}/reviews/task_get/${id}`).catch(() => null);
     const t = j && (j.tasks || [])[0];
     if (!t) return res.status(502).json({ error: 'no answer' });
+    if (/no search results/i.test(t.status_message || '')) return res.status(200).json({ status: 'notfound', msg: 'Geen bedrijf gevonden; probeer naam + plaats.' });
     if (t.status_code !== 20000 || !(t.result && t.result[0])) return res.status(200).json({ status: 'pending', msg: t.status_message });
     const data = slim(t);
     const meta = store ? await getJSON(store, `reviews/task/${id}.json`).catch(() => null) : null;
