@@ -51,6 +51,28 @@
       o.waiting && o.waiting.length ? h('p', { class: 'meta', text: (top.length ? 'Still collecting 4 years of data for ' + o.waiting.length + ' more searches' : 'Collecting 4 years of data for ' + o.waiting.length + ' searches') + '; ready within a day.' }) : null,
       o.rare && o.rare.length ? h('p', { class: 'meta', text: 'Too few searches to measure: ' + o.rare.join(', ') + '.' }) : null);
   }
+  var KINDN = { shop: 'shop', marketplace: 'marketplace', content: 'content site' };
+  function competeBlock(c) {
+    if (!c || c.error) return [err((c && c.error) || 'Could not map competitors right now.')];
+    var out = [], n = (c.terms || []).length;
+    (c.gaps || []).forEach(function (g) {
+      out.push(h('div', { class: 'line wild' }, h('b', { class: 'wild-t', text: g.title }), h('p', { class: 'wild-claim', text: g.why }), g.action ? h('p', { class: 'm-act' }, h('b', { text: 'This week: ' }), g.action) : null,
+        g.terms && g.terms.length ? h('div', { class: 'm-chips' }, g.terms.slice(0, 4).map(function (t) { return h('span', { class: 'm-chip', text: t }); })) : null));
+    });
+    if (c.note) out.push(err(c.note));
+    var mine = c.mine || [];
+    out.push(h('p', { class: 'meta', text: c.serpChecked ? (mine.length ? 'You are in Google\'s top 10 for ' + mine.length + ' of ' + c.serpChecked + ' searches: ' + mine.map(function (m) { return m.k + ' (#' + m.pos + ')'; }).join(', ') + '.' : 'You are not in Google\'s top 10 for any of these ' + c.serpChecked + ' searches.') : 'Google positions are checked within a day (daily data budget).' }));
+    if ((c.competitors || []).length) {
+      var rows = c.competitors.slice(0, 8).map(function (x) { return h('tr', null, h('td', null, x.domain, h('span', { class: 'meta', text: ' · ' + (KINDN[x.kind] || x.kind) })), h('td', { class: 'n', text: x.hits + ' of ' + c.serpChecked }), h('td', { class: 'n', text: x.best < 99 ? '#' + x.best : '–' }), h('td', { class: 'n', text: x.ads ? String(x.ads) : '–' })); });
+      out.push(h('table', { class: 'm-tab' }, h('thead', null, h('tr', null, h('th', { text: 'Who wins your searches in Google' }), h('th', { class: 'n', text: 'Top 10' }), h('th', { class: 'n', text: 'Best' }), h('th', { class: 'n', text: 'Ads' }))), h('tbody', null, rows)));
+    }
+    if ((c.shelf || []).length) {
+      out.push(h('p', { class: 'meta', style: 'margin-top:14px', text: 'What AI assistants (ChatGPT, Gemini, Perplexity, Claude) recommend when asked where to buy:' }));
+      c.shelf.forEach(function (s) { out.push(h('p', { class: 'm-shelf' }, h('b', { text: s.k + ': ' }), s.shops.length ? s.shops.map(function (x) { return x.name + ' ' + x.n + '/' + s.asked; }).join(', ') : 'no shops named')); });
+      out.push(h('p', { class: 'meta', text: c.aiMentionsUs ? 'You were named for ' + c.aiMentionsUs + ' of ' + c.shelf.length + ' searches.' : 'You were not named for any of them.' }));
+    }
+    return out;
+  }
   function follow(id) {
     $('#m-h').textContent = 'Loading your business';
     api('/api/mine?id=' + encodeURIComponent(id)).then(function (d) {
@@ -68,11 +90,14 @@
         l.forEach(function (m) { parts.push(matchRow(m)); });
       });
       if (!any && !d.note) parts.push(h('p', { class: 'meta', text: 'Nothing on today\'s radar touches your business directly. We check again every day.' }));
+      var cbox = h('div', { id: 'm-compete' }, h('p', { class: 'loading', text: 'Mapping your competitors' }));
+      parts.push(h('h2', { class: 'm-sec', text: 'Competitors and your gaps' }), cbox);
       parts.push(h('h2', { class: 'm-sec', text: 'Demand for what you sell' }));
       parts.push(h('p', { class: 'meta', text: 'Monthly Google searches for what your customers type, with the trend and our early-signal test on each.' }));
       Object.keys(d.own || {}).forEach(function (cc) { parts.push(ownBlock(cc, d.own[cc])); });
       parts.push(h('p', { class: 'm-foot' }, h('a', { href: '/mine', text: 'Add another business' }), ' · ', h('a', { href: '/', text: 'Open the full radar' })));
       show.apply(null, parts);
+      api('/api/mine?id=' + encodeURIComponent(id) + '&compete=1').then(function (c) { cbox.replaceChildren.apply(cbox, competeBlock(c)); }).catch(function () { cbox.replaceChildren(err('Could not map competitors right now.')); });
     }).catch(function () { $('#m-h').textContent = 'Could not load.'; show(err('Try again in a minute.')); });
   }
 

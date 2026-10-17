@@ -467,3 +467,12 @@ test('feedtitels: slimme zoekterm kiezen en titels schrijven', async () => {
   assert.equal((await getJSON(store, 'feed/yoors-opt-NL.json')).pick.oc_1.p, '3d puzzel hout');
   setAiFetch(fetch);
 });
+
+test('concurrenten: domeinen tellen, marktplaatsen herkennen, eigen positie', async () => {
+  const { tally, pickTerms } = await import('../lib/compete.js');
+  const t = tally([{ k: 'windgong', organic: [{ domain: 'www.bol.com' }, { domain: 'tuinwinkel.nl' }, { domain: 'yoo.rs' }], ads: [{ domain: 'tuinwinkel.nl' }] }, { k: 'windspinner', organic: [{ domain: 'tuinwinkel.nl' }, { domain: 'youtube.com' }] }], ['yoo.rs']);
+  assert.equal(t.competitors[0].domain, 'tuinwinkel.nl'); assert.equal(t.competitors[0].hits, 2); assert.equal(t.competitors[0].ads, 1);
+  assert.equal(t.competitors.find(x => x.domain === 'bol.com').kind, 'marketplace'); assert.equal(t.competitors.find(x => x.domain === 'youtube.com').kind, 'content');
+  assert.deepEqual(t.mine, [{ k: 'windgong', pos: 3 }]);
+  assert.deepEqual(pickTerms({ profile: { countries: ['NL'], terms: { NL: ['a', 'b'] } } }, null).map(x => x.k), ['a', 'b']);
+});

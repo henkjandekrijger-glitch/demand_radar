@@ -349,3 +349,5 @@ code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6
 .vlink:hover{color:var(--ink)}
 .vlink[aria-pressed="true"]{color:var(--ink);font-weight:600;border-bottom-color:var(--accent)}
 @media (max-width:720px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.vlinks{gap:2px 14px}.vlink{font-size:14px}}
+.m-act{margin:6px 0 0;color:var(--ink)}
+.m-shelf{margin:4px 0 0;font-size:14px;color:var(--body)}

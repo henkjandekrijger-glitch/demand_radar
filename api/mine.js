@@ -56,6 +56,11 @@ export default async function handler(req, res) {
     const rec = await getProfile(store, String(req.query.id || ''));
     if (!rec) return res.status(404).json({ error: 'Not found. Check the link.' });
     const { getDemand } = await import('../lib/data.js'), { presentDemand } = await import('../lib/demand.js');
+    if (req.query.compete) { // concurrenten en gaten (wekelijks, lui)
+      const { getDemand } = await import('../lib/data.js'), { presentDemand } = await import('../lib/demand.js'), { compete } = await import('../lib/compete.js');
+      const d0 = await dailyMine(store, rec, { token, getDemand: async () => presentDemand(await getDemand(req)) });
+      return res.status(200).json(await compete(store, rec, d0.own, { token, force: !!(req.query.refresh && isPro(req)) }));
+    }
     const out = await dailyMine(store, rec, { token, force: !!(req.query.refresh && isPro(req)), debug: !!(req.query.debug && isPro(req)), getDemand: async () => presentDemand(await getDemand(req)) });
     const { owner, ...pub } = rec;
     return res.status(200).json({ ...pub, ...out });
