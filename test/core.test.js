@@ -323,7 +323,7 @@ test('youtube creators: counts, growth, views, quota and cache', async () => {
   process.env.YOUTUBE_API_KEY = 'test';
   globalThis.fetch = async url => { calls++; const u = new URL(url);
     const body = u.pathname.endsWith('/search') ? (Date.parse(u.searchParams.get('publishedBefore')) > Date.now() - 864e5
-      ? { items: Array.from({ length: 12 }, (_, i) => ({ id: { videoId: 'v' + i } })), pageInfo: { totalResults: 300 } } : { items: [{ id: { videoId: 'old' } }, { id: { videoId: 'old2' } }], pageInfo: { totalResults: 40 } })
+      ? { items: Array.from({ length: 12 }, (_, i) => ({ id: { videoId: 'v' + i } })).concat([{ id: { videoId: 'v0' } }]), pageInfo: { totalResults: 300 } } : { items: [{ id: { videoId: 'old' } }, { id: { videoId: 'old2' } }], pageInfo: { totalResults: 40 } })
       : { items: u.searchParams.get('id').split(',').map((id, i) => ({ id, snippet: { title: 'T' + i, channelTitle: 'C', publishedAt: '2026-10-01T00:00:00Z' }, statistics: { viewCount: String(1000 * (i + 1)) } })) };
     return new Response(JSON.stringify(body), { status: 200 }); };
   try {
