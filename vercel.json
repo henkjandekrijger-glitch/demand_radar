@@ -50,6 +50,10 @@
     },
     "api/early.js": {
       "maxDuration": 300
+    },
+    "api/handover.js": {
+      "maxDuration": 30,
+      "includeFiles": "README.md"
     }
   },
   "crons": [
@@ -106,6 +110,14 @@
     {
       "source": "/leren/:key",
       "destination": "/api/learn?key=:key&html=1"
+    },
+    {
+      "source": "/overdracht",
+      "destination": "/api/handover"
+    },
+    {
+      "source": "/handover",
+      "destination": "/api/handover"
     }
   ],
   "redirects": [

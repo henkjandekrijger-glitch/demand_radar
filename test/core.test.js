@@ -84,7 +84,7 @@ test('mcp connector', async () => {
   const init = await run({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-06-18' } });
   assert.equal(init.body.result.serverInfo.name, 'demand-radar');
   const list = await run({ jsonrpc: '2.0', id: 2, method: 'tools/list' });
-  assert.equal(list.body.result.tools.length, 5);
+  assert.equal(list.body.result.tools.length, 7); // team ziet ook handover + handover_note
   const call = await run({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'check_demand', arguments: { idea: 'padel', market: 'NL', city: 'Gouda' } } });
   const text = call.body.result.content[0].text;
   assert.ok(text.includes('Demand check') && text.includes('LOCAL') && text.includes('Gouda'), text.slice(0, 300));
@@ -342,4 +342,16 @@ test('bing weekly: parse and 4-week trend', async () => {
     const w = await B.bingWeekly('x', 'NL'); assert.equal(w.length, 12); assert.ok(w[0].d < w[11].d);
     const t = B.bingTrend(w); assert.equal(t.change4w, 50);
   } finally { globalThis.fetch = real; delete process.env.BING_WEBMASTER_KEY; }
+});
+
+test('handover: notes, tasks and text', async () => {
+  const H = await import('../lib/handover.js'), { memoryStore } = await import('../lib/store.js');
+  const store = memoryStore();
+  await H.addNote(store, { who: 'test', text: 'Bing gekoppeld' });
+  const t = await H.addTodo(store, { who: 'test', text: 'Sleutel in Vercel' });
+  await H.doneTodo(store, { id: t.id, text: 'gedaan', who: 'test' });
+  const h = await H.readHandover(store);
+  assert.equal(h.log[0].text, 'Bing gekoppeld'); assert.ok(h.todo[0].done);
+  const txt = H.toText({ at: 'nu', site: 's', repo: 'r', deploy: {}, setup: { bing: true }, recentCommits: [] }, h, '');
+  assert.match(txt, /LOGBOEK/); assert.match(txt, /Bing gekoppeld/); assert.match(txt, /HOE JE MEEWERKT/);
 });

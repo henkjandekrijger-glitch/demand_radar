@@ -4,6 +4,8 @@ Live vraag-signalen voor NL, VS, DE en wereldwijd: **Spikes** (wat nu piekt), **
 
 Een dienst van ADSFAIR B.V. Draait volledig op Vercel, zonder computer of Claude-account.
 
+> **Live overdracht voor andere chats (altijd actueel): https://demandradar-ivory.vercel.app/overdracht** — als tekst: `?format=text`. Daar staan de live status, open taken, het logboek van alle chats en de laatste codewijzigingen. Bijwerken na elke wijziging: MCP-tool `handover_note` of `POST /api/handover?op=note&key=…` (zie CLAUDE.md).
+
 ## Stand van zaken (overdracht) — 13 okt 2026
 - **Voorpagina = Demand Radar** (`public/index.html` + `public/radar.js`, data uit `/api/demand`). Categorieën: producten, cursussen & training, boeken, diensten, apps & AI, reizen & uitjes, geld & contracten, plus **Onverwacht**, **Bestaat nog niet** en **Komt eraan**. Per land NL, DE, US.
 - De oude pagina met de idee-check staat op `/check`; de kansenkaart op `/map`; uitleg voor collega's op `/team`.

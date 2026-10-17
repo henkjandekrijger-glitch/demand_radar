@@ -29,6 +29,16 @@ const TOOLS = [
     inputSchema: { type: 'object', properties: { cc: { type: 'string', enum: ['NL', 'DE', 'US', 'WW'] }, term: { type: 'string', description: 'The search term or topic the campaign targeted.' }, network: { type: 'string' }, clicks: { type: 'number' }, conversions: { type: 'number' }, spend: { type: 'number', description: 'In dollars or euros.' }, revenue: { type: 'number' }, date: { type: 'string', description: 'YYYY-MM-DD' } }, required: ['cc', 'term'] },
   },
   {
+    name: 'handover',
+    description: 'TEAM ONLY. The always-current handover for Demand Radar: how to work on it, live status (connections, model, early signals, spend), open tasks, the log of what other chats did, recent code changes and the full README. Read this first before working on Demand Radar.',
+    inputSchema: { type: 'object', properties: { short: { type: 'boolean', description: 'Leave out the long README part.' } } },
+  },
+  {
+    name: 'handover_note',
+    description: 'TEAM ONLY. Update the shared Demand Radar handover after you changed or decided something, so other chats can continue: add a log note, open a task, or close a task.',
+    inputSchema: { type: 'object', properties: { text: { type: 'string', description: 'What you did or decided (short, Dutch is fine), or the task text.' }, who: { type: 'string', description: 'Which chat/session you are, e.g. "claude.ai chat" or "Claude Code".' }, todo: { type: 'boolean', description: 'true = add text as an open task instead of a log note.' }, done: { type: 'number', description: 'Id of an open task to close; text = how it was done.' } }, required: ['text'] },
+  },
+  {
     name: 'live_signals',
     description: 'The live Demand Radar overview: spikes right now (product spikes, Google trending searches, Wikipedia attention spikes), upcoming demand (shopping moments, public holidays, regulation deadlines, weather-driven demand, seasonal rises based on last year), products rising now, and App Store / Apple Books top charts. Filter by market.',
     inputSchema: { type: 'object', properties: { market: { type: 'string', enum: ['ALL', ...MK], description: 'Market filter, default ALL.' }, section: { type: 'string', enum: ['all', 'spikes', 'upcoming', 'rising', 'charts'], description: 'Which part, default all.' }, limit: { type: 'number', description: 'Max items per list, default 10.' } } },
@@ -167,6 +177,14 @@ async function call(name, args, req) {
     const ok = await outcome(getStore(), args);
     return ok ? `Saved: ${args.term} (${args.cc}). The radar uses it in tonight's learning round.` : 'Not saved: give cc (NL, DE, US or WW) and a term.';
   }
+  if (name === 'handover' || name === 'handover_note') {
+    if (!req.plan || req.plan.plan !== 'team') return 'The handover is only for the Demand Radar team (team key).';
+    const H = await import('../lib/handover.js'), { getStore } = await import('../lib/store.js'), store = getStore();
+    if (name === 'handover') { const [st, h] = await Promise.all([H.liveStatus(store, { owner: true }), H.readHandover(store)]); return H.toText(st, h, args.short ? '' : H.readme()); }
+    if (args.done) { const t = await H.doneTodo(store, { id: args.done, text: args.text, who: args.who }); return `Task ${t.id} closed.`; }
+    if (args.todo) { const t = await H.addTodo(store, args); return `Task ${t.id} added.`; }
+    await H.addNote(store, args); return 'Note added to the handover log.';
+  }
   if (name === 'live_signals') {
     const r = await getRadar(req);
     const m = String(args.market || 'ALL').toUpperCase();
@@ -178,9 +196,9 @@ async function call(name, args, req) {
 async function handle(msg, req) {
   const { id, method, params = {} } = msg || {};
   const ok = result => ({ jsonrpc: '2.0', id, result });
-  if (method === 'initialize') return ok({ protocolVersion: params.protocolVersion || '2025-06-18', capabilities: { tools: { listChanged: false } }, serverInfo: { name: 'demand-radar', version: '1.1.0' }, instructions: 'Use opportunity_map to find where demand and gaps are in a theme (default: everything people practise for). Use check_demand before choosing a product, campaign or business idea, and demand_radar for what is spiking, rising or coming up. Markets: NL, US, DE, WW. Add a city for a hyperlocal check.' });
+  if (method === 'initialize') return ok({ protocolVersion: params.protocolVersion || '2025-06-18', capabilities: { tools: { listChanged: false } }, serverInfo: { name: 'demand-radar', version: '1.1.0' }, instructions: 'Use opportunity_map to find where demand and gaps are in a theme (default: everything people practise for). Use check_demand before choosing a product, campaign or business idea, and demand_radar for what is spiking, rising or coming up. Markets: NL, US, DE, WW. Add a city for a hyperlocal check. Team: working ON Demand Radar itself? Read the handover tool first and log what you did with handover_note.' });
   if (method === 'ping') return ok({});
-  if (method === 'tools/list') return ok({ tools: TOOLS });
+  if (method === 'tools/list') return ok({ tools: req.plan && req.plan.plan === 'team' ? TOOLS : TOOLS.filter(t => !t.name.startsWith('handover')) }); // overdracht alleen voor het team
   if (method === 'tools/call') {
     try { return ok({ content: [{ type: 'text', text: await call(params.name, params.arguments || {}, req) }] }); }
     catch (e) { return ok({ content: [{ type: 'text', text: String(e.message || e) }], isError: true }); }
