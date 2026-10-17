@@ -56,7 +56,7 @@
       if (d.error) { $('#m-h').textContent = 'Not found.'; $('#m-lead').textContent = d.error; show(h('p', null, h('a', { href: '/mine', text: 'Add your business' }))); return; }
       var p = d.profile; remember({ id: d.id, name: p.name }); document.title = p.name + ' · Demand Radar';
       $('#m-h').textContent = p.name;
-      $('#m-lead').replaceChildren(p.summary + ' ', d.url ? h('a', { href: d.url, rel: 'noopener', target: '_blank', text: d.url.replace(/^https?:\/\//, '').replace(/\/$/, '') }) : null);
+      $('#m-lead').replaceChildren(p.summary + ' ', d.url ? String(d.url).split(' ').reduce(function (acc, u, i) { return acc.concat([i ? ' · ' : '', h('a', { href: u, rel: 'noopener', target: '_blank', text: u.replace(/^https?:\/\//, '').replace(/\/$/, '') })]); }, []) : null);
       var parts = [h('p', { class: 'status', text: 'Matched to today\'s radar (' + day(d.radarDay || d.day) + ') · ' + p.countries.map(function (c) { return CCN[c]; }).join(', ') + ' · updates every day, keep this link' })];
       parts.push(h('h2', { class: 'm-sec', text: 'What the radar sees for you' }));
       if (d.note) parts.push(err(d.note));
@@ -78,7 +78,7 @@
   // ---------- Toevoegen: één vraag per keer ----------
   var W = {};
   function start() {
-    var url = h('input', { id: 'm-url', maxlength: '200', autocomplete: 'url', placeholder: 'yourwebsite.com', 'aria-label': 'Your website' });
+    var url = h('input', { id: 'm-url', maxlength: '200', autocomplete: 'url', placeholder: 'yourwebsite.com (more sites: separate with a space)', 'aria-label': 'Your website' });
     var txt = h('textarea', { id: 'm-txt', rows: '2', maxlength: '600', placeholder: 'No website? Describe what you sell in one sentence.', 'aria-label': 'Describe your business' });
     var note = h('p', { class: 'status', text: '' }), go = h('button', { class: 'cta', type: 'submit', text: 'Analyse my business' });
     var f = h('form', { class: 'm-form', novalidate: '' }, url, txt, go);

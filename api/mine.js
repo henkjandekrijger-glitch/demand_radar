@@ -26,11 +26,14 @@ export default async function handler(req, res) {
       const b = body(req);
       if (op === 'analyse') {
         if (!(await underLimit(store))) return res.status(429).json({ error: 'Too many requests today, try again tomorrow.' });
-        let site = null;
-        if (b.url) site = await readSite(String(b.url)).catch(e => ({ error: String(e.message || e) }));
-        if (site && site.error && !b.text) return res.status(400).json({ error: `${site.error} You can also describe your business in one sentence.` });
-        const profile = await makeProfile({ url: site && !site.error ? site.url : '', text: site && !site.error ? site.text : '', note: String(b.text || b.note || '').slice(0, 600), token });
-        return res.status(200).json({ url: site && !site.error ? site.url : null, profile });
+        // één of meer websites (gescheiden door spatie of komma), max 3
+        const urls = [...new Set(String(b.url || '').split(/[\s,]+/).filter(Boolean))].slice(0, 3);
+        const sites = await Promise.all(urls.map(u => readSite(u).catch(e => ({ error: String(e.message || e) }))));
+        const ok = sites.filter(x => !x.error);
+        if (urls.length && !ok.length && !b.text) return res.status(400).json({ error: `${sites[0].error} You can also describe your business in one sentence.` });
+        const text = ok.map(x => `[${x.url}]\n${x.text.slice(0, Math.floor(7000 / ok.length))}`).join('\n\n');
+        const profile = await makeProfile({ url: ok.map(x => x.url).join(' '), text, note: String(b.text || b.note || '').slice(0, 600), token });
+        return res.status(200).json({ url: ok.length ? ok.map(x => x.url).join(' ') : null, profile });
       }
       // save: antwoorden verwerken (land, antwoord op de vraag, wat er nog meer bij kan), profiel aanscherpen, opslaan
       const p0 = b.profile; if (!p0 || !p0.name) return res.status(400).json({ error: 'profile missing' });
