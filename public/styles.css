@@ -198,13 +198,13 @@ code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6
 #learning,#sources{margin-top:40px}
 @media (max-width:560px){.line{grid-template-columns:minmax(0,1fr)}.line .spark{display:none}.line-top{flex-wrap:wrap}.badges{justify-content:flex-start}}
 #radar{border-top:0;padding-top:0;margin-top:6px!important}
-#dr-mk{margin-top:22px}
+#dr-mk{margin:0}
 /* Schone voorpagina */
 .clean main{max-width:920px;padding-top:40px}
 .clean h1{margin:0 0 8px}
 .clean .lead{margin:0;color:var(--body)}
 .status{font-size:14px;color:var(--muted);margin:10px 0 0;min-height:1.4em}
-.bar{display:flex;align-items:flex-end;gap:16px;margin-top:30px;border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:10px;margin-top:30px}
 .bar .tabs{border-bottom:0;margin:0;flex:1 1 auto;min-width:0}
 .seg{display:inline-flex;flex:0 0 auto;border:1px solid var(--line-strong);border-radius:999px;padding:2px;margin-bottom:8px}
 .seg button{border:0;background:none;font-size:13px;font-weight:600;color:var(--muted);padding:4px 10px;border-radius:999px}
@@ -266,3 +266,36 @@ code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6
 /* Early signals: kop per laag */
 .early-head { padding: 18px 0 6px; border-bottom: 1px solid var(--line, #e5e7eb); }
 .early-head b { font-size: 15px; }
+
+/* Weergaven als tegels: alles in één oogopslag */
+.bar-l{font-size:13px;font-weight:600;color:var(--muted)}
+.views{margin-top:12px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:11px 12px;color:var(--ink);font:inherit;cursor:pointer;min-width:0}
+.tile:hover,.ctile:hover{border-color:var(--line-strong)}
+.tile[aria-pressed="true"],.ctile[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.tile .tn{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;font-size:15px;font-weight:650;line-height:1.25}
+.tile .tt{font-size:13px;color:var(--muted);line-height:1.3}
+.tile .cnt,.ctile .cnt{font-size:12px;font-weight:600;padding:1px 7px;border-radius:999px;background:var(--line);color:var(--muted);font-variant-numeric:tabular-nums;flex:0 0 auto}
+.tile[aria-pressed="true"] .cnt,.ctile[aria-pressed="true"] .cnt{background:var(--panel);color:var(--accent)}
+.cats{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px}
+.cats-l{font-size:13px;font-weight:600;color:var(--muted);margin-right:4px}
+.ctile{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:14px;font-weight:600;color:var(--body);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:5px 8px 5px 12px;cursor:pointer}
+@media (max-width:720px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.tile{padding:9px 10px}.tile .tn{font-size:14px}.tile .tt{font-size:12px}}
+/* Wildcards + trackrecord */
+.line.wild{display:block}
+.record{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:14px 0 6px}
+.rec{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.rec b{font-size:22px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.rec span{font-size:13px;color:var(--muted)}
+.rec.ok b{color:var(--ok)}.rec.bad b{color:var(--warn)}
+@media (max-width:720px){.record{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.wild-t{font-size:16px;color:var(--ink)}
+.wild-claim{margin:4px 0 0;color:var(--body)}
+.wild-res{margin:6px 0 0;color:var(--ink);font-weight:600}
+.wild-tests{margin:8px 0 0;padding:0;list-style:none;font-size:14px;color:var(--body)}
+.wild-tests li{margin:3px 0;font-variant-numeric:tabular-nums}
+.wild-tests li.pass b{color:var(--ok)}.wild-tests li.fail b{color:var(--warn)}.wild-tests li.waiting b{color:var(--muted);font-weight:500}
+.wild-why,.wild-why:last-of-type{margin-top:4px;font-size:14px;border:0;padding:0}
+.wild-why summary{cursor:pointer;color:var(--accent);font-weight:600}
+.wild-why p{margin:6px 0 0;color:var(--body)}

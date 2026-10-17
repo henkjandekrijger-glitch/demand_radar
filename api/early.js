@@ -51,9 +51,15 @@ export default async function handler(req, res) {
         try { return res.status(200).json({ ready: ytReady(), v: await ytActivity(String(req.query.q || 'thuisbatterij'), String(req.query.cc || 'NL').toUpperCase(), store) }); }
         catch (e) { return res.status(200).json({ ready: ytReady(), error: String(e.message || e).slice(0, 300) }); }
       }
+      if (op === 'wild') { // wildcards (eigenaar): ?op=wild&id=p3&status=hit|partly|miss|open&note=… ; ?op=wild&check=1 kijkt nu na (gratis)
+        const { setVerdict, checkWild } = await import('../lib/wildcards.js');
+        if (req.query.check) return res.status(200).json(await checkWild(store));
+        return res.status(200).json(await setVerdict(store, String(req.query.id || ''), String(req.query.status || ''), req.query.note));
+      }
       if (op === 'refresh') return res.status(200).json(await refreshEarly(store, { max: Math.min(3, +(req.query.max || 1.5)) }));
       return res.status(400).json({ error: 'unknown op' });
     }
+    if (req.query.wild) { const { wildList } = await import('../lib/wildcards.js'); res.setHeader('Cache-Control', 'public, max-age=600'); return res.status(200).json(await wildList(store)); }
     const L = await latestEarly(store);
     if (!L) return res.status(200).json({ ready: false, items: [] });
     const cc = String(req.query.cc || '').toUpperCase(), tier = String(req.query.tier || ''), n = Math.max(1, Math.min(200, +req.query.limit || 50));

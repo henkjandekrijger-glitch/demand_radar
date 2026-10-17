@@ -8,6 +8,8 @@
   var MKN = { NL: 'Netherlands', DE: 'Germany', US: 'United States', WW: 'Worldwide' };
   var LBL = { new: ['New demand'], seasonal: ['Seasonal'], rising: ['Growing'], steady: ['Steady demand'] };
   var NOW = { rising: ['Rising today', 'p-early'], steady: ['Holding', 'p-steady'], fading: ['Fading', 'p-falling'], gone: ['Over', 'p-falling'], quiet: ['', ''] };
+  var TAG = { rise: 'Forecast, with the odds', early: 'Before anyone sees it', wild: 'Bold calls + track record', coming: 'Buying moments ahead', now: 'Fastest growth today', unexpected: 'Nobody saw it coming', missing: 'Wanted, not found' };
+  var KEEP = { rise: 1, early: 1, wild: 1, now: 1 };
   var ITEM_VIEWS = { now: 1, products: 1, courses: 1, books: 1, services: 1, apps: 1, trips: 1, money: 1 };
   try { var saved = JSON.parse(localStorage.getItem('dr-view') || 'null'); if (saved) { S.mk = saved.mk || S.mk; S.view = saved.view || S.view; } } catch (e) {}
 
@@ -197,6 +199,39 @@
     $('#dr-learn').textContent = q.length ? 'Now: ' + q.join(', ') + '.' : '';
   }
 
+  // Wildcards: eigen voorspellingen met een vooraf vastgelegde meetlat; de radar kijkt ze zelf na.
+  var WS = { open: ['Open', 'p-steady'], checking: ['Checking', 'p-rising'], hit: ['Came true', 'p-early'], partly: ['Partly true', 'p-peak'], miss: ['Wrong', 'p-falling'], dropped: ['Dropped', 'p-steady'] };
+  var SURE = { tested: 'Tested pattern', strong: 'Strong signal', medium: 'Medium', weak: 'Weak (small numbers)' };
+  function wildFor() { var W = S.d && S.d.wild; return ((W && W.items) || []).filter(function (x) { return S.mk === 'ALL' || x.ccs.indexOf(S.mk) >= 0; }).slice().sort(function (a, b) { var da = /hit|partly|miss/.test(a.status), db = /hit|partly|miss/.test(b.status); return (da - db) || String(a.due).localeCompare(String(b.due)); }); }
+  function day(s) { if (!s) return ''; var a = s.split('-'); return +a[2] + ' ' + MON[+a[1] - 1]; }
+  function stat(n, l, c) { return h('div', { class: 'rec' + (c ? ' ' + c : '') }, h('b', { text: String(n || 0) }), h('span', { text: l })); }
+  function testLine(t) {
+    var m = mon(t.month, true), ly = MON[+t.month.slice(5) - 1] + ' ' + (+t.month.slice(0, 4) - 1);
+    var goal = t.yoy ? 'at least ' + t.yoy + '× ' + ly : t.vs ? 'at least ' + t.times + '× "' + t.vs + '"' : t.min != null ? 'at least ' + num(t.min) : 'at most ' + num(t.max);
+    var got = t.state === 'waiting' ? 'waiting for the ' + m + ' numbers' : num(t.value) + (t.ref != null ? ' vs ' + num(t.ref) : '') + (t.state === 'pass' ? '  ✓' : '  ✗');
+    return h('li', { class: 'wt ' + t.state }, h('span', { class: 'mk', text: t.cc }), '"' + t.k + '" in ' + m + ': ' + goal + ' → ', h('b', { text: got }));
+  }
+  function wildRow(x) {
+    var st = WS[x.status] || WS.open;
+    var meta = ['Made ' + day(x.made), x.sure ? 'How sure: ' + SURE[x.sure] + (x.odds ? ', ' + x.odds : '') : null, x.status === 'dropped' ? null : x.judged ? 'Checked ' + day(x.judged) : x.due ? 'Check ' + day(x.due) + (x.manual ? ' (by hand)' : '') : null].filter(Boolean).join(' · ');
+    return h('div', { class: 'line wild' },
+      h('div', { class: 'line-top' }, h('div', null, x.ccs.map(function (c) { return h('span', { class: 'mk', text: c }); }), h('b', { class: 'wild-t', text: x.title })), h('div', { class: 'badges' }, h('span', { class: 'badge ' + st[1], text: st[0] }))),
+      h('p', { class: 'wild-claim', text: x.claim }),
+      x.tests && x.tests.length ? h('ul', { class: 'wild-tests' }, x.tests.map(testLine)) : null,
+      x.note ? h('p', { class: 'wild-res', text: 'Outcome: ' + x.note }) : null,
+      x.result ? h('p', { class: 'wild-res', text: x.result }) : null,
+      h('p', { class: 'meta', text: meta }),
+      x.basis ? h('details', { class: 'wild-why' }, h('summary', { text: 'Why we think so' }), h('p', { text: x.basis }), x.why ? h('p', { class: 'meta', text: 'Why the model cannot say it yet: ' + x.why }) : null) : null);
+  }
+  function trackRow(t) {
+    var a = t.month.split('-'), end = new Date(Date.UTC(+a[0], +a[1] + 6, 15)), fin = MON[end.getUTCMonth()] + ' ' + end.getUTCFullYear();
+    return h('div', { class: 'line wild' },
+      h('div', { class: 'line-top' }, h('div', null, h('b', { class: 'wild-t', text: 'Our early-signal list (data up to ' + mon(t.month, true) + ')' })), h('div', { class: 'badges' }, h('span', { class: 'badge ' + (t.seen >= 6 ? 'p-early' : 'p-rising'), text: t.seen >= 6 ? 'Final' : 'Checking' }))),
+      h('p', { class: 'wild-claim', text: 'Broke out so far: ' + t.hidden.broke + ' of ' + t.hidden.n + ' "not visible yet" (expected about ' + t.expect.hidden + ') and ' + t.starting.broke + ' of ' + t.starting.n + ' "starting" (expected about ' + t.expect.starting + ').' }),
+      t.broke && t.broke.length ? h('p', { class: 'meta', text: 'Came true: ' + t.broke.map(function (b) { return b.k + ' (' + b.cc + ')'; }).join(', ') }) : null,
+      h('p', { class: 'meta', text: t.seen + ' of 6 months seen · all countries · final check ' + fin }));
+  }
+
   function draw() {
     var d = S.d;
     // landen
@@ -210,12 +245,17 @@
     // categorieën (volgorde: geleerd uit wat bezoekers openen, anders vast)
     var views = (d.views || []).slice();
     if (d.order && d.order.length) views.sort(function (a, b) { var ia = d.order.indexOf(a.id), ib = d.order.indexOf(b.id); return (a.id === 'now' ? -1 : b.id === 'now' ? 1 : 0) || (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
-    var tabs = $('#dr-views'); tabs.replaceChildren();
-    views.forEach(function (v) {
-      var n = countFor(v.id);
-      if (!n && v.id !== 'now' && v.id !== 'rise' && v.id !== S.view) return; // lege categorieën verbergen: rustiger
-      tabs.append(h('button', { class: 'tab', type: 'button', role: 'tab', 'aria-selected': String(S.view === v.id), onclick: function () { S.view = v.id; S.n = 12; save(); ev('open', 'tab-' + v.id); draw(); } }, v.name, h('span', { class: 'cnt', text: String(n) })));
+    // Tegels (alles in één oogopslag, niet zijwaarts scrollen): grote tegels voor de hoofdweergaven, kleine voor de categorieën.
+    var box0 = $('#dr-views'), big = h('div', { class: 'tiles' }), small = h('div', { class: 'cats' }, h('span', { class: 'cats-l', text: 'By category' }));
+    var tk = Object.keys(TAG); // hoofdtegels in vaste volgorde: eerst vooruitkijken, dan nu
+    views.filter(function (v) { return TAG[v.id]; }).sort(function (a, b) { return tk.indexOf(a.id) - tk.indexOf(b.id); }).concat(views.filter(function (v) { return !TAG[v.id]; })).forEach(function (v) {
+      var n = countFor(v.id), sel = String(S.view === v.id);
+      if (!n && !KEEP[v.id] && v.id !== S.view) return; // lege categorieën verbergen: rustiger
+      var go = function () { S.view = v.id; S.n = 12; save(); ev('open', 'tab-' + v.id); draw(); };
+      if (TAG[v.id]) big.append(h('button', { class: 'tile', type: 'button', 'aria-pressed': sel, onclick: go }, h('span', { class: 'tn' }, h('span', { text: v.name }), h('span', { class: 'cnt', text: String(n) })), h('span', { class: 'tt', text: TAG[v.id] })));
+      else small.append(h('button', { class: 'ctile', type: 'button', 'aria-pressed': sel, onclick: go }, v.name, h('span', { class: 'cnt', text: String(n) })));
     });
+    box0.replaceChildren(big); if (small.children.length > 1) box0.append(small);
     var cur = views.filter(function (v) { return v.id === S.view; })[0] || views[0];
     if (cur) S.view = cur.id;
     $('#dr-desc').textContent = cur ? cur.desc : '';
@@ -241,6 +281,12 @@
       var eh = interleave(byCountry(d.early || []).filter(function (x) { return x.tier !== 'starting'; })), es = interleave(byCountry(d.early || []).filter(function (x) { return x.tier === 'starting'; }));
       var el = (eh.length ? [{ head: 'Not visible yet', sub: 'No jump in the numbers yet; the pattern matches searches that broke out later' }] : []).concat(eh, es.length ? [{ head: 'Starting', sub: 'Last month already well above last year, not yet a lasting breakout' }] : [], es);
       if (!el.length) empty(box, 'No early signals for this selection yet.'); else more(el, box, function (x) { return x.head ? h('div', { class: 'early-head' }, h('b', null, x.head), h('span', { class: 'meta', text: ' · ' + x.sub })) : earlyRow(x); });
+    } else if (S.view === 'wild') {
+      var W = d.wild || {}, wl = wildFor(), r = W.record || {};
+      var top = [h('div', { class: 'record' }, stat(r.made, 'calls made'), stat(r.checked, 'checked'), stat(r.hit, 'came true', 'ok'), stat(r.partly, 'partly'), stat(r.miss, 'wrong', 'bad'), stat(r.open, 'still open'))];
+      (W.tracks || []).forEach(function (t) { top.push(trackRow(t)); });
+      var rest = (W.dropped || []).filter(function (x) { return S.mk === 'ALL' || x.ccs.indexOf(S.mk) >= 0; });
+      box.replaceChildren.apply(box, top.concat(wl.map(wildRow), rest.length ? [h('div', { class: 'early-head' }, h('b', null, 'Tested and dropped'), h('span', { class: 'meta', text: ' · ideas the data did not support' }))].concat(rest.map(wildRow)) : []));
     } else if (S.view === 'coming') {
       var cm = byCountry(d.coming || []).slice().sort(function (a, b) { return a.days - b.days; });
       if (!cm.length) empty(box, 'Nothing coming up for this selection.'); else more(cm, box, comingRow);
@@ -253,6 +299,7 @@
     if (id === 'missing') return byCountry(d.missing || []).length;
     if (id === 'rise') return byCountry(d.rise || []).length;
     if (id === 'early') return byCountry(d.early || []).length;
+    if (id === 'wild') return wildFor().length;
     if (id === 'coming') return byCountry(d.coming || []).length;
     return 0;
   }

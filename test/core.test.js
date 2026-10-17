@@ -366,3 +366,34 @@ test('ai shelf: asks several models, tallies shops and brands', async () => {
     assert.equal(v.asked, S.SHELF_MODELS.length); assert.equal(v.shops[0].name.toLowerCase(), 'bol'); assert.equal(v.shops[0].n, S.SHELF_MODELS.length); assert.equal(v.brands[0].name, 'Philips');
   } finally { globalThis.fetch = real; }
 });
+
+test('wildcards: meetlatten, nakijken en vroege lijst volgen', async () => {
+  const { memoryStore, putJSON } = await import('../lib/store.js');
+  const { judge, verdict, checkWild, wildList, setVerdict, trackEarly, WILD } = await import('../lib/wildcards.js');
+  const kw = { temu: { m: [[2025, 11, 1000000], [2026, 11, 600000]] }, 'anker solix': { m: [[2026, 12, 25000]] }, 'tesla powerwall': { m: [[2026, 12, 2000]] } };
+  assert.equal(judge({ k: 'temu', month: '2026-11', max: 750000 }, kw).state, 'pass');
+  assert.equal(judge({ k: 'temu', month: '2026-11', yoy: 2 }, kw).state, 'fail');
+  assert.equal(judge({ k: 'anker solix', month: '2026-12', vs: 'tesla powerwall', times: 10 }, kw).state, 'pass');
+  assert.equal(judge({ k: 'temu', month: '2026-12', min: 1 }, kw).state, 'waiting');
+  assert.equal(verdict([{ state: 'pass' }, { state: 'waiting' }]), 'checking');
+  assert.equal(verdict([{ state: 'pass' }, { state: 'fail' }]), 'partly');
+  assert.equal(verdict([{ state: 'fail' }]), 'miss');
+  // vroege lijst: term breekt 3 maanden na de momentopname door
+  const m = []; for (let i = 0; i < 40; i++) { const y = 2023 + Math.floor((i + 9) / 12), mo = ((i + 9) % 12) + 1; m.push([y, mo, i < 34 ? 300 : 2000]); }
+  const snapMonth = `${m[33][0]}-${String(m[33][1]).padStart(2, '0')}`;
+  const t = trackEarly({ month: snapMonth, items: [{ cc: 'NL', k: 'x', tier: 'hidden' }, { cc: 'NL', k: 'y', tier: 'starting' }] }, { NL: { kw: { x: { m } } } });
+  assert.equal(t.hidden.broke, 1); assert.equal(t.starting.n, 1); assert.equal(t.starting.broke, 0);
+  const store = memoryStore();
+  await putJSON(store, 'early/series-NL.json', { kw: { temu: { m: [[2026, 11, 500000]] }, shein: { m: [[2026, 11, 700000]] } } });
+  await putJSON(store, 'early/latest.json', { month: '2026-09', day: '2026-10-17', items: [{ cc: 'NL', k: 'x', tier: 'hidden', chance: 18 }] });
+  const r = await checkWild(store, new Date('2026-12-16T00:00:00Z'));
+  assert.ok(r.ok && r.queued > 0 && r.tracks === 1);
+  let W = await wildList(store);
+  const p8 = W.items.find(x => x.id === 'p8');
+  assert.deepEqual(p8.tests.map(x => x.state), ['pass', 'fail', 'waiting']);
+  assert.equal(p8.status, 'checking');
+  assert.equal((await setVerdict(store, 'p3', 'hit', 'NL 60 vs 40')).ok, true);
+  assert.equal((await setVerdict(store, 'zz', 'hit')).ok, false);
+  W = await wildList(store);
+  assert.equal(W.record.hit, 1); assert.equal(W.record.made, WILD.length); assert.equal(W.items.find(x => x.id === 'p3').note, 'NL 60 vs 40');
+});
