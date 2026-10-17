@@ -74,6 +74,8 @@
 
     var more = [];
     if (w) more.push(row('Interest (Wikipedia)', pct1(w.momentum) + ' this week · ' + pct1(w.yoy) + ' vs last year'));
+    var bg = c.bing;
+    if (bg && bg.change4w != null) more.push(row('Bing searches, weekly', (bg.change4w > 0 ? '+' : '') + bg.change4w + '% in the last 4 weeks vs the 4 before (fresher than Google\'s monthly data; direction only)'));
     var yv = c.youtube;
     if (yv) more.push(row('YouTube creators', (yv.recent >= 50 ? '50+' : yv.recent) + ' new videos in 30 days (' + (yv.lastYear >= 50 ? '50+' : yv.lastYear) + ' a year earlier' + (yv.growth != null ? ', ' + yv.growth + '×' : '') + ') · ' + num(yv.views) + ' views'));
     if (c.news && c.news.total) more.push(row('In the news', c.news.total + (c.news.capped ? '+' : '') + ' articles in 4 weeks'));

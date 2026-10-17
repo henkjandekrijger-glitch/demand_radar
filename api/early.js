@@ -17,6 +17,11 @@ export default async function handler(req, res) {
         return res.status(200).json(await seedEarly(store, cc, body && body.series));
       }
       if (op === 'score') return res.status(200).json(await scoreEarly(store));
+      if (op === 'bing') { // Bing-koppeling testen (eigenaar): ?op=bing&q=...&cc=NL
+        const { bingWeekly, bingTrend, bingReady } = await import('../lib/bing.js');
+        try { const w = await bingWeekly(String(req.query.q || 'thuisbatterij'), String(req.query.cc || 'NL').toUpperCase()); return res.status(200).json({ ready: bingReady(), trend: bingTrend(w), weeks: w }); }
+        catch (e) { return res.status(200).json({ ready: bingReady(), error: String(e.message || e).slice(0, 200) }); }
+      }
       if (op === 'yt') { // YouTube-koppeling testen (eigenaar): ?op=yt&q=...&cc=NL
         const { ytActivity, ytReady } = await import('../lib/youtube.js');
         try { return res.status(200).json({ ready: ytReady(), v: await ytActivity(String(req.query.q || 'thuisbatterij'), String(req.query.cc || 'NL').toUpperCase(), store) }); }

@@ -332,3 +332,14 @@ test('youtube creators: counts, growth, views, quota and cache', async () => {
     const n = calls; await Y.ytActivity('thuisbatterij', 'NL', store); assert.equal(calls, n); // zelfde dag: uit de bewaarde uitkomst
   } finally { globalThis.fetch = real; delete process.env.YOUTUBE_API_KEY; }
 });
+
+test('bing weekly: parse and 4-week trend', async () => {
+  const B = await import('../lib/bing.js');
+  const real = globalThis.fetch; process.env.BING_WEBMASTER_KEY = 'test';
+  const t0 = Date.UTC(2026, 3, 6), wk = 7 * 864e5;
+  globalThis.fetch = async () => new Response(JSON.stringify({ d: Array.from({ length: 12 }, (_, i) => ({ Query: 'x', Impressions: 10, BroadImpressions: i < 4 ? 150 : 100, Date: `/Date(${t0 + (11 - i) * wk})/` })).reverse() }), { status: 200 });
+  try {
+    const w = await B.bingWeekly('x', 'NL'); assert.equal(w.length, 12); assert.ok(w[0].d < w[11].d);
+    const t = B.bingTrend(w); assert.equal(t.change4w, 50);
+  } finally { globalThis.fetch = real; delete process.env.BING_WEBMASTER_KEY; }
+});
