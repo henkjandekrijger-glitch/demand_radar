@@ -54,6 +54,9 @@
     "api/handover.js": {
       "maxDuration": 30,
       "includeFiles": "README.md"
+    },
+    "api/feed.js": {
+      "maxDuration": 300
     }
   },
   "crons": [
