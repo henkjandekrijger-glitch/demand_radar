@@ -41,6 +41,12 @@ export default async function handler(req, res) {
         const v = await amazonVolume(String(req.query.q || 'airfryer').split(',').map(x => x.trim()).filter(Boolean), COUNTRIES[cc], b);
         return res.status(200).json({ cc, spent: b.spent, errors: b.errors, volumes: v });
       }
+      if (op === 'meta') { // Meta Ad Library testen (eigenaar): ?op=meta&q=...&cc=NL
+        const { metaAds, metaReady } = await import('../lib/meta.js');
+        if (!metaReady()) return res.status(200).json({ ready: false, how: 'META_AD_TOKEN in Vercel (user token van een account met bevestigde identiteit)' });
+        try { return res.status(200).json({ ready: true, ...(await metaAds(String(req.query.q || 'thuisbatterij'), String(req.query.cc || 'NL').toUpperCase())) }); }
+        catch (e) { return res.status(200).json({ ready: true, error: String(e.message || e) }); }
+      }
       if (op === 'ai') { // AI-zoekvolume testen (eigenaar): ?op=ai&q=a,b&cc=NL (± $0,01–0,10)
         const { aiVolume, budget } = await import('../lib/dfs.js'), { COUNTRIES } = await import('../lib/niches.js');
         const cc = String(req.query.cc || 'NL').toUpperCase(), b = budget(0.12);
