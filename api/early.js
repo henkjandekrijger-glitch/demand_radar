@@ -41,6 +41,12 @@ export default async function handler(req, res) {
         const v = await amazonVolume(String(req.query.q || 'airfryer').split(',').map(x => x.trim()).filter(Boolean), COUNTRIES[cc], b);
         return res.status(200).json({ cc, spent: b.spent, errors: b.errors, volumes: v });
       }
+      if (op === 'ai') { // AI-zoekvolume testen (eigenaar): ?op=ai&q=a,b&cc=NL (± $0,01–0,10)
+        const { aiVolume, budget } = await import('../lib/dfs.js'), { COUNTRIES } = await import('../lib/niches.js');
+        const cc = String(req.query.cc || 'NL').toUpperCase(), b = budget(0.12);
+        const v = await aiVolume(String(req.query.q || 'airfryer').split(',').map(x => x.trim()).filter(Boolean), COUNTRIES[cc], b);
+        return res.status(200).json({ cc, spent: b.spent, errors: b.errors, volumes: v });
+      }
       if (op === 'bing') { // Bing-koppeling testen (eigenaar): ?op=bing&q=...&cc=NL
         const { bingWeekly, bingTrend, bingReady } = await import('../lib/bing.js');
         try { const w = await bingWeekly(String(req.query.q || 'thuisbatterij'), String(req.query.cc || 'NL').toUpperCase()); return res.status(200).json({ ready: bingReady(), trend: bingTrend(w), weeks: w }); }

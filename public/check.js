@@ -80,6 +80,8 @@
     if (en && (en.power || en.petrol)) more.push(row('Energy prices', [en.power ? 'power ' + en.power.now + ' €/MWh (' + (en.power.change > 0 ? '+' : '') + en.power.change + '% on last year)' : null, en.petrol ? 'petrol €' + en.petrol.now.toFixed(2) + '/l (' + (en.petrol.change > 0 ? '+' : '') + en.petrol.change + '%)' : null].filter(Boolean).join(' · ')));
     var az = m && m.amazon;
     if (az && az.volume != null) more.push(row('Amazon searches', num(az.volume) + ' a month on Amazon itself' + (az.ratio != null ? ' (' + (az.ratio >= 1 ? az.ratio.toFixed(1) + '× ' : Math.round(az.ratio * 100) + '% of ') + 'Google)' : '') + (az.ratio != null && az.ratio >= 0.5 ? ' · people go to Amazon to buy this' : '')));
+    var ai = m && m.aiAsk;
+    if (ai && ai.volume != null) more.push(row('Asked to AI assistants', num(ai.volume) + ' a month in ChatGPT and Google AI' + (ai.ratio != null ? ' (' + (ai.ratio >= 1 ? ai.ratio.toFixed(1) + '× ' : Math.round(ai.ratio * 100) + '% of ') + 'Google)' : '') + (ai.yoy != null ? ' · ' + (ai.yoy > 0 ? '+' : '') + ai.yoy + '% on last year' : ai.q3 != null ? ' · ' + (ai.q3 > 0 ? '+' : '') + ai.q3 + '% on the 3 months before' : '')));
     var bg = c.bing;
     if (bg && bg.change4w != null) more.push(row('Bing searches, weekly', (bg.change4w > 0 ? '+' : '') + bg.change4w + '% in the last 4 weeks vs the 4 before (fresher than Google\'s monthly data; direction only)'));
     var yv = c.youtube;
