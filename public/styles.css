@@ -262,3 +262,7 @@ code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6
 .billing{margin:18px 0 6px}.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:18px 0 10px}.plan{padding:6px 20px 18px;display:flex;flex-direction:column}.plan .price{font-size:32px;font-weight:700;margin:4px 0 6px}.plan .price small{font-size:15px;font-weight:500;color:var(--muted)}.plan ul{margin:6px 0 16px 18px;padding:0;flex:1}.plan li{margin:5px 0;line-height:1.45}.plan.best{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}.plan .scan{align-self:flex-start;cursor:pointer;border:0;font:inherit}.center{text-align:center}.signin{margin:18px 0;padding:6px 20px 14px}.faq{margin:30px 0}.faq details{border-top:1px solid var(--line);padding:12px 0}.faq summary{cursor:pointer;font-weight:600}.faq p{margin:8px 0 0;line-height:1.55}.legal h2{font-size:18px;margin:22px 0 6px}.legal p,.legal li{line-height:1.6}.legal-links{margin:0 0 6px}.legal-links a{color:inherit}
 @media (max-width:760px){.plans{grid-template-columns:1fr}}
 .plan a.scan.ghost{align-self:flex-start;border:1px solid var(--line);background:transparent;color:var(--ink,inherit)}
+
+/* Early signals: kop per laag */
+.early-head { padding: 18px 0 6px; border-bottom: 1px solid var(--line, #e5e7eb); }
+.early-head b { font-size: 15px; }

@@ -237,8 +237,10 @@
       var rl = interleave(byCountry(d.rise || []));
       if (!rl.length) empty(box, 'No clear rises predicted for this selection.'); else more(rl, box, riseRow);
     } else if (S.view === 'early') {
-      var el = interleave(byCountry(d.early || []));
-      if (!el.length) empty(box, 'No early signals for this selection yet.'); else more(el, box, earlyRow);
+      // eerst wat nog niemand ziet, dan wat net begint; elk met een kop
+      var eh = interleave(byCountry(d.early || []).filter(function (x) { return x.tier !== 'starting'; })), es = interleave(byCountry(d.early || []).filter(function (x) { return x.tier === 'starting'; }));
+      var el = (eh.length ? [{ head: 'Not visible yet', sub: 'No jump in the numbers yet; the pattern matches searches that broke out later' }] : []).concat(eh, es.length ? [{ head: 'Starting', sub: 'Last month already well above last year, not yet a lasting breakout' }] : [], es);
+      if (!el.length) empty(box, 'No early signals for this selection yet.'); else more(el, box, function (x) { return x.head ? h('div', { class: 'early-head' }, h('b', null, x.head), h('span', { class: 'meta', text: ' · ' + x.sub })) : earlyRow(x); });
     } else if (S.view === 'coming') {
       var cm = byCountry(d.coming || []).slice().sort(function (a, b) { return a.days - b.days; });
       if (!cm.length) empty(box, 'Nothing coming up for this selection.'); else more(cm, box, comingRow);
