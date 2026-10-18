@@ -29,7 +29,7 @@
   function norm(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9\u00c0-\u024f]+/g, ' ').trim(); }
   function asked(name, qs, cc) {
     var seen = {}, l = (qs || []).filter(function (q) { var k = norm(q); if (!k || seen[k]) return false; seen[k] = 1; return true; }).slice(0, 3);
-    if (!l.length || (l.length === 1 && norm(l[0]) === norm(name))) return null;
+    if (!l.length) return null; // altijd tonen: de echte zoekopdracht, ook als de naam er al op lijkt
     return h('p', { class: 'asked' }, h('span', { class: 'asked-l', text: 'Searched as ' }), [].concat.apply([], l.map(function (q, i) { return [i ? ' · ' : '', h('a', { href: checkUrl(q, cc), lang: LANGOF[cc] || null }, '\u201c' + q + '\u201d')]; })));
   }
   // Lijn: gemeten maanden; stippellijn: voorspelling (f = voorspelde waarden, aansluitend na een gat van de achterstand).

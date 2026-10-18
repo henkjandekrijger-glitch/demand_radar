@@ -34,7 +34,7 @@
   // De echte zoekopdrachten, in de taal van het land.
   function asked(name, qs, cc) {
     var seen = {}, l = (qs || []).map(function (q) { return typeof q === 'string' ? q : q && q.k; }).filter(function (q) { var k = norm(q); if (!k || seen[k]) return false; seen[k] = 1; return true; }).slice(0, 3);
-    if (!l.length || (l.length === 1 && norm(l[0]) === norm(name))) return null;
+    if (!l.length) return null; // altijd tonen: de echte zoekopdracht, ook als de naam er al op lijkt
     return h('p', { class: 'asked' }, h('span', { text: 'Searched as ' }), [].concat.apply([], l.map(function (q, i) { return [i ? ' · ' : '', h('a', { href: checkLink(q, cc), lang: LANGOF[String(cc).split('/')[0]] || null }, '“' + q + '”')]; })));
   }
   // Het getal achter een punt, kort (voor het oordeel) en als vette bewering (voor het punt zelf).
