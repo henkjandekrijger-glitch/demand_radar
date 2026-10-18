@@ -143,7 +143,7 @@
     var link = h('a', { class: 'lname', href: checkUrl(x.keyword || x.name, x.cc), title: 'Searched as: ' + (x.keyword || x.name), onclick: function () { ev('open', 'rise'); } }, x.name);
     return h('div', { class: 'line' },
       h('div', { class: 'line-main' },
-        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: x.cc }), link, claimEl('rise', x)), h('div', { class: 'badges' }, (f.stability ? f.stability.level === 'all' : f.confidence === 'high') ? h('span', { class: 'badge p-steady', title: 'Rose in this period in every year since 2021', text: 'Every year' }) : null, f.chance != null ? h('span', { class: 'badge p-early', title: 'Chance that searches in ' + MON[pk.m - 1] + ' are at least 40% higher than now. Tested: of the rises we predicted, 90% came true.', text: '+40% by ' + MON[pk.m - 1] + ' · ' + f.chance + '% chance' }) : h('span', { class: 'badge p-early', text: '+' + Math.round((pk.v / Math.max(f.from.v, 1) - 1) * 100).toLocaleString('en-US') + '% by ' + MON[pk.m - 1] }))),
+        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: x.cc }), link, claimEl('rise', x)), h('div', { class: 'badges' }, (f.stability ? f.stability.level === 'all' : f.confidence === 'high') ? h('span', { class: 'badge p-steady', title: 'Rose in this period in every year since 2021', text: 'Every year' }) : null)),
         asked(x.name, [x.keyword || x.name].concat((x.members || []).map(function (m) { return m.k; })), x.cc),
         x.what ? h('p', { class: 'cu-what', text: cap(x.what) }) : null,
         h('p', { class: 'meta' }, h('b', { class: 'fcb' }, 'Forecast '), path + ' searches a month'),
@@ -160,7 +160,7 @@
     return h('div', { class: 'line' },
       h('div', { class: 'line-main' },
         h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: x.cc }), link, claimEl('early', x)), h('div', { class: 'badges' },
-          h('span', { class: 'badge ' + (st ? 'p-rising' : 'p-early'), title: 'Chance of a lasting breakout (searches at least double last year for 3 months) within 6 months, measured in our test on 4 years of data', text: (st ? 'Starting' : 'Not visible yet') + ' · ' + x.chance + '% chance' }))),
+          h('span', { class: 'badge ' + (st ? 'p-rising' : 'p-early'), title: 'Chance of a lasting breakout (searches at least double last year for 3 months) within 6 months, measured in our test on 4 years of data', text: st ? 'Starting' : 'Not visible yet' }))),
         asked(x.name, [x.keyword || x.name], x.cc),
         h('p', { class: 'meta', text: 'Measured: ' + num(x.now.v) + ' in ' + MON[x.now.m - 1] + ' · same month last year ' + num(x.lastYear) + (x.cpc != null ? ' · $' + Number(x.cpc).toFixed(2) + ' per click' : '') }),
         (x.reasons || []).length ? h('p', { class: 'meta', text: x.reasons.join(' · ') }) : null),
