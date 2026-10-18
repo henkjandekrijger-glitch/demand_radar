@@ -13,6 +13,12 @@ export default async function handler(req, res) {
       const h = await r.text(), g = re => { const m = h.match(re); return m ? m[1].trim().slice(0, 160) : null; };
       return res.status(200).json({ status: r.status, url: r.url, title: g(/<title[^>]*>([\s\S]*?)<\/title>/i), productLd: /"@type"\s*:\s*"Product"/.test(h), price: g(/"price"\s*:\s*"?([\d.,]+)/), game: /lollipop|yoors points|silver league/i.test(h), login: /log ?in|inloggen|sign in/i.test(g(/<title[^>]*>([\s\S]*?)<\/title>/i) || '') });
     }
+    if (req.query.prices) { // marktprijzen per product (bol, Amazon.nl, Amazon.de) voor het prijsadvies van de winkel; eigenaar: &run=1 haalt nu een stuk op
+      if (req.query.run && isPro(req)) { const { shopPrices } = await import('../lib/prices.js'), { gatewayToken } = await import('../lib/ai.js'); return res.status(200).json(await shopPrices(store, shop, { token: gatewayToken(req) })); }
+      const { pricesFor } = await import('../lib/prices.js');
+      res.setHeader('Cache-Control', 'public, max-age=600');
+      return res.status(200).json(await pricesFor(store, shop));
+    }
     if (req.query.status) { // korte stand voor de eigen campagnepagina's (geen productgegevens)
       const { getJSON } = await import('../lib/store.js');
       const f0 = await getJSON(store, `feed/${shop}-${cc}.json`, null).catch(() => null), t = (await getJSON(store, `feed/${shop}-titles-${cc}.json`, null).catch(() => null)) || {};
