@@ -365,3 +365,8 @@ details.m-more{margin-top:16px;max-width:740px}details.m-more>summary{cursor:poi
 .cu-what{color:var(--ink)}
 .tchip span{color:var(--body)}
 .m-ol .meta{color:var(--muted)}
+/* Radar-voorpagina als advies (18 okt): vet oordeel bovenaan, genummerde regels met de naam en het getal als vette bewering */
+#dr-desc{font-size:17px;line-height:1.6;color:var(--body)}#dr-desc .verdict{color:var(--ink);font-weight:700}
+.claimf{font-weight:700;color:var(--ink);font-size:17px;line-height:1.35}
+#dr-list{counter-reset:it}#dr-list>.line{counter-increment:it}
+#dr-list>.line .line-top>div:first-child::before{content:counter(it) ".";font-weight:700;color:var(--ink);margin-right:8px;font-variant-numeric:tabular-nums}

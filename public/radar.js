@@ -27,6 +27,19 @@
   // De echte zoekopdrachten in de eigen taal van het land, onder de (Engelse) naam.
   var LANGOF = { NL: 'nl', DE: 'de', US: 'en', GB: 'en', FR: 'fr', ES: 'es', IT: 'it', BE: 'nl', AT: 'de' };
   function norm(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9\u00c0-\u024f]+/g, ' ').trim(); }
+  // Duidelijkheid zoals een goed advies (18 okt): per regel de naam met het getal erachter als vette bewering, genummerd,
+  // en bovenaan elk overzicht één vette zin met het oordeel.
+  var MONF = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  function fact(kind, x) {
+    if (!x) return '';
+    if (kind === 'rise') { var f = x.forecast || {}, pk = f.peak; if (!pk) return ''; return f.chance != null ? f.chance + '% chance of +40% by ' + MONF[pk.m - 1] : '+' + Math.round((pk.v / Math.max((f.from || {}).v || 1, 1) - 1) * 100).toLocaleString('en-US') + '% by ' + MONF[pk.m - 1]; }
+    if (kind === 'item') { var y = !x.jump && x.grew && x.yoy != null; return (y ? pc(x.yoy) + ' on last year' : x.mom != null ? pc(x.mom) + ' in a month' : '') + (x.last ? (y || x.mom != null ? ', ' : '') + num(x.last) + ' searches in ' + mon(x.period) : ''); }
+    if (kind === 'early') return x.chance != null ? (x.tier === 'starting' ? 'starting, ' : 'not visible yet, ') + x.chance + '% chance it breaks out within 6 months' : '';
+    if (kind === 'coming') return (x.days === 0 ? 'today' : x.days === 1 ? 'tomorrow' : 'in ' + x.days + ' days') + (x.date ? ' (' + day(x.date) + ')' : '');
+    if (kind === 'today') return x.traffic && x.traffic !== 'Bluesky' ? x.traffic + ' searches today' : x.traffic === 'Bluesky' ? 'trending on Bluesky' : '';
+    return '';
+  }
+  function claimEl(kind, x) { var f = fact(kind, x); return f ? h('span', { class: 'claimf', text: ': ' + f + '.' }) : null; }
   function asked(name, qs, cc) {
     var seen = {}, l = (qs || []).filter(function (q) { var k = norm(q); if (!k || seen[k]) return false; seen[k] = 1; return true; }).slice(0, 3);
     if (!l.length) return null; // altijd tonen: de echte zoekopdracht, ook als de naam er al op lijkt
@@ -87,7 +100,7 @@
     return h('div', { class: 'line' },
       h('div', { class: 'line-main' },
         h('div', { class: 'line-top' },
-          h('div', null, h('span', { class: 'mk', text: x.cc }), link),
+          h('div', null, h('span', { class: 'mk', text: x.cc }), link, claimEl('item', x)),
           h('div', { class: 'badges' },
             x.fresh ? h('span', { class: 'badge p-early', text: 'New' }) : null,
             x.forecast && x.forecast.call === 'rise' ? h('span', { class: 'badge p-early', text: 'Will rise' }) : x.forecast && x.forecast.call === 'fall' ? h('span', { class: 'badge p-falling', text: 'Will drop' }) : nw && x.now.status !== 'quiet' ? h('span', { class: 'badge ' + nw[1], text: nw[0] }) : null)),
@@ -128,7 +141,7 @@
     var link = h('a', { class: 'lname', href: checkUrl(x.keyword || x.name, x.cc), title: 'Searched as: ' + (x.keyword || x.name), onclick: function () { ev('open', 'rise'); } }, x.name);
     return h('div', { class: 'line' },
       h('div', { class: 'line-main' },
-        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: x.cc }), link), h('div', { class: 'badges' }, (f.stability ? f.stability.level === 'all' : f.confidence === 'high') ? h('span', { class: 'badge p-steady', title: 'Rose in this period in every year since 2021', text: 'Every year' }) : null, f.chance != null ? h('span', { class: 'badge p-early', title: 'Chance that searches in ' + MON[pk.m - 1] + ' are at least 40% higher than now. Tested: of the rises we predicted, 90% came true.', text: '+40% by ' + MON[pk.m - 1] + ' · ' + f.chance + '% chance' }) : h('span', { class: 'badge p-early', text: '+' + Math.round((pk.v / Math.max(f.from.v, 1) - 1) * 100).toLocaleString('en-US') + '% by ' + MON[pk.m - 1] }))),
+        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: x.cc }), link, claimEl('rise', x)), h('div', { class: 'badges' }, (f.stability ? f.stability.level === 'all' : f.confidence === 'high') ? h('span', { class: 'badge p-steady', title: 'Rose in this period in every year since 2021', text: 'Every year' }) : null, f.chance != null ? h('span', { class: 'badge p-early', title: 'Chance that searches in ' + MON[pk.m - 1] + ' are at least 40% higher than now. Tested: of the rises we predicted, 90% came true.', text: '+40% by ' + MON[pk.m - 1] + ' · ' + f.chance + '% chance' }) : h('span', { class: 'badge p-early', text: '+' + Math.round((pk.v / Math.max(f.from.v, 1) - 1) * 100).toLocaleString('en-US') + '% by ' + MON[pk.m - 1] }))),
         asked(x.name, [x.keyword || x.name].concat((x.members || []).map(function (m) { return m.k; })), x.cc),
         x.what ? h('p', { class: 'cu-what', text: cap(x.what) }) : null,
         h('p', { class: 'meta' }, h('b', { class: 'fcb' }, 'Forecast '), path + ' searches a month'),
@@ -144,7 +157,7 @@
     var link = h('a', { class: 'lname', href: checkUrl(x.keyword || x.name, x.cc), title: 'Searched as: ' + (x.keyword || x.name), onclick: function () { ev('open', 'early'); } }, x.name);
     return h('div', { class: 'line' },
       h('div', { class: 'line-main' },
-        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: x.cc }), link), h('div', { class: 'badges' },
+        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: x.cc }), link, claimEl('early', x)), h('div', { class: 'badges' },
           h('span', { class: 'badge ' + (st ? 'p-rising' : 'p-early'), title: 'Chance of a lasting breakout (searches at least double last year for 3 months) within 6 months, measured in our test on 4 years of data', text: (st ? 'Starting' : 'Not visible yet') + ' · ' + x.chance + '% chance' }))),
         asked(x.name, [x.keyword || x.name], x.cc),
         h('p', { class: 'meta', text: 'Measured: ' + num(x.now.v) + ' in ' + MON[x.now.m - 1] + ' · same month last year ' + num(x.lastYear) + (x.cpc != null ? ' · $' + Number(x.cpc).toFixed(2) + ' per click' : '') }),
@@ -155,7 +168,7 @@
   function todayRow(t) {
     return h('div', { class: 'line one' },
       h('div', { class: 'line-main' },
-        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: t.cc }), h('a', { class: 'lname', href: checkUrl(t.keyword || t.name, t.cc), onclick: function () { ev('open', 'today'); } }, t.name)), h('span', { class: 'badge p-early', text: 'Today' })),
+        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: t.cc }), h('a', { class: 'lname', href: checkUrl(t.keyword || t.name, t.cc), onclick: function () { ev('open', 'today'); } }, t.name), claimEl('today', t)), h('span', { class: 'badge p-early', text: 'Today' })),
         asked(t.name, [t.keyword || t.name], t.cc),
         h('p', { class: 'cu-what', text: t.angle }),
         h('p', { class: 'meta' }, (t.traffic && t.traffic !== 'Bluesky' ? t.traffic + ' searches today' : t.traffic === 'Bluesky' ? 'Trending on Bluesky' : ''), t.news && t.news.url ? [' · ', h('a', { href: t.news.url, target: '_blank', rel: 'noopener' }, t.news.source || 'news')] : null),
@@ -178,7 +191,7 @@
       : 'Last year ' + num(ly.now) + ' → ' + num(ly.peak) + ' searches by ' + MON[(ly.peakMonth || 1) - 1] + ' (' + pc(ly.rise) + ')';
     return h('div', { class: 'line one' },
       h('div', { class: 'line-main' },
-        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: m.cc }), h('span', { class: 'lname', text: m.name })), h('span', { class: 'badge ' + (m.status === 'open' ? 'p-early' : 'p-steady'), text: m.days === 0 ? 'Today' : 'In ' + m.days + ' days' })),
+        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: m.cc }), h('span', { class: 'lname', text: m.name }), claimEl('coming', m)), h('span', { class: 'badge ' + (m.status === 'open' ? 'p-early' : 'p-steady'), text: m.days === 0 ? 'Today' : 'In ' + m.days + ' days' })),
         h('p', { class: 'meta', text: line }),
         m.kind === 'launch' ? h('p', { class: 'meta' }, 'Release' + (m.launchType ? ' · ' + m.launchType : '') + (m.month ? ' · date known to the month' : '') + (m.sources && m.sources[0] ? ' · ' : ''), m.sources && m.sources[0] && m.sources[0].site ? h('a', { href: m.sources[0].site, target: '_blank', rel: 'noopener' }, 'Wikipedia') : null) : null,
         m.kind === 'regulation' ? h('p', { class: 'meta' }, 'New rule · ' + (m.direction === 'less' ? 'less' : 'more') + ' demand' + (m.sources && m.sources[0] ? ' · ' : ''), m.sources && m.sources[0] ? (m.sources[0].site ? h('a', { href: m.sources[0].site, target: '_blank', rel: 'noopener' }, m.sources[0].source || 'source') : m.sources[0].source) : null) : null,
@@ -273,39 +286,47 @@
     box0.replaceChildren(big); if (small.children.length) box0.append(small);
     var cur = views.filter(function (v) { return v.id === S.view; })[0] || views[0];
     if (cur) S.view = cur.id;
-    $('#dr-desc').textContent = cur ? cur.desc : '';
+    var vd = ''; // vette oordeelzin, per overzicht hieronder ingevuld
     var box = $('#dr-list'), extra = $('#dr-extra'); extra.replaceChildren();
     if (ITEM_VIEWS[S.view]) {
       var list = byCountry(d.items || []).filter(function (x) { return S.view === 'now' ? !(x.now && (x.now.status === 'gone' || x.now.status === 'fading')) : x.cat === S.view; });
       list = interleave(list.sort(function (a, b) { return b.score - a.score; }));
+      if (list.length) vd = list.length + (S.view === 'now' ? ' searches are rising right now.' : ' searches are rising in ' + String(cur.name || '').toLowerCase() + '.') + ' Biggest: ' + list[0].name + ' (' + fact('item', list[0]) + ').';
       if (!list.length) empty(box, 'Nothing measured in this category for this selection today.'); else more(list, box, itemRow);
       if (S.view === 'books' || S.view === 'apps' || S.view === 'products') { var c = charts(S.view); if (c) extra.append(c); }
     } else if (S.view === 'unexpected') {
       var u = interleave(byCountry(d.items || []).filter(function (x) { return x.unexpected; }));
       var td = interleave(byCountry(d.today || []));
       var rows = td.map(todayRow).concat(u.map(itemRow));
+      if (rows.length) vd = Math.min(rows.length, 30) + ' searches rose that nobody expected.';
       if (!rows.length) empty(box, 'Nothing unexpected for this selection today.'); else box.replaceChildren.apply(box, rows.slice(0, 30));
     } else if (S.view === 'missing') {
       var ms = interleave(byCountry(d.missing || []));
+      if (ms.length) vd = ms.length + ' things people look for that nobody offers well yet.';
       if (!ms.length) empty(box, 'No unmet wishes found for this selection today.'); else more(ms, box, needRow);
     } else if (S.view === 'rise') {
       var rl = interleave(byCountry(d.rise || []));
+      if (rl.length) { var best = rl.slice().sort(function (a, b) { return ((b.forecast || {}).chance || 0) - ((a.forecast || {}).chance || 0); })[0]; vd = rl.length + ' searches will rise at least 40% in the coming months.' + (best ? ' Surest: ' + best.name + ' (' + fact('rise', best) + ').' : ''); }
       if (!rl.length) empty(box, 'No clear rises predicted for this selection.'); else more(rl, box, riseRow);
     } else if (S.view === 'early') {
       // eerst wat nog niemand ziet, dan wat net begint; elk met een kop
       var eh = interleave(byCountry(d.early || []).filter(function (x) { return x.tier !== 'starting'; })), es = interleave(byCountry(d.early || []).filter(function (x) { return x.tier === 'starting'; }));
       var el = (eh.length ? [{ head: 'Not visible yet', sub: 'No jump in the numbers yet; the pattern matches searches that broke out later' }] : []).concat(eh, es.length ? [{ head: 'Starting', sub: 'Last month already well above last year, not yet a lasting breakout' }] : [], es);
+      if (eh.length + es.length) { var eb = eh.concat(es).sort(function (a, b) { return (b.chance || 0) - (a.chance || 0); })[0]; vd = (eh.length + es.length) + ' searches show an early signal of a breakout.' + (eb ? ' Strongest: ' + eb.name + ' (' + eb.chance + '% chance).' : ''); }
       if (!el.length) empty(box, 'No early signals for this selection yet.'); else more(el, box, function (x) { return x.head ? h('div', { class: 'early-head' }, h('b', null, x.head), h('span', { class: 'meta', text: ' · ' + x.sub })) : earlyRow(x); });
     } else if (S.view === 'wild') {
       var W = d.wild || {}, wl = wildFor(), r = W.record || {};
+      if (r.made) vd = r.made + ' bold calls made: ' + (r.hit || 0) + ' came true, ' + (r.partly || 0) + ' partly, ' + (r.miss || 0) + ' wrong, ' + (r.open || 0) + ' still open.';
       var top = [h('div', { class: 'record' }, stat(r.made, 'calls made'), stat(r.checked, 'checked'), stat(r.hit, 'came true', 'ok'), stat(r.partly, 'partly'), stat(r.miss, 'wrong', 'bad'), stat(r.open, 'still open'))];
       (W.tracks || []).forEach(function (t) { top.push(trackRow(t)); });
       var rest = (W.dropped || []).filter(function (x) { return S.mk === 'ALL' || x.ccs.indexOf(S.mk) >= 0; });
       box.replaceChildren.apply(box, top.concat(wl.map(wildRow), rest.length ? [h('div', { class: 'early-head' }, h('b', null, 'Tested and dropped'), h('span', { class: 'meta', text: ' · ideas the data did not support' }))].concat(rest.map(wildRow)) : []));
     } else if (S.view === 'coming') {
       var cm = byCountry(d.coming || []).slice().sort(function (a, b) { return a.days - b.days; });
+      if (cm.length) vd = cm.length + ' buying moments in the next 100 days. First: ' + cm[0].name + ' (' + fact('coming', cm[0]) + ').';
       if (!cm.length) empty(box, 'Nothing coming up for this selection.'); else more(cm, box, comingRow);
     }
+    $('#dr-desc').replaceChildren(vd ? h('b', { class: 'verdict', text: vd }) : '', vd && cur && cur.desc ? ' ' : '', cur && cur.desc ? cur.desc : '');
   }
   function countFor(id) {
     var d = S.d;
