@@ -9,6 +9,18 @@ export default async function handler(req, res) {
   if (!store || !SHOPS[shop] || !/^[A-Z]{2}$/.test(cc)) return res.status(404).send('not found');
   try {
     if (req.query.prices) { // marktprijzen per product (bol, Amazon.nl, Amazon.de) voor het prijsadvies van de winkel; eigenaar: &run=1 haalt nu een stuk op
+      if (req.query.resum && isPro(req)) { // opgeslagen oordelen opnieuw samenvatten (na een regelwijziging), zonder AI
+        const P = await import('../lib/prices.js'), { getJSON, putJSON } = await import('../lib/store.js'), k = `prices/${shop}-NL.json`, o = (await getJSON(store, k, null)) || { items: {} }; let n = 0;
+        for (const [id, x] of Object.entries(o.items)) {
+          if (x.offers && x.verdict) { o.items[id] = { ...x, ...P.summarize({ ...x.offers, price: x.price }, x.verdict) }; n++; continue; }
+          // oudere rijen zonder bewaard oordeel: alleen de prijsregel toepassen op wat er staat
+          const same = { ...(x.same || {}) }, sim = { ...(x.similar || {}) };
+          for (const [k, v] of Object.entries(same)) if (x.price && (v.p < x.price * 0.5 || v.p > x.price * 2)) { delete same[k]; if (!sim[k]) sim[k] = { n: 1, median: v.p, low: v.p, ex: v }; }
+          const sp = Object.values(same).map(v => v.p), meds = Object.values(sim).map(v => v.median).sort((a, b) => a - b), m = meds.length;
+          o.items[id] = { ...x, same, similar: sim, lowSame: sp.length ? Math.min(...sp) : null, medSimilar: m ? Math.round((m % 2 ? meds[(m - 1) / 2] : (meds[m / 2 - 1] + meds[m / 2]) / 2) * 100) / 100 : null }; n++;
+        }
+        await putJSON(store, k, o); return res.status(200).json({ ok: true, redone: n });
+      }
       if (req.query.reset && isPro(req)) { const { putJSON } = await import('../lib/store.js'); await putJSON(store, `prices/${shop}-NL.json`, { items: {} }); await putJSON(store, `prices/${shop}-state.json`, { pending: {}, done: 0 }); return res.status(200).json({ ok: true, reset: true }); }
       if (req.query.pq && isPro(req)) { const P = await import('../lib/prices.js'), q = String(req.query.pq); const [bol, de] = await Promise.all([P.bolSearch(q).catch(e => ({ error: String(e.message || e) })), P.keepaDe(q).catch(e => ({ error: String(e.message || e) }))]); if (req.query.judge) { const { gatewayToken } = await import('../lib/ai.js'); P.judge.debug = true; const v = await P.judge([{ title: String(req.query.title || q), price: +(req.query.price || 0), bol: Array.isArray(bol) ? bol : [], amzNl: [], amzDe: Array.isArray(de) ? de : [] }], gatewayToken(req)).catch(e => ({ error: String(e.message || e) })); return res.status(200).json({ q, v, raw: P.judge.last }); }
         return res.status(200).json({ q, bol, amzDe: de }); }
