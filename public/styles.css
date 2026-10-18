@@ -357,3 +357,11 @@ code{font-size:14px;background:var(--accent-soft);color:var(--ink);padding:2px 6
 .m-pt-h{margin:0;color:var(--ink);font-weight:700}.m-pt-b{margin:4px 0 0;color:var(--body)}.m-ol .meta,.m-ol .asked{margin-top:4px}
 .m-prio{border-left:3px solid var(--accent);padding:6px 0 6px 16px;margin:20px 0 0;max-width:740px;color:var(--body)}.m-prio b{color:var(--ink)}
 details.m-more{margin-top:16px;max-width:740px}details.m-more>summary{cursor:pointer;font-weight:600;color:var(--ink)}
+/* Contrast (18 okt 2026, Henkjan: zo helder als een goed geschreven advies): tekst bijna zwart, bijzaken donkergrijs, namen vet */
+:root{--body:#1F2328;--muted:#4A515C}
+@media (prefers-color-scheme:dark){:root{--body:#E6E8EB;--muted:#B4BAC3}}
+.lname,.wild-t{font-weight:700}
+.line .meta,.line .meta a{color:var(--body)}
+.cu-what{color:var(--ink)}
+.tchip span{color:var(--body)}
+.m-ol .meta{color:var(--muted)}
