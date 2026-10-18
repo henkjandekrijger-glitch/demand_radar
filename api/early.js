@@ -62,6 +62,15 @@ export default async function handler(req, res) {
         if (!K.keepaReady()) return res.status(200).json({ ready: false, todo: 'KEEPA_KEY in Vercel' });
         if (req.method === 'POST') { let b = req.body; if (typeof b === 'string') { try { b = JSON.parse(b); } catch { b = {}; } } return res.status(200).json(await K.keepaQueue(store, (b && b.queue) || {})); }
         if (req.query.data) return res.status(200).json(await K.keepaData(store, String(req.query.data).toUpperCase()));
+        if (req.query.pick) { // toetsset: zoektermen uit de kijklijst met 4 jaar historie, helft met een niveausprong; zet ze in de rij en geeft hun zoekreeksen
+          const { getJSON } = await import('../lib/store.js'), cc = String(req.query.pick).toUpperCase(), n = Math.min(800, +(req.query.n || 400));
+          const S = (await getJSON(store, `early/series-${cc}.json`, null).catch(() => null)) || { kw: {} }, bad = /\b(login|near me|in der nähe|in meiner nähe|tickets?|wetter|weather|news|live|vs|gegen|tabelle|how|what|wie|was|wann|when|kurs|stock|aktie|film|movie|serie|lyrics|job|jobs|steuer|tax|versicherung|insurance|kredit|loan)\b/i;
+          const rows = [];
+          for (const [k, x] of Object.entries(S.kw || {})) { const y = (x.m || []).map(r => r[2]); if (y.length < 40 || bad.test(k)) continue; const a = l => l.reduce((p, c) => p + c, 0) / l.length, a2 = a(y.slice(-12)), a1 = a(y.slice(-24, -12)), a0 = a(y.slice(-36, -24)); if (a2 < 300) continue; rows.push({ k, m: x.m, shift: Math.abs(Math.log((a2 + 10) / (a1 + 10))) > 0.4 || Math.abs(Math.log((a1 + 10) / (a0 + 10))) > 0.4, v: a2 }); }
+          const sh = rows.filter(r => r.shift).sort((a, b) => b.v - a.v).slice(0, Math.round(n * 0.6)), st = rows.filter(r => !r.shift).sort((a, b) => b.v - a.v).slice(0, n - sh.length), pick = [...sh, ...st];
+          if (req.query.queue) await K.keepaQueue(store, { [cc]: pick.map(r => r.k) });
+          return res.status(200).json({ cc, candidates: rows.length, shift: rows.filter(r => r.shift).length, picked: pick.length, series: Object.fromEntries(pick.map(r => [r.k, { m: r.m, shift: r.shift }])) });
+        }
         if (req.query.q) return res.status(200).json(await K.keepaTerm(String(req.query.cc || 'DE').toUpperCase(), String(req.query.q)));
         if (req.query.run) return res.status(200).json(await K.keepaCollect(store, { max: Math.min(60, +(req.query.max || 20)) }));
         return res.status(200).json({ ready: true, tokens: await K.keepaTokens().catch(e => ({ error: String(e.message || e) })), ...(await K.keepaState(store)) });
