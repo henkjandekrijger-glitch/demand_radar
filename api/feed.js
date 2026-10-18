@@ -8,17 +8,17 @@ export default async function handler(req, res) {
   const shop = String(req.query.shop || 'yoors'), cc = String(req.query.cc || 'NL').toUpperCase();
   if (!store || !SHOPS[shop] || !/^[A-Z]{2}$/.test(cc)) return res.status(404).send('not found');
   try {
-    if (req.query.probe && isPro(req)) { // eigenaar: zoals Google een productpagina ziet (uitgelogd)
-      const r = await fetch(SHOPS[shop].link(String(req.query.probe)) + (req.query.qs ? `?${req.query.qs}` : ''), { headers: { ...(req.query.al ? { 'accept-language': String(req.query.al) } : {}), 'user-agent': req.query.ua === 'bot' ? 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36' }, redirect: 'follow', signal: AbortSignal.timeout(15000) });
-      const h = await r.text(), g = re => { const m = h.match(re); return m ? m[1].trim().slice(0, 160) : null; };
-      return res.status(200).json({ status: r.status, url: r.url, title: g(/<title[^>]*>([\s\S]*?)<\/title>/i), productLd: /"@type"\s*:\s*"Product"/.test(h), price: g(/"price"\s*:\s*"?([\d.,]+)/), game: /lollipop|yoors points|silver league/i.test(h), login: /log ?in|inloggen|sign in/i.test(g(/<title[^>]*>([\s\S]*?)<\/title>/i) || '') });
-    }
     if (req.query.prices) { // marktprijzen per product (bol, Amazon.nl, Amazon.de) voor het prijsadvies van de winkel; eigenaar: &run=1 haalt nu een stuk op
-      if (req.query.probe && isPro(req)) { const P = await import('../lib/prices.js'), q = String(req.query.probe); const [bol, de] = await Promise.all([P.bolSearch(q).catch(e => ({ error: String(e.message || e) })), P.keepaDe(q).catch(e => ({ error: String(e.message || e) }))]); return res.status(200).json({ q, bol, amzDe: de }); }
+      if (req.query.pq && isPro(req)) { const P = await import('../lib/prices.js'), q = String(req.query.pq); const [bol, de] = await Promise.all([P.bolSearch(q).catch(e => ({ error: String(e.message || e) })), P.keepaDe(q).catch(e => ({ error: String(e.message || e) }))]); return res.status(200).json({ q, bol, amzDe: de }); }
       if (req.query.run && isPro(req)) { const { shopPrices } = await import('../lib/prices.js'), { gatewayToken } = await import('../lib/ai.js'); return res.status(200).json(await shopPrices(store, shop, { token: gatewayToken(req) })); }
       const { pricesFor } = await import('../lib/prices.js');
       res.setHeader('Cache-Control', 'public, max-age=600');
       return res.status(200).json(await pricesFor(store, shop));
+    }
+    if (req.query.probe && isPro(req)) { // eigenaar: zoals Google een productpagina ziet (uitgelogd)
+      const r = await fetch(SHOPS[shop].link(String(req.query.probe)) + (req.query.qs ? `?${req.query.qs}` : ''), { headers: { ...(req.query.al ? { 'accept-language': String(req.query.al) } : {}), 'user-agent': req.query.ua === 'bot' ? 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36' }, redirect: 'follow', signal: AbortSignal.timeout(15000) });
+      const h = await r.text(), g = re => { const m = h.match(re); return m ? m[1].trim().slice(0, 160) : null; };
+      return res.status(200).json({ status: r.status, url: r.url, title: g(/<title[^>]*>([\s\S]*?)<\/title>/i), productLd: /"@type"\s*:\s*"Product"/.test(h), price: g(/"price"\s*:\s*"?([\d.,]+)/), game: /lollipop|yoors points|silver league/i.test(h), login: /log ?in|inloggen|sign in/i.test(g(/<title[^>]*>([\s\S]*?)<\/title>/i) || '') });
     }
     if (req.query.status) { // korte stand voor de eigen campagnepagina's (geen productgegevens)
       const { getJSON } = await import('../lib/store.js');
