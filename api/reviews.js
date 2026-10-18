@@ -1,9 +1,9 @@
 // GET /api/reviews — reviews ophalen via DataForSEO voor de reviewplek ("Beloofd is beloofd"; zie README).
-//   ?op=post&src=google|trustpilot|tripadvisor&q=<bedrijf + plaats, of domein bij trustpilot>&m=NL|US|DE|BE&n=<max 100>
+//   ?op=post&src=google|trustpilot|tripadvisor&q=<bedrijf + plaats, of domein bij trustpilot>&m=NL|US|DE|BE&n=<max 100; trustpilot max 500>
 //      Zet één taak in de wachtrij. Antwoord: { id, cost } of { cached: true } als dezelfde vraag < 30 dagen oud is.
 //   ?op=get&src=...&id=<taak-id>   Haalt de klaargezette reviews op (gratis bij DataForSEO). Status 'pending' tot ze klaar zijn.
 //   ?op=cache&src=...&q=...&m=...  Geeft eerder opgehaalde reviews terug zonder kosten.
-// Kostengrens: max 100 reviews per vraag, max REVIEWS_DAY_MAX (standaard 10) nieuwe taken per dag, en de harde
+// Kostengrens: max 100 reviews per vraag (Trustpilot max REVIEWS_MAX_N_TP, standaard 500), max REVIEWS_DAY_MAX (standaard 10) nieuwe taken per dag, en de harde
 // DataForSEO-dagrem van lib/dfs.js (DFS_DAILY_MAX, standaard $4) geldt ook hier. Namen van reviewers worden niet teruggegeven.
 import { createHash } from 'node:crypto';
 import { dfsReady, budget, dfsPostMany, dfsGet, underCap } from '../lib/dfs.js';
@@ -50,7 +50,8 @@ export default async function handler(req, res) {
     const day = (store && await getJSON(store, dayPath).catch(() => null)) || { n: 0, cost: 0 };
     if (day.n >= DAY_MAX()) return res.status(429).json({ error: `daily limit of ${DAY_MAX()} review requests reached` });
     if (!(await underCap())) return res.status(429).json({ error: 'daily DataForSEO budget reached' });
-    const n = Math.max(10, Math.min(100, Math.round((+req.query.n || 100) / 10) * 10));
+    const maxN = src === 'trustpilot' ? +(process.env.REVIEWS_MAX_N_TP || 500) : 100; // Trustpilot: grotere steekproef met volledige tekst
+    const n = Math.max(10, Math.min(maxN, Math.round((+req.query.n || 100) / 10) * 10));
     const b = budget(0.5);
     const task = { ...SRC[src](m)(q), depth: n, tag: keyOf(src, q, m) };
     const out = await dfsPostMany(`business_data/${src}/reviews/task_post`, [task], b);
