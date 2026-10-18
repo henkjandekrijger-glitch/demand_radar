@@ -6,6 +6,9 @@
   "buildCommand": null,
   "installCommand": null,
   "functions": {
+    "api/events.js": {
+      "maxDuration": 120
+    },
     "api/radar.js": {
       "maxDuration": 60
     },

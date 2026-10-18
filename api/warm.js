@@ -16,7 +16,9 @@ export default async function handler(req, res) {
         else night = { skip: 'two attempts today' };
       }
     }
-    res.status(200).json({ ok: true, radar: d.generatedAt, night });
+    // Events (voorspellingsmarkten) één keer per dag klaarzetten
+    let events = null; try { const { getEvents } = await import('../lib/events.js'), { getStore } = await import('../lib/store.js'), { gatewayToken } = await import('../lib/ai.js'); const ev = await getEvents(getStore(), { token: gatewayToken(req) }); events = { day: ev.day, items: (ev.items || []).length, errors: ev.errors || [] }; } catch (e) { events = { error: String(e.message || e).slice(0, 120) }; }
+    res.status(200).json({ ok: true, radar: d.generatedAt, night, events });
   } catch (e) {
     res.status(200).json({ ok: false, error: String(e.message || e) });
   }

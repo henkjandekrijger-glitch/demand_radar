@@ -9,9 +9,9 @@
   var LBL = { new: ['New demand'], seasonal: ['Seasonal'], rising: ['Growing'], steady: ['Steady demand'] };
   var NOW = { rising: ['Rising today', 'p-early'], steady: ['Holding', 'p-steady'], fading: ['Fading', 'p-falling'], gone: ['Over', 'p-falling'], quiet: ['', ''] };
   // Rustig: vier hoofdtegels (vooruitkijken), de rest als één regel tekstlinks met korte namen.
-  var TAG = { rise: 'Forecast, with the odds', early: 'Before anyone sees it', wild: 'Bold calls, checked', coming: 'Moments ahead' };
+  var TAG = { rise: 'Forecast, with the odds', early: 'Before anyone sees it', wild: 'Bold calls, checked', coming: 'Moments ahead', events: 'World odds, what they change' };
   var SHORT = { now: 'Rising now', unexpected: 'Unexpected', missing: 'Not made yet', products: 'Products', courses: 'Courses', services: 'Services', books: 'Books', apps: 'Apps & AI', trips: 'Trips', money: 'Money' };
-  var KEEP = { rise: 1, early: 1, wild: 1, coming: 1, now: 1 };
+  var KEEP = { rise: 1, early: 1, wild: 1, coming: 1, now: 1, events: 1 };
   var ITEM_VIEWS = { now: 1, products: 1, courses: 1, books: 1, services: 1, apps: 1, trips: 1, money: 1 };
   try { var saved = JSON.parse(localStorage.getItem('dr-view') || 'null'); if (saved) { S.mk = saved.mk || S.mk; S.view = saved.view || S.view; } } catch (e) {}
 
@@ -241,6 +241,18 @@
     var got = t.state === 'waiting' ? 'waiting for the ' + m + ' numbers' : num(t.value) + (t.ref != null ? ' vs ' + num(t.ref) : '') + (t.state === 'pass' ? '  ✓' : '  ✗');
     return h('li', { class: 'wt ' + t.state }, h('span', { class: 'mk', text: t.cc }), '"' + t.k + '" in ' + m + ': ' + goal + ' → ', h('b', { text: got }));
   }
+  // Events: de kans volgens de markt en wat het verandert in de vraag (met de echte zoektermen per land)
+  function eventRow(e) {
+    var cc = S.mk === 'ALL' ? (e.ccs || [])[0] : S.mk, terms = (e.terms || {})[cc] || [];
+    var claim = (e.outcome && e.outcome !== 'Yes' ? e.outcome + ': ' : '') + e.prob + '% chance' + (e.ends ? ', decided by ' + day(e.ends) : '');
+    return h('div', { class: 'line one' },
+      h('div', { class: 'line-main' },
+        h('div', { class: 'line-top' }, h('div', null, (e.ccs || []).map(function (c) { return h('span', { class: 'mk', text: c }); }), h('a', { class: 'lname', href: e.url, target: '_blank', rel: 'noopener' }, e.title), h('span', { class: 'claimf', text: ': ' + claim + '.' })),
+          h('span', { class: 'badge ' + (e.dir === 'less' ? 'p-falling' : 'p-early'), text: e.dir === 'less' ? 'Less demand' : 'More demand' })),
+        e.effect ? h('p', { class: 'cu-what', text: e.effect }) : null,
+        terms.length ? asked('', terms, cc) : null,
+        h('p', { class: 'meta', text: 'Odds from ' + e.src + (e.volume ? ' · $' + num(e.volume) + ' traded' : '') })));
+  }
   function wildRow(x) {
     var st = WS[x.status] || WS.open;
     var meta = ['Made ' + day(x.made), x.sure ? 'How sure: ' + SURE[x.sure] + (x.odds ? ', ' + x.odds : '') : null, x.status === 'dropped' ? null : x.judged ? 'Checked ' + day(x.judged) : x.due ? 'Check ' + day(x.due) + (x.manual ? ' (by hand)' : '') : null].filter(Boolean).join(' · ');
@@ -274,6 +286,7 @@
     status();
     // categorieën (volgorde: geleerd uit wat bezoekers openen, anders vast)
     var views = (d.views || []).filter(function (v, i, a) { return a.findIndex(function (x) { return x.id === v.id; }) === i; });
+    if (!views.some(function (v) { return v.id === 'events'; })) views.push({ id: 'events', name: 'Events', desc: 'What prediction markets expect to happen, with the odds, and what it changes in what people search for and buy' });
     if (d.order && d.order.length) views.sort(function (a, b) { var ia = d.order.indexOf(a.id), ib = d.order.indexOf(b.id); return (a.id === 'now' ? -1 : b.id === 'now' ? 1 : 0) || (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
     // Vier tegels zonder tellers; daaronder één regel links (lege verborgen).
     var box0 = $('#dr-views'), big = h('div', { class: 'tiles' }), small = h('div', { class: 'vlinks' });
@@ -323,6 +336,13 @@
       (W.tracks || []).forEach(function (t) { top.push(trackRow(t)); });
       var rest = (W.dropped || []).filter(function (x) { return S.mk === 'ALL' || x.ccs.indexOf(S.mk) >= 0; });
       box.replaceChildren.apply(box, top.concat(wl.map(wildRow), rest.length ? [h('div', { class: 'early-head' }, h('b', null, 'Tested and dropped'), h('span', { class: 'meta', text: ' · ideas the data did not support' }))].concat(rest.map(wildRow)) : []));
+    } else if (S.view === 'events') {
+      if (!S.ev) { box.replaceChildren(h('p', { class: 'loading', text: "Reading the world's odds" })); if (!S.evLoading) { S.evLoading = 1; fetch('/api/events').then(function (r) { return r.json(); }).then(function (j) { S.ev = j || { items: [] }; draw(); }).catch(function () { S.ev = { items: [] }; draw(); }); } }
+      else {
+        var evs = (S.ev.items || []).filter(function (e) { return S.mk === 'ALL' || (e.ccs || []).indexOf(S.mk) >= 0; });
+        if (evs.length) { var et = evs.slice().sort(function (a, b) { return b.volume - a.volume; })[0]; vd = evs.length + ' world events will change what people buy. Most traded: ' + et.title + ' (' + (et.outcome && et.outcome !== 'Yes' ? et.outcome + ' ' : '') + et.prob + '%).'; }
+        if (!evs.length) empty(box, 'No events for this selection today.'); else more(evs, box, eventRow);
+      }
     } else if (S.view === 'coming') {
       var cm = byCountry(d.coming || []).slice().sort(function (a, b) { return a.days - b.days; });
       if (cm.length) vd = cm.length + ' buying moments in the next 100 days. First: ' + cm[0].name + ' (' + fact('coming', cm[0]) + ').';
@@ -332,6 +352,7 @@
   }
   function countFor(id) {
     var d = S.d;
+    if (id === 'events') return S.ev ? (S.ev.items || []).filter(function (e) { return S.mk === 'ALL' || (e.ccs || []).indexOf(S.mk) >= 0; }).length : 1;
     if (ITEM_VIEWS[id]) return byCountry(d.items || []).filter(function (x) { return id === 'now' ? !(x.now && (x.now.status === 'gone' || x.now.status === 'fading')) : x.cat === id; }).length;
     if (id === 'unexpected') return byCountry(d.items || []).filter(function (x) { return x.unexpected; }).length + byCountry(d.today || []).length;
     if (id === 'missing') return byCountry(d.missing || []).length;

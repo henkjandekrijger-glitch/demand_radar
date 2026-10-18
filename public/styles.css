@@ -370,3 +370,6 @@ details.m-more{margin-top:16px;max-width:740px}details.m-more>summary{cursor:poi
 .claimf{font-weight:700;color:var(--ink);font-size:17px;line-height:1.35}
 #dr-list{counter-reset:it}#dr-list>.line{counter-increment:it}
 #dr-list>.line .line-top>div:first-child::before{content:counter(it) ".";font-weight:700;color:var(--ink);margin-right:8px;font-variant-numeric:tabular-nums}
+/* vijf tegels sinds Events (18 okt) */
+.tiles{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media (max-width:720px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
