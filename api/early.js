@@ -47,6 +47,25 @@ export default async function handler(req, res) {
         const st = (await getJSON(store, 'amzsales/state.json', null).catch(() => null)) || {};
         return res.status(200).json({ ...st, open: Object.keys(st.open || {}).length });
       }
+      if (op === 'launches') { // lanceerkalender (eigenaar): ?op=launches → Wikidata-lijst (gratis); &cc=NL&ai=1 → wat de radar ervan houdt (één AI-vraag)
+        const L = await import('../lib/launches.js'), today = new Date().toISOString().slice(0, 10);
+        if (req.query.ai) { const { gatewayToken } = await import('../lib/ai.js'); return res.status(200).json(await L.launchMoments(String(req.query.cc || 'NL').toUpperCase(), { token: gatewayToken(req), store, today, force: true })); }
+        return res.status(200).json((await L.wikidataLaunches(today)).slice(0, 40));
+      }
+      if (op === 'regulation') { // beleidskalender (eigenaar): ?op=regulation&cc=US → opnieuw opbouwen (één AI-vraag)
+        const { regulationMoments } = await import('../lib/regulation.js'), { getJSON, putJSON } = await import('../lib/store.js'), { gatewayToken } = await import('../lib/ai.js'), cc = String(req.query.cc || 'US').toUpperCase();
+        await putJSON(store, `regulation/${cc}.json`, { day: '2000-01-01', items: [] }).catch(() => {});
+        return res.status(200).json(await regulationMoments(cc, { token: gatewayToken(req), store, today: new Date().toISOString().slice(0, 10) }));
+      }
+      if (op === 'keepa') { // Keepa (eigenaar): stand en tokens; &q=term&cc=DE test één zoekterm (10 tokens); POST {queue:{cc:[...]}} zet termen klaar; &run=1 verzamelt nu; &data=DE geeft de reeksen
+        const K = await import('../lib/keepa.js');
+        if (!K.keepaReady()) return res.status(200).json({ ready: false, todo: 'KEEPA_KEY in Vercel' });
+        if (req.method === 'POST') { let b = req.body; if (typeof b === 'string') { try { b = JSON.parse(b); } catch { b = {}; } } return res.status(200).json(await K.keepaQueue(store, (b && b.queue) || {})); }
+        if (req.query.data) return res.status(200).json(await K.keepaData(store, String(req.query.data).toUpperCase()));
+        if (req.query.q) return res.status(200).json(await K.keepaTerm(String(req.query.cc || 'DE').toUpperCase(), String(req.query.q)));
+        if (req.query.run) return res.status(200).json(await K.keepaCollect(store, { max: Math.min(60, +(req.query.max || 20)) }));
+        return res.status(200).json({ ready: true, tokens: await K.keepaTokens().catch(e => ({ error: String(e.message || e) })), ...(await K.keepaState(store)) });
+      }
       if (op === 'meta') { // Meta Ad Library testen (eigenaar): ?op=meta&q=...&cc=NL
         const { metaAds, metaReady } = await import('../lib/meta.js');
         if (!metaReady()) return res.status(200).json({ ready: false, how: 'META_AD_TOKEN in Vercel (user token van een account met bevestigde identiteit)' });

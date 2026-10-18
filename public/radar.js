@@ -180,6 +180,7 @@
       h('div', { class: 'line-main' },
         h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: m.cc }), h('span', { class: 'lname', text: m.name })), h('span', { class: 'badge ' + (m.status === 'open' ? 'p-early' : 'p-steady'), text: m.days === 0 ? 'Today' : 'In ' + m.days + ' days' })),
         h('p', { class: 'meta', text: line }),
+        m.kind === 'launch' ? h('p', { class: 'meta' }, 'Release' + (m.launchType ? ' · ' + m.launchType : '') + (m.month ? ' · date known to the month' : '') + (m.sources && m.sources[0] ? ' · ' : ''), m.sources && m.sources[0] && m.sources[0].site ? h('a', { href: m.sources[0].site, target: '_blank', rel: 'noopener' }, 'Wikipedia') : null) : null,
         m.kind === 'regulation' ? h('p', { class: 'meta' }, 'New rule · ' + (m.direction === 'less' ? 'less' : 'more') + ' demand' + (m.sources && m.sources[0] ? ' · ' : ''), m.sources && m.sources[0] ? (m.sources[0].site ? h('a', { href: m.sources[0].site, target: '_blank', rel: 'noopener' }, m.sources[0].source || 'source') : m.sources[0].source) : null) : null,
         m.kind === 'school' && m.note ? h('p', { class: 'meta', text: 'School holidays ' + m.note.replace(' to ', ' to ') + ' (regions differ)' }) : null,
         m.terms && m.terms.length ? h('div', { class: 'tchips' }, m.terms.map(function (t) { return h('a', { class: 'tchip', href: checkUrl(t.k, m.cc), onclick: function () { ev('open', 'coming'); } }, t.k, h('span', { text: ' ' + (t.now === t.peak ? num(t.peak) : num(t.now) + '→' + num(t.peak)) })); })) : null,
