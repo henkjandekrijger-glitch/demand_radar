@@ -54,6 +54,7 @@ export default async function handler(req, res) {
       }
       if (op === 'regulation') { // beleidskalender (eigenaar): ?op=regulation&cc=US → opnieuw opbouwen (één AI-vraag)
         const { regulationMoments } = await import('../lib/regulation.js'), { getJSON, putJSON } = await import('../lib/store.js'), { gatewayToken } = await import('../lib/ai.js'), cc = String(req.query.cc || 'US').toUpperCase();
+        if (req.query.federal) { const { federalRules } = await import('../lib/regulation.js'); return res.status(200).json(await federalRules(new Date().toISOString().slice(0, 10))); }
         await putJSON(store, `regulation/${cc}.json`, { day: '2000-01-01', items: [] }).catch(() => {});
         return res.status(200).json(await regulationMoments(cc, { token: gatewayToken(req), store, today: new Date().toISOString().slice(0, 10) }));
       }
