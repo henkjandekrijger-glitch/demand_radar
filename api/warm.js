@@ -5,7 +5,18 @@ export default async function handler(req, res) {
   try {
     if (req.query.map) { const d = await getMap(req, { pack: 'practice' }); return res.status(200).json({ ok: true, map: d.generatedAt, items: d.items.length, mode: d.mode }); }
     const d = await getRadar(req);
-    res.status(200).json({ ok: true, radar: d.generatedAt });
+    // Elke nacht de radar opnieuw opbouwen (vanaf 04:00 UTC, als de radardag omslaat), hooguit 2 pogingen per dag.
+    let night = null;
+    if (new Date().getUTCHours() >= 4) {
+      const { getDemand, demandDay } = await import('../lib/data.js'), { getStore, getJSON, putJSON } = await import('../lib/store.js');
+      const cur = await getDemand(req), day = demandDay(), store = getStore();
+      if (store && (!cur || cur.day !== day || cur.stale)) {
+        const k = `demand/attempt-${day}.json`, a = (await getJSON(store, k, null).catch(() => null)) || { n: 0 };
+        if (a.n < 2) { a.n++; a.at = new Date().toISOString(); await putJSON(store, k, a).catch(() => {}); const nd = await getDemand(req, { build: true }); night = { day: nd.day, stale: !!nd.stale, note: nd.buildNote || null, spent: nd.spent, attempt: a.n }; }
+        else night = { skip: 'two attempts today' };
+      }
+    }
+    res.status(200).json({ ok: true, radar: d.generatedAt, night });
   } catch (e) {
     res.status(200).json({ ok: false, error: String(e.message || e) });
   }

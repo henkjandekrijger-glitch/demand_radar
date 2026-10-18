@@ -10,4 +10,4 @@ Werkafspraken:
    Taken: `op=todo` (text) en `op=done` (id, text).
 3. Grotere veranderingen ook in README.md ("Stand van zaken"), committen en pushen (push naar main = live).
 4. Deze repo is OPENBAAR: nooit sleutels, wachtwoorden of tokens in code of commits; alleen in Vercel-omgevingsvariabelen.
-5. Henkjan: Nederlands, kort, één stap tegelijk vragen; zuinig met tokens. DataForSEO max $4/dag. Nooit een eindpunt dat geld of quotum kost (checks, `op=yt`, `op=refresh`) in een lus aanroepen.
+5. Henkjan: Nederlands, kort, één stap tegelijk vragen; zuinig met tokens. DataForSEO max $4/dag, plus max $3 voor de nachtelijke opbouw van de radar (Henkjan 18 okt: "elke nacht"). Nooit een eindpunt dat geld of quotum kost (checks, `op=yt`, `op=refresh`) in een lus aanroepen.
