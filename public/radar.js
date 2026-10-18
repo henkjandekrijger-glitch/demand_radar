@@ -24,6 +24,14 @@
   function ev(k, c) { try { var u = '/api/e?x=radar&k=' + k + '&v=A&c=' + encodeURIComponent(c || '-'); if (navigator.sendBeacon) navigator.sendBeacon(u); else fetch(u, { keepalive: true }); } catch (e) {} }
   function save() { try { localStorage.setItem('dr-view', JSON.stringify({ mk: S.mk, view: S.view })); } catch (e) {} }
   function checkUrl(q, cc) { return '/check?q=' + encodeURIComponent(q) + '&m=' + (cc === 'WW' ? 'US' : cc) + '#check'; }
+  // De echte zoekopdrachten in de eigen taal van het land, onder de (Engelse) naam.
+  var LANGOF = { NL: 'nl', DE: 'de', US: 'en', GB: 'en', FR: 'fr', ES: 'es', IT: 'it', BE: 'nl', AT: 'de' };
+  function norm(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9\u00c0-\u024f]+/g, ' ').trim(); }
+  function asked(name, qs, cc) {
+    var seen = {}, l = (qs || []).filter(function (q) { var k = norm(q); if (!k || seen[k]) return false; seen[k] = 1; return true; }).slice(0, 3);
+    if (!l.length || (l.length === 1 && norm(l[0]) === norm(name))) return null;
+    return h('p', { class: 'asked' }, h('span', { class: 'asked-l', text: 'Searched as ' }), [].concat.apply([], l.map(function (q, i) { return [i ? ' · ' : '', h('a', { href: checkUrl(q, cc), lang: LANGOF[cc] || null }, '\u201c' + q + '\u201d')]; })));
+  }
   // Lijn: gemeten maanden; stippellijn: voorspelling (f = voorspelde waarden, aansluitend na een gat van de achterstand).
   function spark(v, f, gap) {
     if (!v || v.length < 4) return null;
@@ -83,6 +91,7 @@
           h('div', { class: 'badges' },
             x.fresh ? h('span', { class: 'badge p-early', text: 'New' }) : null,
             x.forecast && x.forecast.call === 'rise' ? h('span', { class: 'badge p-early', text: 'Will rise' }) : x.forecast && x.forecast.call === 'fall' ? h('span', { class: 'badge p-falling', text: 'Will drop' }) : nw && x.now.status !== 'quiet' ? h('span', { class: 'badge ' + nw[1], text: nw[0] }) : null)),
+        asked(x.name, [x.keyword || x.name].concat(also), x.cc),
         x.what ? h('p', { class: 'cu-what', text: cap(x.what) }) : null,
         S.view === 'unexpected' && x.why ? h('p', { class: 'cu-why', text: x.why }) : null,
         h('p', { class: 'meta', text: nums.join(' · ') }),
@@ -120,6 +129,7 @@
     return h('div', { class: 'line' },
       h('div', { class: 'line-main' },
         h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: x.cc }), link), h('div', { class: 'badges' }, (f.stability ? f.stability.level === 'all' : f.confidence === 'high') ? h('span', { class: 'badge p-steady', title: 'Rose in this period in every year since 2021', text: 'Every year' }) : null, f.chance != null ? h('span', { class: 'badge p-early', title: 'Chance that searches in ' + MON[pk.m - 1] + ' are at least 40% higher than now. Tested: of the rises we predicted, 90% came true.', text: '+40% by ' + MON[pk.m - 1] + ' · ' + f.chance + '% chance' }) : h('span', { class: 'badge p-early', text: '+' + Math.round((pk.v / Math.max(f.from.v, 1) - 1) * 100).toLocaleString('en-US') + '% by ' + MON[pk.m - 1] }))),
+        asked(x.name, [x.keyword || x.name].concat((x.members || []).map(function (m) { return m.k; })), x.cc),
         x.what ? h('p', { class: 'cu-what', text: cap(x.what) }) : null,
         h('p', { class: 'meta' }, h('b', { class: 'fcb' }, 'Forecast '), path + ' searches a month'),
         h('p', { class: 'meta', text: 'Measured: ' + num(f.from.v) + ' in ' + MON[f.from.m - 1] + (lyPeak ? ' · last year ' + num(lyPeak.v) + ' in ' + MON[lyPeak.m - 1] : '') + (x.cpc != null ? ' · $' + Number(x.cpc).toFixed(2) + ' per click' : '') }),
@@ -136,6 +146,7 @@
       h('div', { class: 'line-main' },
         h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: x.cc }), link), h('div', { class: 'badges' },
           h('span', { class: 'badge ' + (st ? 'p-rising' : 'p-early'), title: 'Chance of a lasting breakout (searches at least double last year for 3 months) within 6 months, measured in our test on 4 years of data', text: (st ? 'Starting' : 'Not visible yet') + ' · ' + x.chance + '% chance' }))),
+        asked(x.name, [x.keyword || x.name], x.cc),
         h('p', { class: 'meta', text: 'Measured: ' + num(x.now.v) + ' in ' + MON[x.now.m - 1] + ' · same month last year ' + num(x.lastYear) + (x.cpc != null ? ' · $' + Number(x.cpc).toFixed(2) + ' per click' : '') }),
         (x.reasons || []).length ? h('p', { class: 'meta', text: x.reasons.join(' · ') }) : null),
       spark((x.series || []).map(function (s) { return s.v; })));
@@ -145,6 +156,7 @@
     return h('div', { class: 'line one' },
       h('div', { class: 'line-main' },
         h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: t.cc }), h('a', { class: 'lname', href: checkUrl(t.keyword || t.name, t.cc), onclick: function () { ev('open', 'today'); } }, t.name)), h('span', { class: 'badge p-early', text: 'Today' })),
+        asked(t.name, [t.keyword || t.name], t.cc),
         h('p', { class: 'cu-what', text: t.angle }),
         h('p', { class: 'meta' }, (t.traffic && t.traffic !== 'Bluesky' ? t.traffic + ' searches today' : t.traffic === 'Bluesky' ? 'Trending on Bluesky' : ''), t.news && t.news.url ? [' · ', h('a', { href: t.news.url, target: '_blank', rel: 'noopener' }, t.news.source || 'news')] : null),
         t.idea ? h('p', { class: 'cu-idea' }, h('b', null, 'Idea'), t.idea) : null));

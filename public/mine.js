@@ -24,53 +24,79 @@
   function err(msg) { return h('p', { class: 'm-err', text: msg }); }
 
   // ---------- Volgen: /mine/<id> ----------
-  var KIND = [['direct', 'About what you sell'], ['adjacent', 'Next to what you do'], ['moment', 'Moments to prepare for'], ['threat', 'Watch out']];
-  var TYPE = { rise: 'Will rise', now: 'Rising now', early: 'Early signal', coming: 'Coming up', missing: "Doesn't exist yet", today: 'Today', wild: 'Wildcard' };
-  function matchRow(m) {
-    var meta = [];
-    if (m.type === 'rise' && m.chance != null) meta.push(m.chance + '% chance of +40%' + (m.peak ? ' by ' + MON[m.peak.m - 1] : ''));
-    if (m.type === 'now' && m.yoy != null) meta.push(pc(m.yoy) + ' on last year' + (m.v ? ' · ' + num(m.v) + ' searches a month' : ''));
-    if (m.type === 'early' && m.chance != null) meta.push((m.tier === 'starting' ? 'Starting' : 'Not visible yet') + ' · ' + m.chance + '% chance it breaks out');
-    if (m.type === 'coming' && m.date) meta.push(day(m.date) + (m.days != null ? (m.days > 0 ? ' · in ' + m.days + ' days' : ' · now') : ''));
-    if (m.type === 'wild' && m.status) meta.push((m.status === 'open' ? 'Open' : m.status) + (m.due ? ' · checked ' + day(m.due) : ''));
-    var q = m.q || (m.terms && m.terms[0]);
-    return h('div', { class: 'line wild' },
-      h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: m.cc }), h('b', { class: 'wild-t', text: m.name })), h('div', { class: 'badges' }, h('span', { class: 'badge ' + (m.kind === 'threat' ? 'p-falling' : m.fit >= 3 ? 'p-early' : 'p-rising'), text: TYPE[m.type] || m.type }))),
-      h('p', { class: 'wild-claim', text: m.say }),
-      h('p', { class: 'meta' }, meta.join(' · '), meta.length && q ? ' · ' : '', q ? h('a', { href: '/check?q=' + encodeURIComponent(q) + '&m=' + String(m.cc).split('/')[0] + '#check', text: 'Check "' + q + '"' }) : null));
+  // Opbouw zoals een goed advies: eerst het oordeel in één vette zin, dan genummerde punten (vette bewering met het getal,
+  // daaronder wat het betekent en wat je doet), en bij de concurrentie een prioriteit voor deze week.
+  var MONF = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  var TYPE = { rise: 'Forecast', now: 'Rising now', early: 'Early signal', coming: 'Buying moment', missing: "Doesn't exist yet", today: 'Today', wild: 'Wildcard' };
+  var LANGOF = { NL: 'nl', DE: 'de', US: 'en' };
+  function norm(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9À-ɏ]+/g, ' ').trim(); }
+  function checkLink(q, cc) { return '/check?q=' + encodeURIComponent(q) + '&m=' + String(cc || 'NL').split('/')[0] + '#check'; }
+  // De echte zoekopdrachten, in de taal van het land.
+  function asked(name, qs, cc) {
+    var seen = {}, l = (qs || []).map(function (q) { return typeof q === 'string' ? q : q && q.k; }).filter(function (q) { var k = norm(q); if (!k || seen[k]) return false; seen[k] = 1; return true; }).slice(0, 3);
+    if (!l.length || (l.length === 1 && norm(l[0]) === norm(name))) return null;
+    return h('p', { class: 'asked' }, h('span', { text: 'Searched as ' }), [].concat.apply([], l.map(function (q, i) { return [i ? ' · ' : '', h('a', { href: checkLink(q, cc), lang: LANGOF[String(cc).split('/')[0]] || null }, '“' + q + '”')]; })));
   }
+  // Het getal achter een punt, kort (voor het oordeel) en als vette bewering (voor het punt zelf).
+  function fact(m) {
+    if (m.type === 'rise' && m.chance != null) return m.chance + '% chance searches rise 40% or more' + (m.peak ? ' by ' + MONF[m.peak.m - 1] : '');
+    if (m.type === 'now' && m.yoy != null) return pc(m.yoy) + ' searches on last year' + (m.v ? ', ' + num(m.v) + ' a month' : '');
+    if (m.type === 'early' && m.chance != null) return 'early signal, ' + m.chance + '% chance it breaks out';
+    if (m.type === 'coming' && m.date) { var dd = Math.round((Date.parse(String(m.date).slice(0, 10)) - Date.parse(new Date().toISOString().slice(0, 10))) / 864e5); return day(m.date) + (dd > 1 ? ', in ' + dd + ' days' : dd === 1 ? ', tomorrow' : dd === 0 ? ', today' : ''); }
+    return '';
+  }
+  function claim(m) { var f = fact(m), n = String(m.name || '').replace(/\.$/, ''); return f ? n + ': ' + f + '.' : n + '.'; }
+  function point(m) {
+    var meta = [CCN[String(m.cc).split('/')[0]] || m.cc, TYPE[m.type] || m.type];
+    if (m.type === 'wild' && m.due) meta.push('checked ' + day(m.due));
+    return h('li', null, h('p', { class: 'm-pt-h', text: claim(m) }), m.say ? h('p', { class: 'm-pt-b', text: m.say }) : null,
+      asked(m.name, [m.q].concat(m.terms || []), m.cc), h('p', { class: 'meta', text: meta.join(' · ') }));
+  }
+  function points(list, show) {
+    var ol = h('ol', { class: 'm-ol' }, list.slice(0, show).map(point)), rest = list.slice(show);
+    return [ol, rest.length ? h('button', { class: 'chip', type: 'button', text: 'Show ' + rest.length + ' more', onclick: function (e) { rest.forEach(function (m) { ol.append(point(m)); }); e.target.remove(); } }) : null];
+  }
+  function and(l) { return l.length < 2 ? l.join('') : l.slice(0, -1).join(', ') + ' and ' + l[l.length - 1]; }
   function ownBlock(cc, o) {
     var top = (o.terms || []).slice(0, 8), rest = (o.terms || []).slice(8), hasAmz = (o.terms || []).some(function (t) { return t.amazon; });
-    var row = function (t) { return h('tr', null, h('td', null, t.k, t.early ? h('span', { class: 'badge p-early m-eb', text: 'Early signal ' + t.early.chance + '%' }) : null), h('td', { class: 'n', text: num(t.v) }), hasAmz ? h('td', { class: 'n', text: t.amazon ? num(t.amazon.units) : '–', title: t.amazon && t.amazon.top ? 'Best seller: ' + t.amazon.top : '' }) : null, h('td', { class: 'n ' + (t.yoy == null ? '' : t.yoy >= 10 ? 'up' : t.yoy <= -10 ? 'down' : ''), text: pc(t.yoy) }), h('td', { class: 'sp' }, spark(t.spark))); };
+    var row = function (t) { return h('tr', null, h('td', { lang: LANGOF[cc] || null }, t.k, t.early ? h('span', { class: 'badge p-early m-eb', text: 'Early signal ' + t.early.chance + '%' }) : null), h('td', { class: 'n', text: num(t.v) }), hasAmz ? h('td', { class: 'n', text: t.amazon ? num(t.amazon.units) : '–', title: t.amazon && t.amazon.top ? 'Best seller: ' + t.amazon.top : '' }) : null, h('td', { class: 'n ' + (t.yoy == null ? '' : t.yoy >= 10 ? 'up' : t.yoy <= -10 ? 'down' : ''), text: pc(t.yoy) }), h('td', { class: 'sp' }, spark(t.spark))); };
     var tb = h('tbody', null, top.map(row));
     return h('div', { class: 'm-own' },
       h('div', { class: 'm-own-h' }, h('span', { class: 'mk', text: cc }), h('b', { text: CCN[cc] }), o.spark && o.spark.length > 3 ? spark(o.spark) : null),
       o.total ? h('p', { class: 'meta', text: num(o.total) + ' searches in ' + (o.month ? MON[+o.month.slice(5) - 1] : 'the last month') + (o.yoy != null ? ' · ' + pc(o.yoy) + ' on last year (last 3 months)' : '') }) : null,
-      top.length ? h('table', { class: 'm-tab' }, h('thead', null, h('tr', null, h('th', { text: 'Search' }), h('th', { class: 'n', text: 'A month' }), hasAmz ? h('th', { class: 'n', text: 'Bought on Amazon' }) : null, h('th', { class: 'n', text: 'vs last year' }), h('th', { text: '' }))), tb) : null,
+      top.length ? h('table', { class: 'm-tab' }, h('thead', null, h('tr', null, h('th', { text: 'What people type' }), h('th', { class: 'n', text: 'A month' }), hasAmz ? h('th', { class: 'n', text: 'Bought on Amazon' }) : null, h('th', { class: 'n', text: 'vs last year' }), h('th', { text: '' }))), tb) : null,
       rest.length ? h('button', { class: 'chip', type: 'button', style: 'margin-top:8px', text: 'Show ' + rest.length + ' more', onclick: function (e) { rest.forEach(function (t) { tb.append(row(t)); }); e.target.remove(); } }) : null,
       o.waiting && o.waiting.length ? h('p', { class: 'meta', text: (top.length ? 'Still collecting 4 years of data for ' + o.waiting.length + ' more searches' : 'Collecting 4 years of data for ' + o.waiting.length + ' searches') + '; ready within a day.' }) : null,
       o.rare && o.rare.length ? h('p', { class: 'meta', text: 'Too few searches to measure: ' + o.rare.join(', ') + '.' }) : null);
   }
   var KINDN = { shop: 'shop', marketplace: 'marketplace', content: 'content site' };
-  function competeBlock(c) {
+  function cleanAct(a) { return String(a || '').replace(/^this week,?\s*/i, '').replace(/^./, function (c) { return c.toUpperCase(); }); }
+  function competeBlock(c, name) {
     if (!c || c.error) return [err((c && c.error) || 'Could not map competitors right now.')];
-    var out = [], n = (c.terms || []).length;
-    (c.gaps || []).forEach(function (g) {
-      out.push(h('div', { class: 'line wild' }, h('b', { class: 'wild-t', text: g.title }), h('p', { class: 'wild-claim', text: g.why }), g.action ? h('p', { class: 'm-act' }, h('b', { text: 'This week: ' }), String(g.action).replace(/^this week,?\s*/i, '').replace(/^./, function (c) { return c.toUpperCase(); })) : null,
-        g.terms && g.terms.length ? h('div', { class: 'm-chips' }, g.terms.slice(0, 4).map(function (t) { return h('span', { class: 'm-chip', text: t }); })) : null));
-    });
+    var out = [], mine = c.mine || [], comp = c.competitors || [], shelf = c.shelf || [];
+    var lead = c.serpChecked ? (mine.length ? name + ' is in Google\'s top 10 for ' + mine.length + ' of its ' + c.serpChecked + ' biggest searches.' : name + ' is not in Google\'s top 10 for any of its ' + c.serpChecked + ' biggest searches.') : '';
+    if (shelf.length) lead += (lead ? ' ' : '') + (c.aiMentionsUs ? 'AI assistants name it for ' + c.aiMentionsUs + ' of ' + shelf.length + ' searches.' : 'AI assistants never name it.');
+    var win = comp.filter(function (x) { return x.kind !== 'content'; }).slice(0, 3).map(function (x) { return x.domain; });
+    if (lead) out.push(h('p', { class: 'm-verdict' }, h('b', { text: lead }), win.length ? ' Most often on top: ' + and(win) + '.' : ''));
+    else out.push(h('p', { class: 'meta', text: 'Google positions are checked within a day (daily data budget).' }));
+    var gaps = c.gaps || [];
+    if (gaps.length) out.push(h('ol', { class: 'm-ol' }, gaps.map(function (g) {
+      return h('li', null, h('p', { class: 'm-pt-h', text: String(g.title || '').replace(/\.$/, '') + '.' }), h('p', { class: 'm-pt-b', text: g.why }),
+        g.action ? h('p', { class: 'm-pt-b' }, h('b', { text: 'This week: ' }), cleanAct(g.action)) : null,
+        g.terms && g.terms.length ? asked('', g.terms, (c.terms && c.terms[0] && c.terms[0].cc) || 'NL') : null);
+    })));
     if (c.note) out.push(err(c.note));
-    var mine = c.mine || [];
-    out.push(h('p', { class: 'meta', text: c.serpChecked ? (mine.length ? 'You are in Google\'s top 10 for ' + mine.length + ' of ' + c.serpChecked + ' searches: ' + mine.map(function (m) { return m.k + ' (#' + m.pos + ')'; }).join(', ') + '.' : 'You are not in Google\'s top 10 for any of these ' + c.serpChecked + ' searches.') : 'Google positions are checked within a day (daily data budget).' }));
-    if ((c.competitors || []).length) {
-      var rows = c.competitors.slice(0, 8).map(function (x) { return h('tr', null, h('td', null, x.domain, h('span', { class: 'meta', text: ' · ' + (KINDN[x.kind] || x.kind) })), h('td', { class: 'n', text: x.hits + ' of ' + c.serpChecked }), h('td', { class: 'n', text: x.best < 99 ? '#' + x.best : '–' }), h('td', { class: 'n', text: x.ads ? String(x.ads) : '–' })); });
-      out.push(h('table', { class: 'm-tab' }, h('thead', null, h('tr', null, h('th', { text: 'Who wins your searches in Google' }), h('th', { class: 'n', text: 'Top 10' }), h('th', { class: 'n', text: 'Best' }), h('th', { class: 'n', text: 'Ads' }))), h('tbody', null, rows)));
+    var more = [];
+    if (comp.length) {
+      var rows = comp.slice(0, 8).map(function (x) { return h('tr', null, h('td', null, x.domain, h('span', { class: 'meta', text: ' · ' + (KINDN[x.kind] || x.kind) })), h('td', { class: 'n', text: x.hits + ' of ' + c.serpChecked }), h('td', { class: 'n', text: x.best < 99 ? '#' + x.best : '–' }), h('td', { class: 'n', text: x.ads ? String(x.ads) : '–' })); });
+      more.push(h('table', { class: 'm-tab' }, h('thead', null, h('tr', null, h('th', { text: 'Who wins in Google' }), h('th', { class: 'n', text: 'Top 10' }), h('th', { class: 'n', text: 'Best' }), h('th', { class: 'n', text: 'Ads' }))), h('tbody', null, rows)));
     }
-    if ((c.shelf || []).length) {
-      out.push(h('p', { class: 'meta', style: 'margin-top:14px', text: 'What AI assistants (ChatGPT, Gemini, Perplexity, Claude) recommend when asked where to buy:' }));
-      c.shelf.forEach(function (s) { out.push(h('p', { class: 'm-shelf' }, h('b', { text: s.k + ': ' }), s.shops.length ? s.shops.map(function (x) { return x.name + ' ' + x.n + '/' + s.asked; }).join(', ') : 'no shops named')); });
-      out.push(h('p', { class: 'meta', text: c.aiMentionsUs ? 'You were named for ' + c.aiMentionsUs + ' of ' + c.shelf.length + ' searches.' : 'You were not named for any of them.' }));
+    if (shelf.length) {
+      more.push(h('p', { class: 'meta', style: 'margin-top:14px', text: 'What AI assistants (ChatGPT, Gemini, Perplexity, Claude) recommend when asked where to buy:' }));
+      shelf.forEach(function (s) { more.push(h('p', { class: 'm-shelf' }, h('b', { lang: LANGOF[s.cc] || null, text: s.k + ': ' }), s.shops.length ? s.shops.map(function (x) { return x.name + ' ' + x.n + '/' + s.asked; }).join(', ') : 'no shops named')); });
     }
+    if (more.length) out.push(h('details', { class: 'm-more' }, h('summary', { text: 'The numbers behind this' }), more));
+    if (gaps[0] && gaps[0].action) out.push(h('p', { class: 'm-prio' }, h('b', { text: 'Priority this week: ' }), cleanAct(gaps[0].action)));
     return out;
   }
   function follow(id) {
@@ -79,27 +105,28 @@
       if (d.error) { $('#m-h').textContent = 'Not found.'; $('#m-lead').textContent = d.error; show(h('p', null, h('a', { href: '/mine', text: 'Add your business' }))); return; }
       var p = d.profile; remember({ id: d.id, name: p.name }); document.title = p.name + ' · Demand Radar';
       $('#m-h').textContent = p.name;
-      $('#m-lead').replaceChildren(p.summary + ' ', d.url ? String(d.url).split(' ').reduce(function (acc, u, i) { return acc.concat([i ? ' · ' : '', h('a', { href: u, rel: 'noopener', target: '_blank', text: u.replace(/^https?:\/\//, '').replace(/\/$/, '') })]); }, []) : null);
-      var parts = [h('p', { class: 'status', text: 'Matched to today\'s radar (' + day(d.radarDay || d.day) + ') · ' + p.countries.map(function (c) { return CCN[c]; }).join(', ') + ' · updates every day, keep this link' })];
-      parts.push(h('h2', { class: 'm-sec', text: 'What the radar sees for you' }));
+      $('#m-lead').textContent = p.summary;
+      var urls = d.url ? String(d.url).split(/[\s,]+/).filter(Boolean) : [];
+      var parts = [h('p', { class: 'status' }, [].concat.apply([], urls.map(function (u, i) { return [i ? ' · ' : '', h('a', { href: /^https?:/.test(u) ? u : 'https://' + u, rel: 'noopener', target: '_blank', text: u.replace(/^https?:\/\//, '').replace(/\/$/, '') })]; })),
+        (urls.length ? ' · ' : '') + p.countries.map(function (c) { return CCN[c]; }).join(', ') + ' · radar data of ' + day(d.radarDay || d.day) + ' · updates every day')];
+      var all = d.matches || [], acts = all.filter(function (m) { return m.kind !== 'threat'; }), warn = all.filter(function (m) { return m.kind === 'threat'; });
       if (d.note) parts.push(err(d.note));
-      var any = false;
-      KIND.forEach(function (k) {
-        var l = (d.matches || []).filter(function (m) { return m.kind === k[0]; }); if (!l.length) return; any = true;
-        parts.push(h('div', { class: 'early-head' }, h('b', null, k[1]), h('span', { class: 'meta', text: ' · ' + l.length })));
-        l.forEach(function (m) { parts.push(matchRow(m)); });
-      });
-      if (!any && !d.note) parts.push(h('p', { class: 'meta', text: 'Nothing on today\'s radar touches your business directly. We check again every day.' }));
-      if (d.shopping) parts.push(h('h2', { class: 'm-sec', text: 'Google Shopping' }), h('div', { class: 'record' }, h('div', { class: 'rec' }, h('b', { text: String(d.shopping.products) }), h('span', { text: 'products in the feed' })), h('div', { class: 'rec' }, h('b', { text: String(d.shopping.titles) }), h('span', { text: 'titles rewritten with search terms' })), h('div', { class: 'rec' }, h('b', { text: day(d.shopping.at) }), h('span', { text: 'feed refreshed' }))),
-        h('p', { class: 'meta', text: 'Merchant Center account ' + d.shopping.merchant + ' fetches the feed ' + d.shopping.fetch + '. Titles are rewritten every hour until all products are done.' }));
+      if (acts.length) {
+        var f0 = fact(acts[0]);
+        parts.push(h('p', { class: 'm-verdict' }, h('b', { text: 'The radar sees ' + acts.length + ' chance' + (acts.length > 1 ? 's' : '') + ' for ' + p.name + ' in the coming months.' }),
+          ' The strongest: ' + String(acts[0].name).replace(/\.$/, '') + (f0 ? ' (' + f0 + ')' : '') + '.' + (warn.length ? ' And ' + warn.length + ' thing' + (warn.length > 1 ? 's' : '') + ' to watch out for.' : '')));
+        parts.push(h('h2', { class: 'm-sec', text: 'What to do' }));
+        parts.push.apply(parts, points(acts, 6));
+      } else if (!d.note) parts.push(h('p', { class: 'm-verdict' }, h('b', { text: 'Nothing on the radar touches ' + p.name + ' directly today.' }), ' We check again every day.'));
+      if (warn.length) { parts.push(h('h2', { class: 'm-sec', text: 'Watch out' })); parts.push.apply(parts, points(warn, 3)); }
       var cbox = h('div', { id: 'm-compete' }, h('p', { class: 'loading', text: 'Mapping your competitors' }));
-      parts.push(h('h2', { class: 'm-sec', text: 'Competitors and your gaps' }), cbox);
+      parts.push(h('h2', { class: 'm-sec', text: 'Where competitors beat you' }), cbox);
       parts.push(h('h2', { class: 'm-sec', text: 'Demand for what you sell' }));
-      parts.push(h('p', { class: 'meta', text: 'Monthly Google searches for what your customers type, with the trend and our early-signal test on each.' }));
+      parts.push(h('p', { class: 'meta', text: 'Monthly Google searches, in the words your customers type, with the trend and our early-signal test on each.' }));
       Object.keys(d.own || {}).forEach(function (cc) { parts.push(ownBlock(cc, d.own[cc])); });
       parts.push(h('p', { class: 'm-foot' }, h('a', { href: '/mine', text: 'Add another business' }), ' · ', h('a', { href: '/', text: 'Open the full radar' })));
       show.apply(null, parts);
-      api('/api/mine?id=' + encodeURIComponent(id) + '&compete=1').then(function (c) { cbox.replaceChildren.apply(cbox, competeBlock(c)); }).catch(function () { cbox.replaceChildren(err('Could not map competitors right now.')); });
+      api('/api/mine?id=' + encodeURIComponent(id) + '&compete=1').then(function (c) { cbox.replaceChildren.apply(cbox, competeBlock(c, p.name)); }).catch(function () { cbox.replaceChildren(err('Could not map competitors right now.')); });
     }).catch(function () { $('#m-h').textContent = 'Could not load.'; show(err('Try again in a minute.')); });
   }
 

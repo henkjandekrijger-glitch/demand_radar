@@ -13,6 +13,12 @@ export default async function handler(req, res) {
       const h = await r.text(), g = re => { const m = h.match(re); return m ? m[1].trim().slice(0, 160) : null; };
       return res.status(200).json({ status: r.status, url: r.url, title: g(/<title[^>]*>([\s\S]*?)<\/title>/i), productLd: /"@type"\s*:\s*"Product"/.test(h), price: g(/"price"\s*:\s*"?([\d.,]+)/), game: /lollipop|yoors points|silver league/i.test(h), login: /log ?in|inloggen|sign in/i.test(g(/<title[^>]*>([\s\S]*?)<\/title>/i) || '') });
     }
+    if (req.query.status) { // korte stand voor de eigen campagnepagina's (geen productgegevens)
+      const { getJSON } = await import('../lib/store.js');
+      const f0 = await getJSON(store, `feed/${shop}-${cc}.json`, null).catch(() => null), t = (await getJSON(store, `feed/${shop}-titles-${cc}.json`, null).catch(() => null)) || {};
+      res.setHeader('Cache-Control', 'public, max-age=300');
+      return res.status(200).json({ shop: SHOPS[shop].name, cc, at: f0 && f0.at, products: f0 && f0.n, titles: Object.keys(t).length, merchant: shop === 'yoors' ? 'Yoors (5875752564)' : null, fetch: 'every day at 00:00', feed: `https://demandradar-ivory.vercel.app/api/feed?shop=${shop}&cc=${cc}` });
+    }
     const f = await getFeed(store, shop, cc, { force: !!(req.query.refresh && isPro(req)) });
     if (req.query.info && isPro(req)) return res.status(200).json({ at: f.at, products: f.n, skipped: f.skipped, bytes: f.xml.length, items: (f.xml.match(/<item>/g) || []).length });
     res.setHeader('Content-Type', 'application/xml; charset=utf-8');

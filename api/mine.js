@@ -7,7 +7,7 @@ import { getStore, getJSON, putJSON } from '../lib/store.js';
 import { isPro } from '../lib/access.js';
 import { gatewayToken } from '../lib/ai.js';
 import { planOf } from '../lib/account.js';
-import { readSite, makeProfile, saveProfile, getProfile, listProfiles, fetchTerms, dailyMine, CCS } from '../lib/mine.js';
+import { readSite, makeProfile, saveProfile, getProfile, renameProfile, listProfiles, fetchTerms, dailyMine, CCS } from '../lib/mine.js';
 
 const body = req => { let b = req.body; if (typeof b === 'string') { try { b = JSON.parse(b); } catch { b = {}; } } return b || {}; };
 async function who(req, store) { const p = await planOf(req, store).catch(() => ({ plan: 'anon' })); return { ok: p.plan === 'team' || !['free', 'anon'].includes(p.plan), owner: p.plan === 'team' ? 'team' : p.email || '' }; }
@@ -49,6 +49,10 @@ export default async function handler(req, res) {
       const fetched = await fetchTerms(store, rec).catch(e => ({ error: String(e.message || e).slice(0, 120) }));
       return res.status(200).json({ id: rec.id, link: `/mine/${rec.id}`, fetched });
     }
+    if (op === 'rename' && isPro(req)) { // eigenaar: naam van een bedrijf aanpassen (?id=…&name=…)
+      const r = await renameProfile(store, String(req.query.id || ''), String(req.query.name || '').trim().slice(0, 60));
+      return res.status(r ? 200 : 404).json(r ? { ok: true, id: r.id, name: r.profile.name } : { error: 'not found' });
+    }
     if (req.query.list) {
       const me = await who(req, store); if (!me.ok) return res.status(200).json({ items: [] });
       return res.status(200).json({ items: (await listProfiles(store, me.owner === 'team' ? null : me.owner)).slice(-50).reverse() });
@@ -63,13 +67,7 @@ export default async function handler(req, res) {
     }
     const out = await dailyMine(store, rec, { token, force: !!(req.query.refresh && isPro(req)), debug: !!(req.query.debug && isPro(req)), getDemand: async () => presentDemand(await getDemand(req)) });
     const { owner, ...pub } = rec;
-    // Eigen winkel met productfeed (nu Yoors Shop): stand van Google Shopping / Merchant Center, dagelijks ververst
-    let shopping = null;
-    if (/(^|\/\/|\.)yoo\.rs\/shop/.test(String(rec.url || ''))) {
-      const { getJSON } = await import('../lib/store.js'), f = await getJSON(store, 'feed/yoors-NL.json', null).catch(() => null), t = (await getJSON(store, 'feed/yoors-titles-NL.json', null).catch(() => null)) || {};
-      if (f) shopping = { feed: 'https://demandradar-ivory.vercel.app/api/feed?shop=yoors&cc=NL', products: f.n, at: f.at, titles: Object.keys(t).length, merchant: 'Yoors (5875752564)', fetch: 'every day at 00:00' };
-    }
-    return res.status(200).json({ ...pub, ...out, shopping });
+    return res.status(200).json({ ...pub, ...out });
   } catch (e) {
     res.status(500).json({ error: String(e.message || e).slice(0, 200) });
   }
