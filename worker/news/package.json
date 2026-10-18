@@ -1,0 +1,9 @@
+{
+  "name": "radar-news",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Demand Radar: nieuwsvolume uit GDELT via een eigen server (Railway), omdat GDELT verzoeken vanaf Vercel weigert.",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=20" }
+}
