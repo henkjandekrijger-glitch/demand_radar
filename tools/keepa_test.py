@@ -42,7 +42,7 @@ for sid, s in S.items():
             act = y[t + h]
             if y[t] < 50 and act < 50: continue
             k1 = add(keys[t], -1)
-            r = dict(sid=sid, prod=prod, shift=bool(s.get('shift')), tgt=keys[t + h], y0=y[t], act=act, h=h, ly0=math.log1p(y[t]), r1=L(y[t - 1], y[t]), r2=L(y[t - 2], y[t]),
+            r = dict(sid=sid, isprod=prod, shift=bool(s.get('shift')), tgt=keys[t + h], y0=y[t], act=act, h=h, ly0=math.log1p(y[t]), r1=L(y[t - 1], y[t]), r2=L(y[t - 2], y[t]),
                      rs=L(y[t + h - 12], y[t]), rs2=L(y[t + h - 24], y[t - 12]), rsh=L(y[t + h - 12], y[t - 12]), yoy3=L(sum(y[t - 2:t + 1]), sum(y[t - 14:t - 11])),
                      yoy1=L(y[t], y[t - 12]), spike=L(y[t], float(np.median(y[:t + 1]))), cc={'DE': 1, 'US': 2, 'NL': 0}.get(cc, 3), tm=int(keys[t + h][5:]),
                      # Keepa: gekocht en verkooprang, t.o.v. een jaar eerder en t.o.v. 3 maanden eerder (alleen verleden)
@@ -56,12 +56,12 @@ df['y'] = np.log((df.act + 10) / (df.y0 + 10))
 P = dict(objective='l1', n_estimators=300, learning_rate=0.05, num_leaves=31, min_child_samples=40, subsample=0.8, subsample_freq=1, colsample_bytree=0.8, verbose=-1)
 tr, te = df[df.tgt < cut], df[df.tgt >= cut]
 wape = lambda f, d: round(float(np.abs(f - d.act).sum() / max(d.act.sum(), 1) * 100), 2)
-out = dict(cut=cut, terms=int(df.sid.nunique()), product_terms=int(df[df.prod].sid.nunique()), test_rows=int(len(te)))
+out = dict(cut=cut, terms=int(df.sid.nunique()), product_terms=int(df[df.isprod].sid.nunique()), test_rows=int(len(te)))
 for name, feats in [('without_keepa', BASE), ('with_keepa', BASE + KEE)]:
     preds = []
     for seed in range(3):
         mdl = lgb.LGBMRegressor(**P, random_state=seed).fit(tr[feats], tr.y, sample_weight=np.sqrt(tr.y0 + 10))
         preds.append(np.maximum((te.y0 + 10) * np.exp(mdl.predict(te[feats])) - 10, 0))
-    f = np.mean(preds, axis=0); p, sh = te['prod'].values, te['shift'].values
+    f = np.mean(preds, axis=0); p, sh = te['isprod'].values, te['shift'].values
     out[name] = dict(all=wape(f, te), product=wape(f[p], te[p]), product_shift=wape(f[p & sh], te[p & sh]), product_stable=wape(f[p & ~sh], te[p & ~sh]))
 print(json.dumps(out, indent=1))
