@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     const heavy = early && (early.refresh || early.pending || early.grow); // zwaar uur: titels het volgende uur
     const feedOpt = heavy ? { wait: 'busy hour' } : await feedTitles(store, 'yoors', 'NL', { token: gatewayToken(req) }).catch(e => ({ error: String(e.message || e).slice(0, 120) })); // Yoors-titels met radar-zoektermen (tot alles klaar is)
     const { keepaCollect } = await import('../lib/keepa.js'); // Keepa: Amazon-historie per zoekterm, binnen de tokens van het uur
-    const keepa = heavy ? { wait: 'busy hour' } : await keepaCollect(store, { max: 30 }).catch(e => ({ error: String(e.message || e).slice(0, 120) }));
+    const keepa = heavy ? { wait: 'busy hour' } : await keepaCollect(store, { max: 110 }).catch(e => ({ error: String(e.message || e).slice(0, 120) }));
     res.status(200).json({ ok: true, signals: sig, bol, early, wild, amzSales, feedOpt, keepa, ...(await runLoop(store)) }); }
   catch (e) { res.status(500).json({ ok: false, error: String(e.message || e) }); }
 }
