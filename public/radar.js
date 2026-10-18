@@ -193,7 +193,7 @@
       : 'Last year ' + num(ly.now) + ' → ' + num(ly.peak) + ' searches by ' + MON[(ly.peakMonth || 1) - 1] + ' (' + pc(ly.rise) + ')';
     return h('div', { class: 'line one' },
       h('div', { class: 'line-main' },
-        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: m.cc }), h('span', { class: 'lname', text: m.name }), claimEl('coming', m)), h('span', { class: 'badge ' + (m.status === 'open' ? 'p-early' : 'p-steady'), text: daysTo(m) === 0 ? 'Today' : 'In ' + daysTo(m) + ' days' })),
+        h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: m.cc }), h('span', { class: 'lname', text: m.name }), claimEl('coming', m)), h('span', { class: 'badge ' + (m.status === 'open' ? 'p-early' : 'p-steady'), text: daysTo(m) === 0 ? 'Today' : daysTo(m) === 1 ? 'Tomorrow' : 'In ' + daysTo(m) + ' days' })),
         h('p', { class: 'meta', text: line }),
         m.kind === 'launch' ? h('p', { class: 'meta' }, 'Release' + (m.launchType ? ' · ' + m.launchType : '') + (m.month ? ' · date known to the month' : '') + (m.sources && m.sources[0] ? ' · ' : ''), m.sources && m.sources[0] && m.sources[0].site ? h('a', { href: m.sources[0].site, target: '_blank', rel: 'noopener' }, 'Wikipedia') : null) : null,
         m.kind === 'regulation' ? h('p', { class: 'meta' }, 'New rule · ' + (m.direction === 'less' ? 'less' : 'more') + ' demand' + (m.sources && m.sources[0] ? ' · ' : ''), m.sources && m.sources[0] ? (m.sources[0].site ? h('a', { href: m.sources[0].site, target: '_blank', rel: 'noopener' }, m.sources[0].source || 'source') : m.sources[0].source) : null) : null,
