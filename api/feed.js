@@ -14,6 +14,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ status: r.status, url: r.url, title: g(/<title[^>]*>([\s\S]*?)<\/title>/i), productLd: /"@type"\s*:\s*"Product"/.test(h), price: g(/"price"\s*:\s*"?([\d.,]+)/), game: /lollipop|yoors points|silver league/i.test(h), login: /log ?in|inloggen|sign in/i.test(g(/<title[^>]*>([\s\S]*?)<\/title>/i) || '') });
     }
     if (req.query.prices) { // marktprijzen per product (bol, Amazon.nl, Amazon.de) voor het prijsadvies van de winkel; eigenaar: &run=1 haalt nu een stuk op
+      if (req.query.probe && isPro(req)) { const P = await import('../lib/prices.js'), q = String(req.query.probe); const [bol, de] = await Promise.all([P.bolSearch(q).catch(e => ({ error: String(e.message || e) })), P.keepaDe(q).catch(e => ({ error: String(e.message || e) }))]); return res.status(200).json({ q, bol, amzDe: de }); }
       if (req.query.run && isPro(req)) { const { shopPrices } = await import('../lib/prices.js'), { gatewayToken } = await import('../lib/ai.js'); return res.status(200).json(await shopPrices(store, shop, { token: gatewayToken(req) })); }
       const { pricesFor } = await import('../lib/prices.js');
       res.setHeader('Cache-Control', 'public, max-age=600');
