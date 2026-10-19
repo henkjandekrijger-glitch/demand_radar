@@ -8,6 +8,6 @@ Werkafspraken:
 2. Na elke wijziging of beslissing: korte notitie in het logboek — MCP-tool `handover_note`, of
    `curl -X POST "https://demandradar-ivory.vercel.app/api/handover?op=note&key=$TEAM_KEY" -H 'content-type: application/json' -d '{"who":"<sessie>","text":"…"}'`.
    Taken: `op=todo` (text) en `op=done` (id, text).
-3. Grotere veranderingen ook in README.md ("Stand van zaken"), committen en pushen (push naar main = live).
+3. Verandert de werking (nieuw onderdeel, bron, schema, regel)? Werk `docs/WERKING.md` bij (complete beschrijving; de test controleert dat elk eindpunt en elk onderdeel erin staat) en zet een nieuw onderdeel in `lib/components.js` (live status in de overdracht). Committen en pushen (push naar main = live).
 4. Deze repo is OPENBAAR: nooit sleutels, wachtwoorden of tokens in code of commits; alleen in Vercel-omgevingsvariabelen.
 5. Henkjan: Nederlands, kort, één stap tegelijk vragen; zuinig met tokens. DataForSEO max $4/dag, plus max $3 voor de nachtelijke opbouw van de radar (Henkjan 18 okt: "elke nacht"). Nooit een eindpunt dat geld of quotum kost (checks, `op=yt`, `op=refresh`) in een lus aanroepen.

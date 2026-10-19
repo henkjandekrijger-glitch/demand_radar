@@ -18,6 +18,10 @@ export default async function handler(req, res) {
     }
     // Events (voorspellingsmarkten) één keer per dag klaarzetten
     let events = null; try { const { getEvents } = await import('../lib/events.js'), { getStore } = await import('../lib/store.js'), { gatewayToken } = await import('../lib/ai.js'); const ev = await getEvents(getStore(), { token: gatewayToken(req) }); events = { day: ev.day, items: (ev.items || []).length, errors: ev.errors || [] }; } catch (e) { events = { error: String(e.message || e).slice(0, 120) }; }
+    // klein stand-bestand en hartslag voor de overdracht
+    try { const { getDemand } = await import('../lib/data.js'), { getStore, putJSON } = await import('../lib/store.js'), { heartbeat } = await import('../lib/components.js'), st = getStore(), cur = await getDemand(req);
+      if (st && cur && cur.day) await putJSON(st, 'demand/meta.json', { day: cur.day, generatedAt: cur.generatedAt || null, items: (cur.items || []).length, rise: (cur.rise || []).length });
+      await heartbeat(st, 'warm', { radar: d.generatedAt, night, events }); } catch {}
     res.status(200).json({ ok: true, radar: d.generatedAt, night, events });
   } catch (e) {
     res.status(200).json({ ok: false, error: String(e.message || e) });

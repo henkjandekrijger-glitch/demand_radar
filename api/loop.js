@@ -22,6 +22,8 @@ export default async function handler(req, res) {
     const prices = heavy ? { wait: 'busy hour' } : await shopPrices(store, 'yoors', { token: gatewayToken(req) }).catch(e => ({ error: String(e.message || e).slice(0, 120) }));
     const { keepaCollect } = await import('../lib/keepa.js'); // Keepa: Amazon-historie per zoekterm, binnen de tokens van het uur
     const keepa = heavy ? { wait: 'busy hour' } : await keepaCollect(store, { max: 110 }).catch(e => ({ error: String(e.message || e).slice(0, 120) }));
-    res.status(200).json({ ok: true, signals: sig, bol, early, wild, amzSales, feedOpt, prices, keepa, ...(await runLoop(store)) }); }
+    const out = { ok: true, signals: sig, bol, early, wild, amzSales, feedOpt, prices, keepa, ...(await runLoop(store)) };
+    const { heartbeat } = await import('../lib/components.js'); await heartbeat(store, 'loop', out); // hartslag voor de overdracht
+    res.status(200).json(out); }
   catch (e) { res.status(500).json({ ok: false, error: String(e.message || e) }); }
 }

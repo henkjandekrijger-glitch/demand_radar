@@ -476,3 +476,14 @@ test('concurrenten: domeinen tellen, marktplaatsen herkennen, eigen positie', as
   assert.deepEqual(t.mine, [{ k: 'windgong', pos: 3 }]);
   assert.deepEqual(pickTerms({ profile: { countries: ['NL'], terms: { NL: ['a', 'b'] } } }, null).map(x => x.k), ['a', 'b']);
 });
+
+// De overdracht moet compleet blijven: elk eindpunt en elk onderdeel van de statuslijst staat in docs/WERKING.md.
+test('docs/WERKING.md noemt elk eindpunt en elk onderdeel', async () => {
+  const fs = await import('node:fs'), doc = fs.readFileSync(new URL('../docs/WERKING.md', import.meta.url), 'utf8');
+  const apis = fs.readdirSync(new URL('../api/', import.meta.url)).filter(f => f.endsWith('.js')).map(f => f.replace(/\.js$/, ''));
+  const missing = apis.filter(a => !doc.includes(`/api/${a}`) && !doc.includes(`api/${a}.js`));
+  assert.deepEqual(missing, [], `ontbreekt in docs/WERKING.md: ${missing.map(a => '/api/' + a).join(', ')}`);
+  const { COMPONENTS } = await import('../lib/components.js');
+  const noSec = COMPONENTS.filter(c => !doc.includes(`### ${c.id} `) && !doc.includes(`### ${c.id}\n`)).map(c => c.id);
+  assert.deepEqual(noSec, [], `geen sectie "### <id>" in docs/WERKING.md voor: ${noSec.join(', ')}`);
+});

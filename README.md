@@ -4,6 +4,8 @@ Live vraag-signalen voor NL, VS, DE en wereldwijd: **Spikes** (wat nu piekt), **
 
 Een dienst van ADSFAIR B.V. Draait volledig op Vercel, zonder computer of Claude-account.
 
+> **Complete werking: [`docs/WERKING.md`](docs/WERKING.md).** Deze README is de geschiedenis (stand van zaken per dag).
+>
 > **Live overdracht voor andere chats (altijd actueel): https://demandradar-ivory.vercel.app/overdracht** — als tekst: `?format=text`. Daar staan de live status, open taken, het logboek van alle chats en de laatste codewijzigingen. Bijwerken na elke wijziging: MCP-tool `handover_note` of `POST /api/handover?op=note&key=…` (zie CLAUDE.md).
 
 ## Stand van zaken (overdracht) — 13 okt 2026

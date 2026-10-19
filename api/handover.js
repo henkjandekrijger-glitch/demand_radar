@@ -2,7 +2,8 @@
 // Bijwerken (teamsleutel): ?op=note|todo|done, als POST (JSON) of GET (voor chats die alleen kunnen ophalen).
 import { getStore } from '../lib/store.js';
 import { isPro } from '../lib/access.js';
-import { readHandover, addNote, addTodo, doneTodo, liveStatus, readme, toText, HOW } from '../lib/handover.js';
+import { readHandover, addNote, addTodo, doneTodo, liveStatus, readme, werking, toText, HOW } from '../lib/handover.js';
+import { componentStatus } from '../lib/components.js';
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -21,11 +22,12 @@ export default async function handler(req, res) {
       if (op === 'done') return res.status(200).json({ ok: true, todo: await doneTodo(store, a) });
       return res.status(400).json({ error: 'op must be note, todo or done' });
     }
-    const [st, h] = await Promise.all([liveStatus(store, { owner: isPro(req), req }), readHandover(store)]);
+    const [st, h, comp] = await Promise.all([liveStatus(store, { owner: isPro(req), req }), readHandover(store), componentStatus(store).catch(() => null)]);
     const f = String(req.query.format || '');
-    if (f === 'json') return res.status(200).json({ how: HOW, status: st, ...h });
-    const text = toText(st, h, f === 'short' ? '' : readme());
-    if (f === 'text' || f === 'short' || /claude|python|curl|node|fetch|bot/i.test(String(req.headers['user-agent'] || ''))) {
+    if (f === 'json') return res.status(200).json({ how: HOW, status: st, components: comp, werking: werking(), ...h });
+    // kort: status, geld, taken, logboek · standaard: plus de complete werking · full: plus de README met de geschiedenis
+    const text = toText(st, h, f === 'short' ? '' : werking() + (f === 'full' ? '\n\n════════ README (geschiedenis) ════════\n' + readme() : ''), comp, f === 'full');
+    if (f === 'text' || f === 'short' || f === 'full' || /claude|python|curl|node|fetch|bot/i.test(String(req.headers['user-agent'] || ''))) {
       res.setHeader('Content-Type', 'text/plain; charset=utf-8'); return res.status(200).send(text);
     }
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
