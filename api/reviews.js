@@ -1,5 +1,5 @@
 // GET /api/reviews — reviews ophalen via DataForSEO voor de reviewplek ("Beloofd is beloofd"; zie README).
-//   ?op=post&src=google|trustpilot|tripadvisor&q=<bedrijf + plaats, of domein bij trustpilot>&m=NL|US|DE|BE&n=<max 100; trustpilot max 500>
+//   ?op=post&src=google|trustpilot|tripadvisor&q=<bedrijf + plaats, of domein bij trustpilot>&m=NL|US|DE|BE|CW (CW = Willemstad, Curaçao)&n=<max 100; trustpilot max 500>
 //      Zet één taak in de wachtrij. Antwoord: { id, cost } of { cached: true } als dezelfde vraag < 30 dagen oud is.
 //   ?op=get&src=...&id=<taak-id>   Haalt de klaargezette reviews op (gratis bij DataForSEO). Status 'pending' tot ze klaar zijn.
 //   ?op=cache&src=...&q=...&m=...  Geeft eerder opgehaalde reviews terug zonder kosten.
@@ -9,7 +9,7 @@ import { createHash } from 'node:crypto';
 import { dfsReady, budget, dfsPostMany, dfsGet, underCap } from '../lib/dfs.js';
 import { getStore, getJSON, putJSON } from '../lib/store.js';
 
-const MKT = { NL: { loc: 2528, lang: 'nl' }, BE: { loc: 2056, lang: 'nl' }, US: { loc: 2840, lang: 'en' }, DE: { loc: 2276, lang: 'de' } };
+const MKT = { CW: { loc: 1000009, lang: 'en' }, NL: { loc: 2528, lang: 'nl' }, BE: { loc: 2056, lang: 'nl' }, US: { loc: 2840, lang: 'en' }, DE: { loc: 2276, lang: 'de' } };
 const SRC = {
   google: m => q => ({ keyword: q, location_code: MKT[m].loc, language_code: MKT[m].lang, sort_by: 'newest' }),
   trustpilot: () => q => ({ domain: q.replace(/^https?:\/\//, '').replace(/\/.*$/, ''), sort_by: 'recency' }),
