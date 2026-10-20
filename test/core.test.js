@@ -202,9 +202,9 @@ test('demand radar: categories, missing, coming up, daily learning', async () =>
   const store = memoryStore();
   const resp = o => new Response(JSON.stringify({ content: [{ type: 'text', text: JSON.stringify(o) }] }), { status: 200 });
   setAiFetch(async (url, opts) => {
-    const p = JSON.parse(opts.body).messages[0].content;
-    if (p.includes('search terms people in that country')) { const keys = [...p.matchAll(/^(\w\w\|[\w-]+):/gm)].map(m => m[1]); return resp({ t: Object.fromEntries(keys.map(k => [k, [`boom ${k.split('|')[1]}`, 'cadeau idee', 'feest spullen']])) }); }
-    if (p.includes('distinct needs')) return resp({ needs: [{ need: 'An app that measures room temperature', ids: [1, 2], exists: 'no', gap: 'Phones have no thermometer', idea: 'Sell a bluetooth thermometer with app', cat: 'apps' }], today: [{ id: 1, angle: 'People want the thing in the news', cat: 'products', idea: 'Stock it now' }] });
+    const b = JSON.parse(opts.body), p = b.messages[0].content, sys = ((b.system || [])[0] || {}).text || '';
+    if (sys.includes('search terms people type')) { const keys = [...p.matchAll(/^(\w\w\|[\w-]+):/gm)].map(m => m[1]); return resp({ t: Object.fromEntries(keys.map(k => [k, [`boom ${k.split('|')[1]}`, 'cadeau idee', 'feest spullen']])) }); }
+    if (sys.includes('distinct needs')) return resp({ needs: [{ need: 'An app that measures room temperature', ids: [1, 2], exists: 'no', gap: 'Phones have no thermometer', idea: 'Sell a bluetooth thermometer with app', cat: 'apps' }], today: [{ id: 1, angle: 'People want the thing in the news', cat: 'products', idea: 'Stock it now' }] });
     const n = (p.match(/^\d+\. /gm) || []).length;
     return resp({ r: Array.from({ length: n }, (_, i) => ({ id: i + 1, keep: i % 5 !== 4, cat: ['products', 'courses', 'books', 'services'][i % 4], topic: `topic ${i}`, what: 'What people want', idea: 'One idea', unexpected: i === 0, why: 'Came out of nowhere' })) });
   });
@@ -458,7 +458,7 @@ test('feedtitels: slimme zoekterm kiezen en titels schrijven', async () => {
   const store = memoryStore();
   await putJSON(store, 'feed/yoors-items-NL.json', [{ id: 'oc_1', title: 'Muziekdoos hout', brand: 'Art', cat: 'hobby', sub: 'diy', price: 30 }]);
   await putJSON(store, 'feed/yoors-opt-NL.json', { phrases: {}, vol: { '3d puzzel hout': { v: 2400, c: 40 }, 'houten muziekdoos': { v: 900, c: 10 }, 'puzzel volwassenen': { v: 0, c: 0 } }, pick: {} });
-  setAiFetch(async (u, o) => { const p = JSON.parse(o.body).messages[0].content;
+  setAiFetch(async (u, o) => { const b = JSON.parse(o.body), p = b.messages[0].content + (((b.system || [])[0] || {}).text || '');
     const text = p.includes('Google searches') ? JSON.stringify({ p: { oc_1: ['3D puzzel hout', 'houten muziekdoos', 'puzzel volwassenen'] } }) : JSON.stringify({ t: { oc_1: '3D puzzel hout: muziekdoos Circus Troupe | Art Bizniz' } });
     return { ok: true, json: async () => ({ content: [{ type: 'text', text }] }) }; });
   const r = await feedTitles(store, 'yoors', 'NL', { token: 't' });
@@ -486,4 +486,18 @@ test('docs/WERKING.md noemt elk eindpunt en elk onderdeel', async () => {
   const { COMPONENTS } = await import('../lib/components.js');
   const noSec = COMPONENTS.filter(c => !doc.includes(`### ${c.id} `) && !doc.includes(`### ${c.id}\n`)).map(c => c.id);
   assert.deepEqual(noSec, [], `geen sectie "### <id>" in docs/WERKING.md voor: ${noSec.join(', ')}`);
+});
+
+test('AI-cache: zelfde vraag niet opnieuw, leeg antwoord één keer opnieuw met haiku', async () => {
+  const { askCached, setAiFetch, compact } = await import('../lib/ai.js');
+  const { memoryStore } = await import('../lib/store.js');
+  const store = memoryStore(), models = [];
+  let n = 0;
+  setAiFetch(async (u, o) => { n++; const b = JSON.parse(o.body); models.push(b.model); const text = b.messages[0].content === 'leeg' && n === 1 ? '' : '{"ok":1}'; return { ok: true, json: async () => ({ content: [{ type: 'text', text }] }) }; });
+  const a = { task: 't', store, token: 't', system: 'S', prompt: 'p1', model: 'anthropic/claude-sonnet-5.5' };
+  assert.equal(await askCached(a), '{"ok":1}'); assert.equal(await askCached(a), '{"ok":1}'); assert.equal(n, 1);
+  n = 0; models.length = 0;
+  assert.equal(await askCached({ ...a, prompt: 'leeg' }), '{"ok":1}'); assert.equal(n, 2); assert.equal(models[1], 'anthropic/claude-haiku-5.5');
+  setAiFetch(fetch);
+  assert.deepEqual(compact({ a: 1.23456, b: null, c: [], d: { e: '' }, f: 1234.5 }), { a: 1.23, f: 1235 });
 });

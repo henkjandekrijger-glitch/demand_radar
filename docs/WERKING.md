@@ -12,10 +12,23 @@ andere regel). De test `test/core.test.js` controleert dat elk eindpunt in `api/
 - **Site**: https://demandradar-ivory.vercel.app · **repo** (openbaar): github.com/henkjandekrijger-glitch/demand_radar ·
   push naar `main` = live op Vercel (project `demand_radar`, team henq).
 - **Opslag**: Vercel Blob (privé), JSON-bestanden per onderdeel (paden staan per onderdeel hieronder).
-- **AI**: Vercel AI Gateway (geen eigen sleutel nodig); goedkoop werk met `anthropic/claude-haiku-5.5`, de rest met het
-  standaardmodel. Elke aanroep heeft het label `project:demand_radar,fn:<bestand>` en het model komt via de opruimlus
+- **AI**: Vercel AI Gateway (geen eigen sleutel nodig), alles via `lib/ai.js`. **Standaard `anthropic/claude-haiku-5.5`**
+  (env `MINE_MODEL`) voor alle extractie, classificatie en JSON-werk; **sonnet alleen** voor de AI-analist bij een betaalde
+  check (`lib/core.js`, met webzoeken) en het advies op de kansenkaart (`lib/map.js`, gat + eerste stap). Per aanroeper terug
+  te zetten met een env (`DEMAND_MODEL`, `RISING_MODEL`, `MAP_MODEL`, `MAP_ADVICE_MODEL`, `REGULATION_MODEL`, `LAUNCH_MODEL`,
+  `PROFILE_MODEL`, `FEED_MODEL`). Zuinig (20 okt 2026, Henkjan: "alles token-efficiënt"):
+  - **Cache**: `askCached` bewaart elk bruikbaar antwoord in Blob op `aicache/<taak>/<hash van model+systeem+vraag>.json`;
+    dezelfde vraag gaat binnen de houdbaarheid niet opnieuw naar AI (radar/rising/events 20 u, checks 24 u, beleid en
+    lanceringen 14 dagen, profiel, thema, prijzen 30 dagen, feedtitels 7 dagen). Uitzetten: env `AI_CACHE=uit`.
+  - **Alleen wat nieuw is**: de radar onthoudt per zoekterm het AI-oordeel (`aicache/items-demand-rows.json` 5 dagen,
+    `-rise.json` 7 dagen); de nachtelijke opbouw vraagt alleen nieuwe onderwerpen, 25 per vraag. Feedtitels: een product
+    zonder bruikbaar antwoord 3 dagen niet opnieuw; prijsoordeel na 3 mislukte pogingen afgesloten.
+  - **Kleine invoer**: vaste instructies in de systeemprompt (gecachet, ± 10% prijs), wisselende data in de gebruikersprompt,
+    alleen de nodige velden (`compact`: lege velden weg, getallen afgerond, teksten en lijsten afgekapt), `maxTokens` naar
+    behoefte. Leeg antwoord: één keer opnieuw, met haiku.
+  Elke aanroep heeft het label `project:demand_radar,fn:<bestand>` en het model komt via de opruimlus
   (`https://opruimlus.vercel.app/api/model`, 5 min gecachet): boven het dagbudget krijgt dit project een goedkoper
-  Anthropic-model, om 00:00 UTC weer normaal. Systeemprompts worden gecachet. Uitzetten: env `OPRUIM=uit`.
+  Anthropic-model, om 00:00 UTC weer normaal. Uitzetten: env `OPRUIM=uit`.
 - **Extra server**: Railway (`worker/news`, nieuwsophaler voor GDELT), omdat GDELT verzoeken vanaf Vercel weigert.
 
 ## 2. Geplande taken (Vercel Cron, tijden in UTC)
@@ -155,7 +168,13 @@ Scripts in `tools/` (toetsen van bronnen en het model).
   (Henkjan, 18 okt). Wat de opbouw uitgaf (`dfs/build-<dag>.json`) telt niet mee voor de rest.
 - **Keepa**: 20 tokens per minuut; marktprijzen gaan voor op het verzamelen.
 - **AI Gateway**: dagbudget per project in de opruimlus (standaard $5, env `OPRUIM_BUDGET` in project opruimlus); daarboven een
-  goedkoper model (sonnet-5.5 → haiku-5.5). Henkjan 20 okt: te duur = goedkoper model, niet stoppen.
+  goedkoper model (sonnet-5.5 → haiku-5.5). Henkjan 20 okt: te duur = goedkoper model, niet stoppen. Verwacht na 20 okt:
+  ± $0,15–0,40 per dag (nachtelijke opbouw ± $0,10 met haiku en geheugen per zoekterm, uurronde feedtitels/prijzen een paar
+  cent, events één haiku-vraag per dag); sonnet alleen nog bij een check met AI (± $0,02 per check) en het kansenkaart-advies.
+  Gemeten (AI Gateway, project demand_radar): 13-14 okt twee opbouwen met sonnet ± $11,70 (± 510 aanroepen, ± 1.600 in- en
+  ± 1.000 uitvoertokens per aanroep; de uitvoer is het duurste deel), 18-20 okt ± $0,60 sonnet per nacht plus ± $0,50 haiku per
+  dag (uurronde vroeg elk uur dezelfde feedtitels en prijsoordelen opnieuw). Een nieuwe
+  aanroeper gebruikt `askCached` met een `task` en standaard `CHEAP()` (haiku); sonnet alleen voor echt redeneerwerk.
 - Nooit een eindpunt dat geld of quotum kost in een lus aanroepen (checks, `op=yt`, `op=refresh`, `prices&run=1`).
 
 ## 6. Vaste regels (Henkjan)
