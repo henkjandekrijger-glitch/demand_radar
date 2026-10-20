@@ -31,7 +31,7 @@ export default async function handler(req, res) {
     }
     if (req.query.bing && isPro(req)) { // eigenaar: Yoors Shop bij Bing Webmaster (lib/bingsubmit.js): stand | toevoegen | verifieer | sitemap | indienen (&max=, &droog=1)
       const B = await import('../lib/bingsubmit.js'), a = String(req.query.bing);
-      const uit = a === 'toevoegen' ? await B.bingVoegToe(shop) : a === 'verifieer' ? await B.bingVerifieer(shop) : a === 'sitemap' ? await B.bingSitemap(shop) : a === 'indienen' ? await B.bingIndienen(store, shop, { max: Number(req.query.max) || 10000, droog: !!req.query.droog }) : await B.bingStand(shop);
+      const uit = a === 'toevoegen' ? await B.bingVoegToe(shop) : a === 'verifieer' ? await B.bingVerifieer(shop) : a === 'sitemap' ? await B.bingSitemap(shop, req.query.url ? [String(req.query.url)] : []) : a === 'indienen' ? await B.bingIndienen(store, shop, { max: Number(req.query.max) || 10000, droog: !!req.query.droog }) : await B.bingStand(shop);
       return res.status(200).json(uit);
     }
     if (req.query.probe && isPro(req)) { // eigenaar: zoals Google een productpagina ziet (uitgelogd)
