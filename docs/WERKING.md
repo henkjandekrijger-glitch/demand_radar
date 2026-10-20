@@ -84,7 +84,7 @@ en 3-5 gaten met één actie. Eén keer per week per bedrijf (`mine/<id>/compete
 
 ### feed — Yoors Shop in Google Merchant Center
 `lib/feed.js`, `/api/feed?shop=yoors&cc=NL` (productfeed, 1.027 producten, Merchant Center Yoors 5875752564 haalt hem
-elke dag om 00:00 op). Titels met radar-zoektermen: `lib/feedopt.js`, elk uur een stuk (`feed/yoors-titles-NL.json`).
+elke dag om 00:00 op; de feed wordt opnieuw opgebouwd zodra hij ouder is dan 2 uur, zodat de prijzen kloppen met de shop). Titels met radar-zoektermen: `lib/feedopt.js`, elk uur een stuk (`feed/yoors-titles-NL.json`).
 Korte stand (openbaar): `&status=1`; die verschijnt op het shop-overzicht van hjdk-api, niet op de klantpagina.
 
 ### bing — Yoors Shop bij Bing Webmaster Tools
