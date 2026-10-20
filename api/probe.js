@@ -21,6 +21,6 @@ export default async function handler(req, res) {
       out = { balance: u.money && u.money.balance, total: u.money && u.money.total, limits: u.money && u.money.limits, spentToday: u.money && u.money.statistics && u.money.statistics.day, rates: u.rates && u.rates.statistics && u.rates.statistics.day };
     }
     else if (t === 'url') out = await get(req.query.u, { text: true, timeout: 12000 }).then(x => String(x).slice(0, +(req.query.n || 4000)));
-    res.status(200).json({ ms: Date.now() - t0, spent: b.spent, errors: b.errors, out: req.query.full ? out : JSON.stringify(out).slice(0, 6000), loc: C && C.loc });
+    res.status(200).json({ ms: Date.now() - t0, spent: b.spent, errors: b.errors, out: req.query.full ? out : JSON.stringify(out).slice(0, 6000), loc: C && C.loc, ...(req.query.pad ? { pad: '.'.repeat(Math.min(200000, +req.query.pad || 0)) } : {}) });
   } catch (e) { res.status(200).json({ error: String(e.message || e), errors: b.errors }); }
 }
