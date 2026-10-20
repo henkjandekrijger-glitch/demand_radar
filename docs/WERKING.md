@@ -87,6 +87,12 @@ en 3-5 gaten met één actie. Eén keer per week per bedrijf (`mine/<id>/compete
 elke dag om 00:00 op). Titels met radar-zoektermen: `lib/feedopt.js`, elk uur een stuk (`feed/yoors-titles-NL.json`).
 Korte stand (openbaar): `&status=1`; die verschijnt op het shop-overzicht van hjdk-api, niet op de klantpagina.
 
+### bing — Yoors Shop bij Bing Webmaster Tools
+`lib/bingsubmit.js`, eigenaar: `/api/feed?shop=yoors&bing=stand|toevoegen|verifieer|sitemap|indienen` (met `&max=`, `&droog=1`).
+Zet https://yoo.rs/ in het Bing-account (BING_WEBMASTER_KEY), dient de sitemap uit robots.txt in en meldt elke productpagina
+één keer aan binnen het dagquotum (`feed/yoors-bing.json`). De uurronde (`/api/loop`) gaat elk uur verder tot alles is ingediend.
+Indienen kan pas als de site in Bing geverifieerd is (BingSiteAuth.xml of meta-tag msvalidate.01 op yoo.rs, of DNS).
+
 ### prices — marktprijzen per Yoors-product
 `lib/prices.js`, `/api/feed?shop=yoors&cc=NL&prices=1`. Per product één zoekopdracht bij bol.com (via de bol-koppeling van
 hjdk-api), Amazon.nl (DataForSEO, wachtrij) en Amazon.de (Keepa); AI oordeelt "zelfde product" of "vergelijkbaar"; een

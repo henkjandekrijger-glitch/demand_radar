@@ -29,6 +29,11 @@ export default async function handler(req, res) {
       res.setHeader('Cache-Control', 'public, max-age=600');
       return res.status(200).json(await pricesFor(store, shop));
     }
+    if (req.query.bing && isPro(req)) { // eigenaar: Yoors Shop bij Bing Webmaster (lib/bingsubmit.js): stand | toevoegen | verifieer | sitemap | indienen (&max=, &droog=1)
+      const B = await import('../lib/bingsubmit.js'), a = String(req.query.bing);
+      const uit = a === 'toevoegen' ? await B.bingVoegToe(shop) : a === 'verifieer' ? await B.bingVerifieer(shop) : a === 'sitemap' ? await B.bingSitemap(shop) : a === 'indienen' ? await B.bingIndienen(store, shop, { max: Number(req.query.max) || 10000, droog: !!req.query.droog }) : await B.bingStand(shop);
+      return res.status(200).json(uit);
+    }
     if (req.query.probe && isPro(req)) { // eigenaar: zoals Google een productpagina ziet (uitgelogd)
       const r = await fetch(SHOPS[shop].link(String(req.query.probe)) + (req.query.qs ? `?${req.query.qs}` : ''), { headers: { ...(req.query.al ? { 'accept-language': String(req.query.al) } : {}), 'user-agent': req.query.ua === 'bot' ? 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36' }, redirect: 'follow', signal: AbortSignal.timeout(15000) });
       const h = await r.text(), g = re => { const m = h.match(re); return m ? m[1].trim().slice(0, 160) : null; };
