@@ -13,7 +13,9 @@ andere regel). De test `test/core.test.js` controleert dat elk eindpunt in `api/
   push naar `main` = live op Vercel (project `demand_radar`, team henq).
 - **Opslag**: Vercel Blob (privé), JSON-bestanden per onderdeel (paden staan per onderdeel hieronder).
 - **AI**: Vercel AI Gateway (geen eigen sleutel nodig); goedkoop werk met `anthropic/claude-haiku-5.5`, de rest met het
-  standaardmodel.
+  standaardmodel. Elke aanroep heeft het label `project:demand_radar,fn:<bestand>` en het model komt via de opruimlus
+  (`https://opruimlus.vercel.app/api/model`, 5 min gecachet): boven het dagbudget krijgt dit project een goedkoper
+  Anthropic-model, om 00:00 UTC weer normaal. Systeemprompts worden gecachet. Uitzetten: env `OPRUIM=uit`.
 - **Extra server**: Railway (`worker/news`, nieuwsophaler voor GDELT), omdat GDELT verzoeken vanaf Vercel weigert.
 
 ## 2. Geplande taken (Vercel Cron, tijden in UTC)
@@ -152,6 +154,8 @@ Scripts in `tools/` (toetsen van bronnen en het model).
 - **DataForSEO**: dagrem `DFS_DAILY_MAX` = $4 voor alles, plus `DFS_BUILD_MAX` = $3 alleen voor de nachtelijke opbouw
   (Henkjan, 18 okt). Wat de opbouw uitgaf (`dfs/build-<dag>.json`) telt niet mee voor de rest.
 - **Keepa**: 20 tokens per minuut; marktprijzen gaan voor op het verzamelen.
+- **AI Gateway**: dagbudget per project in de opruimlus (standaard $5, env `OPRUIM_BUDGET` in project opruimlus); daarboven een
+  goedkoper model (sonnet-5.5 → haiku-5.5). Henkjan 20 okt: te duur = goedkoper model, niet stoppen.
 - Nooit een eindpunt dat geld of quotum kost in een lus aanroepen (checks, `op=yt`, `op=refresh`, `prices&run=1`).
 
 ## 6. Vaste regels (Henkjan)
