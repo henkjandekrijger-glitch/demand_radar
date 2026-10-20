@@ -3,6 +3,7 @@
 //      Zet één taak in de wachtrij. Antwoord: { id, cost } of { cached: true } als dezelfde vraag < 30 dagen oud is.
 //   ?op=get&src=...&id=<taak-id>   Haalt de klaargezette reviews op (gratis bij DataForSEO). Status 'pending' tot ze klaar zijn.
 //   ?op=cache&src=...&q=...&m=...  Geeft eerder opgehaalde reviews terug zonder kosten.
+//   ?op=gmb&m=CW&qs=<JSON-lijst, max 25 namen>  Google-bedrijfsprofiel (score, aantal, site); max GMB_DAY_MAX (100) nieuwe opvragingen per dag, 30 dagen cache. Gebruikt door de Curaçao-keuzehulpen van hjdk-api.
 // Kostengrens: max 100 reviews per vraag (Trustpilot max REVIEWS_MAX_N_TP, standaard 500), max REVIEWS_DAY_MAX (standaard 10) nieuwe taken per dag, en de harde
 // DataForSEO-dagrem van lib/dfs.js (DFS_DAILY_MAX, standaard $4) geldt ook hier. Namen van reviewers worden niet teruggegeven.
 import { createHash } from 'node:crypto';
@@ -37,6 +38,24 @@ export default async function handler(req, res) {
   const src = String(req.query.src || 'google');
   const m = String(req.query.m || 'NL').toUpperCase();
   const q = String(req.query.q || '').trim().replace(/\s+/g, ' ').slice(0, 100);
+  if (op === 'gmb') { // Google-bedrijfsprofiel (score, aantal reviews, site) voor max 25 namen; max GMB_DAY_MAX (standaard 100) namen per dag; gecachet 30 dagen
+    if (!dfsReady()) return res.status(503).json({ error: 'DataForSEO not configured' });
+    const store = getStore(); const lijst = (() => { try { return JSON.parse(String(req.query.qs || '[]')); } catch { return []; } })().map(x => String(x).trim().slice(0, 120)).filter(Boolean).slice(0, 25);
+    const mk = MKT[m] || { loc: 1000009, lang: 'en' }; const loc = m === 'CW' ? 1000009 : mk.loc;
+    const dayPath = `reviews/gmbday/${today()}.json`; const day = (store && await getJSON(store, dayPath).catch(() => null)) || { n: 0 };
+    const out = []; const b = budget(0.6);
+    for (const q2 of lijst) {
+      const ck = `reviews/gmb/${keyOf('gmb', q2, m)}.json`; const c = store ? await getJSON(store, ck).catch(() => null) : null;
+      if (c && Date.now() - c.t < 30 * 864e5) { out.push({ ...c.r, cached: true }); continue; }
+      if (day.n >= +(process.env.GMB_DAY_MAX || 100) || !(await underCap())) { out.push({ q: q2, later: true }); continue; }
+      const { call } = await import('../lib/dfs.js'); const r = await call('business_data/google/my_business_info/live', { keyword: q2, location_code: loc, language_code: mk.lang }, b); day.n++;
+      const it = ((r || [])[0] || {}).items && r[0].items[0];
+      const rr = it ? { q: q2, naam: it.title, score: it.rating && it.rating.value, aantal: it.rating && it.rating.votes_count, site: it.url || null, adres: it.address || null, cat: it.category || null, cid: it.cid || null } : { q: q2, niet: true };
+      out.push(rr); if (store) await putJSON(store, ck, { t: Date.now(), r: rr }).catch(() => {});
+    }
+    if (store) await putJSON(store, dayPath, day).catch(() => {});
+    return res.status(200).json({ out, today: day.n, spent: b.spent });
+  }
   if (!SRC[src] || !MKT[m]) return res.status(400).json({ error: 'unknown src or market' });
   if (!dfsReady()) return res.status(503).json({ error: 'DataForSEO not configured' });
   const store = getStore();

@@ -159,7 +159,7 @@ logboek, codewijzigingen en dit document. Bijwerken: `?op=note|todo|done&key=…
 ### tools — onderzoek en toetsen (eigenaar)
 `/api/series` (zoekreeksen en drijvers voor toetsen), `/api/collect` (historie uit gratis bronnen), `/api/probe` (t=gmb: Google-bedrijfsprofielen met score en aantal reviews voor max 25 namen per keer, voor de Curaçao-keuzehulpen van hjdk-api; één bron
 testen), `/api/status` (gezondheid van de bronnen), `/api/map` en `/api/warmmap` (kansenkaart), `/api/rising` (What came up),
-`/api/radar` (oud overzicht), `/api/reviews` (reviews via DataForSEO voor de reviewplek, max 10 taken per dag; markten NL, BE, US, DE en CW = Willemstad/Curaçao, die laatste gebruikt de keuzehulp autohuur Curaçao op hjdk-api voor 2 verhuurders per ronde).
+`/api/radar` (oud overzicht), `/api/reviews` (reviews via DataForSEO voor de reviewplek, max 10 taken per dag; op=gmb: Google-bedrijfsprofielen, max 100 per dag, 30 dagen cache; markten NL, BE, US, DE en CW = Willemstad/Curaçao, die laatste gebruikt de keuzehulp autohuur Curaçao op hjdk-api voor 2 verhuurders per ronde).
 Scripts in `tools/` (toetsen van bronnen en het model).
 
 ## 5. Geld en grenzen
