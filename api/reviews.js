@@ -61,6 +61,20 @@ export default async function handler(req, res) {
     await putJSON(store, stPath, st); await putJSON(store, 'cw/listings/lock.json', { t: 0 }).catch(() => {});
     return res.status(200).json({ state: st, opgehaald: items.length, spent: b.spent });
   }
+  if (op === 'catagg') { // Aantal bedrijven per soort in een vaste plaats (Google Business Listings categories_aggregation, ca. $0,01-0,05 per plaats), voor vergelijken welke soorten bedrijven ergens ontbreken. Bewaard in blob; opnieuw ophalen hooguit eens per 30 dagen, max 6 verzoeken per dag.
+    const PL = { cw: '12.185,-68.98,38', rotterdam: '51.9225,4.47917,10', amsterdam: '52.3676,4.9041,10', aruba: '12.52,-69.97,25' };
+    const pl = String(req.query.plaats || ''); if (!PL[pl]) return res.status(400).json({ error: 'onbekende plaats', plaatsen: Object.keys(PL) });
+    const store = getStore(); if (!store) return res.status(503).json({ error: 'geen opslag' });
+    const pad = `cw/catagg/${pl}.json`; const oud = await getJSON(store, pad).catch(() => null);
+    if (oud && (req.query.vers !== '1' || Date.now() - oud.t < 30 * 864e5)) return res.status(200).json(oud);
+    if (!dfsReady()) return res.status(503).json({ error: 'DataForSEO not configured' });
+    const dp = `cw/catagg/dag-${today()}.json`; const dag = (await getJSON(store, dp).catch(() => null)) || { n: 0 }; if (dag.n >= 6 || !(await underCap(0.2))) return res.status(200).json({ later: true });
+    const { call } = await import('../lib/dfs.js'); const b = budget(0.3); const items = []; let total = null;
+    for (let off = 0; off < 3000; off += 1000) { const r = await call('business_data/business_listings/categories_aggregation/live', { location_coordinate: PL[pl], limit: 1000, offset: off, internal_list_limit: 20 }, b); const r0 = (r || [])[0]; if (!r0) break; total = r0.total_count ?? total; const its = r0.items || []; for (const it of its) { const a = it.aggregation || {}; items.push({ cat: it.categories || it.categoiries || null, n: a.count || 0, sites: a.websites_count || 0, top: (a.top_categories || []).slice(0, 20).map(x => [x.category || x.key || x.name, x.count ?? x.value]) }); } dag.n++; if (its.length < 1000) break; }
+    await putJSON(store, dp, dag).catch(() => {});
+    if (!items.length) return res.status(200).json({ fout: b.errors.slice(0, 3), spent: b.spent });
+    const uit = { t: Date.now(), plaats: pl, coord: PL[pl], total, items, spent: b.spent }; await putJSON(store, pad, uit); return res.status(200).json(uit);
+  }
   if (op === 'gmb') { // Google-bedrijfsprofiel (score, aantal reviews, site) voor max 25 namen; max GMB_DAY_MAX (standaard 100) namen per dag; gecachet 30 dagen
     if (!dfsReady()) return res.status(503).json({ error: 'DataForSEO not configured' });
     const store = getStore(); const lijst = (() => { try { return JSON.parse(String(req.query.qs || '[]')); } catch { return []; } })().map(x => String(x).trim().slice(0, 120)).filter(Boolean).slice(0, 25);
