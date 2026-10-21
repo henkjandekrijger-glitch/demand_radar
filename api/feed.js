@@ -37,6 +37,11 @@ export default async function handler(req, res) {
     if (req.query.probe && isPro(req)) { // eigenaar: zoals Google een productpagina ziet (uitgelogd)
       const r = await fetch(SHOPS[shop].link(String(req.query.probe)) + (req.query.qs ? `?${req.query.qs}` : ''), { headers: { ...(req.query.al ? { 'accept-language': String(req.query.al) } : {}), 'user-agent': req.query.ua === 'bot' ? 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36' }, redirect: 'follow', signal: AbortSignal.timeout(15000) });
       const h = await r.text(), g = re => { const m = h.match(re); return m ? m[1].trim().slice(0, 160) : null; };
+      if (req.query.grep) { // stukjes HTML rond een zoekterm (bijv. knopteksten of klassen), om meting op de pagina af te stemmen
+        let re; try { re = new RegExp(String(req.query.grep).slice(0, 80), 'gi'); } catch (e) { return res.status(400).json({ error: 'grep: geen geldige regex' }); }
+        const uit = []; let m; while ((m = re.exec(h)) && uit.length < 40) { uit.push(h.slice(Math.max(0, m.index - 120), m.index + 160).replace(/\s+/g, ' ')); if (!m[0]) re.lastIndex++; }
+        return res.status(200).json({ status: r.status, bytes: h.length, n: uit.length, stukjes: uit });
+      }
       return res.status(200).json({ status: r.status, url: r.url, title: g(/<title[^>]*>([\s\S]*?)<\/title>/i), productLd: /"@type"\s*:\s*"Product"/.test(h), price: g(/"price"\s*:\s*"?([\d.,]+)/), game: /lollipop|yoors points|silver league/i.test(h), login: /log ?in|inloggen|sign in/i.test(g(/<title[^>]*>([\s\S]*?)<\/title>/i) || '') });
     }
     if (req.query.status) { // korte stand voor de eigen campagnepagina's (geen productgegevens)

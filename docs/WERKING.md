@@ -101,6 +101,7 @@ en 3-5 gaten met één actie. Eén keer per week per bedrijf (`mine/<id>/compete
 `lib/feed.js`, `/api/feed?shop=yoors&cc=NL` (productfeed, 1.027 producten, Merchant Center Yoors 5875752564 haalt hem
 elke dag om 00:00 op; de feed wordt opnieuw opgebouwd zodra hij ouder is dan 2 uur, zodat de prijzen kloppen met de shop). Titels met radar-zoektermen: `lib/feedopt.js`, elk uur een stuk (`feed/yoors-titles-NL.json`).
 Korte stand (openbaar): `&status=1`; die verschijnt op het shop-overzicht van hjdk-api, niet op de klantpagina.
+Eigenaar: `&probe=<id>` laat zien hoe een productpagina er uitgelogd uitziet (status, titel, prijs uit JSON-LD); met `&grep=<regex>` geeft hij de stukjes HTML rond die term (hoogstens 40), om de meting van Clickmind (cm.js) op knoppen en blokken van de pagina af te stemmen.
 
 ### bing — Yoors Shop bij Bing Webmaster Tools
 `lib/bingsubmit.js`, eigenaar: `/api/feed?shop=yoors&bing=stand|toevoegen|verifieer|sitemap|indienen` (met `&max=`, `&droog=1`).
