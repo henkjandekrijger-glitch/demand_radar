@@ -3,6 +3,7 @@
 //      Zet één taak in de wachtrij. Antwoord: { id, cost } of { cached: true } als dezelfde vraag < 30 dagen oud is.
 //   ?op=get&src=...&id=<taak-id>   Haalt de klaargezette reviews op (gratis bij DataForSEO). Status 'pending' tot ze klaar zijn.
 //   ?op=cache&src=...&q=...&m=...  Geeft eerder opgehaalde reviews terug zonder kosten.
+//   ?op=listings[&read=<n>]  alle bedrijven op Curaçao in pagina's van 1000 (zie code), plafond CW_LISTINGS_USD ($3) per dag
 //   ?op=gmb&m=CW&qs=<JSON-lijst, max 25 namen>[&v=2]  Google-bedrijfsprofiel (score, aantal, site, telefoon, adres, coördinaten, openingstijden, place_id); max GMB_DAY_MAX (700) nieuwe opvragingen en GMB_DAY_USD ($2,50) per dag, binnen de DFS-dagrem; 30 dagen cache; v=2 haalt oude cache zonder telefoon opnieuw op. Gebruikt door de Curaçao-keuzehulpen van hjdk-api.
 // Kostengrens: max 100 reviews per vraag (Trustpilot max REVIEWS_MAX_N_TP, standaard 500), max REVIEWS_DAY_MAX (standaard 10) nieuwe taken per dag, en de harde
 // DataForSEO-dagrem van lib/dfs.js (DFS_DAILY_MAX, standaard $4) geldt ook hier. Namen van reviewers worden niet teruggegeven.
@@ -38,6 +39,28 @@ export default async function handler(req, res) {
   const src = String(req.query.src || 'google');
   const m = String(req.query.m || 'NL').toUpperCase();
   const q = String(req.query.q || '').trim().replace(/\s+/g, ' ').slice(0, 100);
+  if (op === 'listings') { // Alle bedrijven op Curaçao (Google Business Listings, DataForSEO $0,01 per verzoek + $0,0003 per bedrijf). Eén pagina van max 1000 per aanroep, hervat met offset_token; plafond CW_LISTINGS_USD per dag (standaard $3) binnen de DFS-dagrem. read=<n> geeft een opgeslagen pagina terug (gratis).
+    const store = getStore(); if (!store) return res.status(503).json({ error: 'geen opslag' });
+    const stPath = 'cw/listings/state.json'; const st = (await getJSON(store, stPath).catch(() => null)) || { n: 0, token: null, total: null, done: false, dag: '', usd: 0 };
+    if (req.query.read != null) { const n = Math.max(0, Math.floor(+req.query.read || 0)); const pg = await getJSON(store, `cw/listings/page-${n}.json`).catch(() => null); return res.status(200).json({ state: { n: st.n, total: st.total, done: st.done }, page: pg }); }
+    if (req.query.reset === '1' && st.done && st.dag !== today()) { st.n = 0; st.token = null; st.done = false; }
+    if (st.done) return res.status(200).json({ state: st, klaar: true });
+    if (!dfsReady()) return res.status(503).json({ error: 'DataForSEO not configured' });
+    if (st.dag !== today()) { st.dag = today(); st.usd = 0; }
+    if (st.usd >= +(process.env.CW_LISTINGS_USD || 3) || !(await underCap(0.35))) return res.status(200).json({ state: st, later: true });
+    const lock = await getJSON(store, 'cw/listings/lock.json').catch(() => null); if (lock && Date.now() - lock.t < 90000) return res.status(200).json({ state: st, bezig: true });
+    await putJSON(store, 'cw/listings/lock.json', { t: Date.now() }).catch(() => {});
+    const { call } = await import('../lib/dfs.js'); const b = budget(0.5);
+    const task = st.token ? { location_coordinate: '12.185,-68.98,38', limit: 1000, offset_token: st.token } : { location_coordinate: '12.185,-68.98,38', limit: 1000, order_by: ['rating.votes_count,desc'] };
+    const r = await call('business_data/business_listings/search/live', task, b); const res0 = (r || [])[0];
+    if (!res0) { await putJSON(store, 'cw/listings/lock.json', { t: 0 }).catch(() => {}); return res.status(200).json({ state: st, fout: b.errors.slice(0, 3), spent: b.spent }); }
+    const tt = w => { const t = w && w.work_hours && w.work_hours.timetable; return t ? Object.fromEntries(Object.entries(t).map(([d, a]) => [d.slice(0, 3), (a || []).map(x => [x.open, x.close].map(z => z ? String(z.hour).padStart(2, '0') + ':' + String(z.minute).padStart(2, '0') : '').join('-')).join(', ')])) : null; };
+    const items = (res0.items || []).map(it => ({ naam: it.title, cat: it.category || null, cats: (it.additional_categories || []).slice(0, 5), catIds: (it.category_ids || []).slice(0, 5), adres: it.address || null, plaats: it.address_info && it.address_info.city || null, land: it.address_info && it.address_info.country_code || null, tel: it.phone || null, site: it.url || null, place_id: it.place_id || null, cid: it.cid || null, lat: it.latitude, lng: it.longitude, score: it.rating && it.rating.value || null, aantal: it.rating && it.rating.votes_count || 0, prijs: it.price_level || null, claimed: it.is_claimed ?? null, uren: tt(it.work_time), status: it.work_time && it.work_time.work_hours && it.work_time.work_hours.current_status || null, beschrijving: (it.description || '').slice(0, 400) || null, foto: it.main_image || null, bijgewerkt: it.last_updated_time || null }));
+    await putJSON(store, `cw/listings/page-${st.n}.json`, { t: Date.now(), n: st.n, items });
+    st.n++; st.total = res0.total_count ?? st.total; st.token = res0.offset_token || null; st.usd = +(st.usd + b.spent).toFixed(4); if (!st.token || !items.length) { st.done = true; st.klaarOp = new Date().toISOString(); }
+    await putJSON(store, stPath, st); await putJSON(store, 'cw/listings/lock.json', { t: 0 }).catch(() => {});
+    return res.status(200).json({ state: st, opgehaald: items.length, spent: b.spent });
+  }
   if (op === 'gmb') { // Google-bedrijfsprofiel (score, aantal reviews, site) voor max 25 namen; max GMB_DAY_MAX (standaard 100) namen per dag; gecachet 30 dagen
     if (!dfsReady()) return res.status(503).json({ error: 'DataForSEO not configured' });
     const store = getStore(); const lijst = (() => { try { return JSON.parse(String(req.query.qs || '[]')); } catch { return []; } })().map(x => String(x).trim().slice(0, 120)).filter(Boolean).slice(0, 25);
