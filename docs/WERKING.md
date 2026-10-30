@@ -97,8 +97,8 @@ gematcht met alle voorspellingen (`mine/<id>/<dag>.json`). Eigenaar: naam wijzig
 `lib/compete.js` (op `/mine/<id>`): Google top 10 + advertenties voor de grootste zoektermen, wat 4 AI-assistenten aanraden,
 en 3-5 gaten met één actie. Eén keer per week per bedrijf (`mine/<id>/compete-<week>.json`).
 
-### feed — Yoors Shop in Google Merchant Center
-`lib/feed.js`, `/api/feed?shop=yoors&cc=NL` (productfeed, 1.027 producten, Merchant Center Yoors 5875752564 haalt hem
+### feed — Kadoly (voorheen Yoors Shop) in Google Merchant Center
+`lib/feed.js`, `/api/feed?shop=yoors&cc=NL` (sinds 30 okt 2026 uit kadoly.com/shop/api/shop met links naar kadoly.com/product/<id>, want yoo.rs is sinds 26 okt offline; `shop=kadoly` is hetzelfde; productfeed, 1.027 producten, Merchant Center Yoors 5875752564 haalt hem
 elke dag om 00:00 op; de feed wordt opnieuw opgebouwd zodra hij ouder is dan 2 uur, zodat de prijzen kloppen met de shop). Titels met radar-zoektermen: `lib/feedopt.js`, elk uur een stuk (`feed/yoors-titles-NL.json`).
 Korte stand (openbaar): `&status=1`; die verschijnt op het shop-overzicht van hjdk-api, niet op de klantpagina.
 Eigenaar: `&probe=<id>` laat zien hoe een productpagina er uitgelogd uitziet (status, titel, prijs uit JSON-LD); met `&grep=<regex>` geeft hij de stukjes HTML rond die term (hoogstens 40), om de meting van Clickmind (cm.js) op knoppen en blokken van de pagina af te stemmen.
