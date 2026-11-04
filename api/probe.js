@@ -20,6 +20,7 @@ export default async function handler(req, res) {
       const j = await r.json(); const u = (((j.tasks || [])[0] || {}).result || [])[0] || {};
       out = { balance: u.money && u.money.balance, total: u.money && u.money.total, limits: u.money && u.money.limits, spentToday: u.money && u.money.statistics && u.money.statistics.day, rates: u.rates && u.rates.statistics && u.rates.statistics.day };
     }
+    else if (t === 'ledger') { const { getStore, getJSON } = await import('../lib/store.js'); const s = getStore(), days = Math.min(14, +(req.query.days || 7)); out = {}; for (let i = 0; i < days; i++) { const d = new Date(Date.now() - i * 864e5).toISOString().slice(0, 10); const j = await getJSON(s, `dfs/ledger-${d}.json`, null).catch(() => null); const bj = await getJSON(s, `dfs/build-${d}.json`, null).catch(() => null); if (j || bj) out[d] = { ...(j || {}), buildTotal: bj ? bj.spent : null }; } }
     else if (t === 'url') out = await get(req.query.u, { text: true, timeout: 12000 }).then(x => String(x).slice(0, +(req.query.n || 4000)));
     res.status(200).json({ ms: Date.now() - t0, spent: b.spent, errors: b.errors, out: req.query.full ? out : JSON.stringify(out).slice(0, 6000), loc: C && C.loc, ...(req.query.pad ? { pad: '.'.repeat(Math.min(200000, +req.query.pad || 0)) } : {}) });
   } catch (e) { res.status(200).json({ error: String(e.message || e), errors: b.errors }); }

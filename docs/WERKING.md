@@ -89,6 +89,19 @@ Wikidata; wekelijks, `launches/<cc>.json`). Per moment zoektermen in de eigen ta
 Eén AI-vraag per dag kiest er tot 18 die de vraag in NL/DE/US verschuiven, met effect, richting en zoektermen per land.
 Opslag `events/latest.json` en een dagelijkse momentopname `events/<dag>.json` om later na te kijken.
 
+### fill — teksten door Claude in plaats van de Vercel AI Gateway (4 nov 2026)
+Henkjan 4 nov: "Vul content gewoon aan met jouw tokens. Niet Vercel gateway!!". De AI Gateway staat uit tenzij `AI_GATEWAY=on`
+(lib/ai.js `gatewayToken` geeft dan pas een sleutel). De nachtelijke opbouw meet gewoon en past toe wat in het geheugen staat
+(onderwerpen 5 dagen, stijgers 7 dagen). Wat nog een titel, categorie, wat-het-is en idee mist, vult Claude in:
+- `GET /api/fill` (openbaar, alleen radargegevens): de open onderwerpen, stijgers, trending van vandaag per land, de vragen van de
+  voorspellingsmarkten (`events/markets-<dag>.json`) plus instructie en antwoordformaat.
+- Claude schrijft `fill/<dag>.json` op tak `fill` van de repo (Vercel bouwt die tak niet: `git.deploymentEnabled` in vercel.json;
+  alleen wie mag pushen kan schrijven) of POST het naar `/api/fill?key=…`. Eigenaar `?repo=1` haalt het bestand nu op.
+- De uurronde (`/api/warm`) haalt het bestand op en past het één keer toe (`fill/applied-<dag>.json`): radar van vandaag,
+  geheugen voor de volgende nachten en de events van vandaag (lib/claudefill.js, `saveEvents` in lib/events.js).
+- Elke ochtend doet een geplande Claude-taak dit (06:2x UTC, na de nachtelijke opbouw).
+Nog niet via Claude (staan stil zolang de gateway uit is): prijsoordelen Yoors/Kadoly, lanceringen, beleid, check-analist.
+
 ### mine — mijn bedrijf
 `lib/mine.js`, `/api/mine`, `public/mine.*`. Website of één zin → profiel → 4 vragen → volgen op `/mine/<id>`. Dagelijks
 gematcht met alle voorspellingen (`mine/<id>/<dag>.json`). Eigenaar: naam wijzigen `?op=rename&id=…&name=…&key=…`.
@@ -167,6 +180,9 @@ Scripts in `tools/` (toetsen van bronnen en het model).
 
 - **DataForSEO**: dagrem `DFS_DAILY_MAX` = $4 voor alles, plus `DFS_BUILD_MAX` = $3 alleen voor de nachtelijke opbouw
   (Henkjan, 18 okt). Wat de opbouw uitgaf (`dfs/build-<dag>.json`) telt niet mee voor de rest.
+- **DataForSEO-geheugen** (4 nov): maanddata (Google Ads-zoekvolumes, Labs-toplijsten) worden `DFS_CACHE_DAYS` (standaard 5)
+  dagen bewaard in `dfscache/`; die veranderen één keer per maand maar werden elke nacht opnieuw gekocht. Kasboek per onderdeel
+  per dag: `dfs/ledger-<dag>.json` (eigenaar: `/api/probe?t=ledger&days=7`). Stand 4 nov: $151 ingelegd sinds 12 okt, $128 op.
 - **Keepa**: 20 tokens per minuut; marktprijzen gaan voor op het verzamelen.
 - **AI Gateway**: dagbudget per project in de opruimlus (standaard $5, env `OPRUIM_BUDGET` in project opruimlus); daarboven een
   goedkoper model (sonnet-5.5 → haiku-5.5). Henkjan 20 okt: te duur = goedkoper model, niet stoppen. Verwacht na 20 okt:

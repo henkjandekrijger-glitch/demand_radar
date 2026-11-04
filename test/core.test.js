@@ -501,3 +501,25 @@ test('AI-cache: zelfde vraag niet opnieuw, leeg antwoord één keer opnieuw met 
   setAiFetch(fetch);
   assert.deepEqual(compact({ a: 1.23456, b: null, c: [], d: { e: '' }, f: 1234.5 }), { a: 1.23, f: 1235 });
 });
+
+test('claudefill: openstaande teksten, toepassen op radar, geheugen en events', async () => {
+  const { memoryStore, putJSON, getJSON } = await import('../lib/store.js');
+  const { pendingFill, applyFill } = await import('../lib/claudefill.js');
+  const store = memoryStore(), today = new Date().toISOString().slice(0, 10);
+  await putJSON(store, 'maps/demand.json', { ready: true, day: today, views: [{ id: 'products', n: 0 }, { id: 'now', n: 2 }], items: [
+    { id: 'NL:thuisbatterij', cc: 'NL', name: 'thuisbatterij', members: [{ k: 'thuisbatterij' }, { k: 'thuis batterij' }], where: [], last: 100, mom: 5, yoy: 70, cat: 'money' },
+    { id: 'NL:chatgpts', cc: 'NL', name: 'chatgpts', members: [{ k: 'chatgpts' }], where: [], last: 9, cat: 'apps' }], rise: [], today: [] });
+  await putJSON(store, `events/markets-${today}.json`, { day: today, items: [{ title: 'Fed cuts rates?', outcome: 'Yes', prob: 60, volume: 9 }] });
+  const p = await pendingFill(store, { radar: { spikes: { search: [{ geo: 'NL', items: [{ name: 'klaas knot', traffic: '1000+' }] }] } } });
+  assert.equal(p.items.length, 2); assert.equal(p.markets.length, 1); assert.equal(p.trending.NL.length, 1); assert.match(p.how, /fill\//);
+  const r = await applyFill(store, { items: { 'NL:thuisbatterij': { keep: true, title: 'Home batteries', cat: 'products', topic: 'home battery', what: 'a battery for solar power', idea: 'sell before net metering ends' }, 'NL:chatgpts': { keep: false } },
+    events: [{ n: 1, effect: 'Cheaper loans', dir: 'more', cc: ['NL'], terms: { NL: ['hypotheek'] } }], eventsDay: today });
+  assert.equal(r.items, 1); assert.equal(r.dropped, 1); assert.equal(r.events, 1);
+  const d = await getJSON(store, 'maps/demand.json');
+  assert.equal(d.items.length, 1); assert.equal(d.items[0].title, 'Home batteries'); assert.equal(d.ai, 'claude');
+  assert.equal(d.views.find(v => v.id === 'products').n, 1);
+  const memo = await getJSON(store, 'aicache/items-demand-rows.json');
+  assert.ok(memo['NL|thuis batterij'] && memo['NL|chatgpts'].v.keep === false);
+  assert.equal((await getJSON(store, 'events/latest.json')).items[0].effect, 'Cheaper loans');
+  assert.equal((await pendingFill(store)).items.length, 0);
+});
