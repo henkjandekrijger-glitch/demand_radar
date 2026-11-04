@@ -99,7 +99,7 @@ Henkjan 4 nov: "Vul content gewoon aan met jouw tokens. Niet Vercel gateway!!". 
   alleen wie mag pushen kan schrijven) of POST het naar `/api/fill?key=…`. Eigenaar `?repo=1` haalt het bestand nu op.
 - De uurronde (`/api/warm`) haalt het bestand op en past het één keer toe (`fill/applied-<dag>.json`): radar van vandaag,
   geheugen voor de volgende nachten en de events van vandaag (lib/claudefill.js, `saveEvents` in lib/events.js).
-- Elke ochtend doet een geplande Claude-taak dit (06:2x UTC, na de nachtelijke opbouw).
+- Dagelijks invullen: een geplande Claude-taak (± 06:20 UTC, na de nachtelijke opbouw) wacht op Henkjans akkoord; tot dan doet een chat het (4 nov: 136 onderwerpen, 11 stijgers, 6 trending, 5 events).
 Nog niet via Claude (staan stil zolang de gateway uit is): prijsoordelen Yoors/Kadoly, lanceringen, beleid, check-analist.
 
 ### mine — mijn bedrijf
