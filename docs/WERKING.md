@@ -185,7 +185,7 @@ Scripts in `tools/` (toetsen van bronnen en het model).
   per dag: `dfs/ledger-<dag>.json` (eigenaar: `/api/probe?t=ledger&days=7`). Stand 4 nov: $151 ingelegd sinds 12 okt, $128 op.
 - **Google Trends live** (7 nov, mail DataForSEO): hooguit 250 per minuut voor het hele account. lib/dfs.js laat per proces
   hooguit `TRENDS_PER_MIN` (90) per minuut en `TRENDS_CONC` (6) tegelijk door en wacht bij een rate-limitfout tot de volgende
-  minuut (één keer opnieuw). Foutenlijst van DataForSEO (gratis): `/api/probe?t=errors&key=…`.
+  minuut (één keer opnieuw). Foutenlijst van DataForSEO (gratis, laatste 7 dagen): `/api/probe?t=errors&api=keywords_data&key=…`.
 - **Keepa**: 20 tokens per minuut; marktprijzen gaan voor op het verzamelen.
 - **AI Gateway**: dagbudget per project in de opruimlus (standaard $5, env `OPRUIM_BUDGET` in project opruimlus); daarboven een
   goedkoper model (sonnet-5.5 → haiku-5.5). Henkjan 20 okt: te duur = goedkoper model, niet stoppen. Verwacht na 20 okt:
