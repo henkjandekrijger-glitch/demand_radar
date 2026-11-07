@@ -10,4 +10,4 @@ Werkafspraken:
    Taken: `op=todo` (text) en `op=done` (id, text).
 3. Verandert de werking (nieuw onderdeel, bron, schema, regel)? Werk `docs/WERKING.md` bij (complete beschrijving; de test controleert dat elk eindpunt en elk onderdeel erin staat) en zet een nieuw onderdeel in `lib/components.js` (live status in de overdracht). Committen en pushen (push naar main = live).
 4. Deze repo is OPENBAAR: nooit sleutels, wachtwoorden of tokens in code of commits; alleen in Vercel-omgevingsvariabelen.
-5. Henkjan: Nederlands, kort, één stap tegelijk vragen; zuinig met tokens. DataForSEO max $4/dag, plus max $3 voor de nachtelijke opbouw van de radar (Henkjan 18 okt: "elke nacht"). Nooit een eindpunt dat geld of quotum kost (checks, `op=yt`, `op=refresh`) in een lus aanroepen.
+5. Henkjan: Nederlands, kort, één stap tegelijk vragen; zuinig met tokens. DataForSEO alles samen max $1,50/dag (opbouw max $0,75, de rest max $1; Henkjan 7 nov: "budget en efficient werken"). Nooit een eindpunt dat geld of quotum kost (checks, `op=yt`, `op=refresh`) in een lus aanroepen.

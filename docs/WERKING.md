@@ -178,8 +178,12 @@ Scripts in `tools/` (toetsen van bronnen en het model).
 
 ## 5. Geld en grenzen
 
-- **DataForSEO**: dagrem `DFS_DAILY_MAX` = $4 voor alles, plus `DFS_BUILD_MAX` = $3 alleen voor de nachtelijke opbouw
-  (Henkjan, 18 okt). Wat de opbouw uitgaf (`dfs/build-<dag>.json`) telt niet mee voor de rest.
+- **DataForSEO** (7 nov, Henkjan: "zorg dat mn saldo daar niet zo snel opgaat"): alles samen hooguit `DFS_TOTAL_MAX` = $1,50 per
+  UTC-dag (hele account, volgens de eigen teller van DataForSEO); daarbinnen de nachtelijke opbouw hooguit `DFS_BUILD_MAX` = $0,75
+  en al het andere hooguit `DFS_DAILY_MAX` = $1 (was $4 + $3). Twijfel over de teller = niet betalen. Zuinig: Google Trends-dagdata
+  in de opbouw alleen voor de bovenste 4 groepen per land (`NOW_GOOGLE_CHUNKS`, rest goedkopere DataForSEO Trends), wachtlijst van
+  de vroege signalen pas na 3 dagen of bij 900+ termen, verse maanddata in stukken van $0,45 per dag. Kasboek per proces:
+  `dfs/ledger/<dag>/<proces>.json`.
 - **DataForSEO-geheugen** (4 nov): maanddata (Google Ads-zoekvolumes, Labs-toplijsten) worden `DFS_CACHE_DAYS` (standaard 5)
   dagen bewaard in `dfscache/`; die veranderen één keer per maand maar werden elke nacht opnieuw gekocht. Kasboek per onderdeel
   per dag: `dfs/ledger-<dag>.json` (eigenaar: `/api/probe?t=ledger&days=7`). Stand 4 nov: $151 ingelegd sinds 12 okt, $128 op.
