@@ -183,9 +183,10 @@ Scripts in `tools/` (toetsen van bronnen en het model).
 - **DataForSEO-geheugen** (4 nov): maanddata (Google Ads-zoekvolumes, Labs-toplijsten) worden `DFS_CACHE_DAYS` (standaard 5)
   dagen bewaard in `dfscache/`; die veranderen één keer per maand maar werden elke nacht opnieuw gekocht. Kasboek per onderdeel
   per dag: `dfs/ledger-<dag>.json` (eigenaar: `/api/probe?t=ledger&days=7`). Stand 4 nov: $151 ingelegd sinds 12 okt, $128 op.
-- **Google Trends live** (7 nov, mail DataForSEO): hooguit 250 per minuut voor het hele account. lib/dfs.js laat per proces
-  hooguit `TRENDS_PER_MIN` (90) per minuut en `TRENDS_CONC` (6) tegelijk door en wacht bij een rate-limitfout tot de volgende
-  minuut (één keer opnieuw). Foutenlijst van DataForSEO (gratis, laatste 7 dagen): `/api/probe?t=errors&api=keywords_data&key=…`.
+- **Snelheidsgrenzen DataForSEO** (7 nov, mail DataForSEO en foutenlijst): Google Trends live 250 per minuut, Google Ads live
+  (zoekvolumes) 12 per minuut, voor het hele account (fout 40202). lib/dfs.js laat per proces hooguit `TRENDS_PER_MIN` (90) /
+  `TRENDS_CONC` (6) en `ADS_PER_MIN` (10) / `ADS_CONC` (2) door en wacht bij 40202 tot de volgende minuut (hooguit 2 keer
+  opnieuw). Vroege signalen stoppen na 150 s met nieuwe stukken; de rest volgt de volgende ronde. Foutenlijst van DataForSEO (gratis, laatste 7 dagen): `/api/probe?t=errors&api=keywords_data&key=…`.
 - **Keepa**: 20 tokens per minuut; marktprijzen gaan voor op het verzamelen.
 - **AI Gateway**: dagbudget per project in de opruimlus (standaard $5, env `OPRUIM_BUDGET` in project opruimlus); daarboven een
   goedkoper model (sonnet-5.5 → haiku-5.5). Henkjan 20 okt: te duur = goedkoper model, niet stoppen. Verwacht na 20 okt:
