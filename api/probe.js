@@ -20,6 +20,12 @@ export default async function handler(req, res) {
       const j = await r.json(); const u = (((j.tasks || [])[0] || {}).result || [])[0] || {};
       out = { balance: u.money && u.money.balance, total: u.money && u.money.total, limits: u.money && u.money.limits, spentToday: u.money && u.money.statistics && u.money.statistics.day, rates: u.rates && u.rates.statistics && u.rates.statistics.day };
     }
+    else if (t === 'errors') { // DataForSEO-foutenlijst (gratis, buiten de dagrem): ?fn=<deel van de functie>&n=
+      const r = await fetch('https://api.dataforseo.com/v3/appendix/errors', { method: 'POST', headers: { 'content-type': 'application/json', Authorization: `Basic ${Buffer.from(`${process.env.DFS_LOGIN}:${process.env.DFS_PASSWORD}`).toString('base64')}` }, body: JSON.stringify([{ limit: Math.min(1000, +(req.query.n || 1000)), offset: 0, ...(req.query.fn ? { filtered_function: String(req.query.fn) } : {}) }]) });
+      const j = await r.json(); const it = ((((j.tasks || [])[0] || {}).result || [])[0] || {}).items || [];
+      const per = {}; for (const x of it) { const k = `${String(x.datetime || '').slice(0, 16)} ${x.function} ${x.error_code}`; per[k] = (per[k] || 0) + 1; }
+      out = { n: it.length, perMinute: Object.entries(per).sort((a2, b2) => (a2[0] < b2[0] ? 1 : -1)).slice(0, 60), sample: it.slice(0, 3).map(x => ({ at: x.datetime, fn: x.function, code: x.error_code, msg: x.error_message, url: String(x.http_url || '').slice(0, 120) })) };
+    }
     else if (t === 'ledger') { const { getStore, getJSON } = await import('../lib/store.js'); const s = getStore(), days = Math.min(14, +(req.query.days || 7)); out = {}; for (let i = 0; i < days; i++) { const d = new Date(Date.now() - i * 864e5).toISOString().slice(0, 10); const j = await getJSON(s, `dfs/ledger-${d}.json`, null).catch(() => null); const bj = await getJSON(s, `dfs/build-${d}.json`, null).catch(() => null); if (j || bj) out[d] = { ...(j || {}), buildTotal: bj ? bj.spent : null }; } }
     else if (t === 'url') out = await get(req.query.u, { text: true, timeout: 12000 }).then(x => String(x).slice(0, +(req.query.n || 4000)));
     res.status(200).json({ ms: Date.now() - t0, spent: b.spent, errors: b.errors, out: req.query.full ? out : JSON.stringify(out).slice(0, 6000), loc: C && C.loc, ...(req.query.pad ? { pad: '.'.repeat(Math.min(200000, +req.query.pad || 0)) } : {}) });
