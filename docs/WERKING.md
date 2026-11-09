@@ -162,6 +162,15 @@ kliks, "Useful / Not real demand", campagne-uitkomsten en A/B-varianten van pagi
 `lib/access.js` (teamsleutel `TEAM_KEY`, persoonlijke sleutels), `lib/account.js` (plannen), `/api/unlock`, `/api/me`,
 `/api/account`, `/api/paddle` (betalen via Paddle, nog niet live), `/api/subscribe` en `/api/daily` (dagmail via Resend).
 
+### zoekvraag — wat mensen zoeken over een thema
+`api/zoekvraag.js`, `/api/zoekvraag?thema=curacao[&cc=US]` (openbaar te lezen): per markt in de eigen taal alle zoektermen met het thema
+erin (DataForSEO Labs top_searches met een regex, alle zoekintenties, volume ≥ 20), met volume, jaartrend, intentie en 12 maanden, en per
+onderwerp (vluchten, hotels, stranden, duiken, weer, geld, reisregels, veiligheid, eten, doen, uitgaan, cruise, vervoer, wonen, kaart, taal,
+nieuws) het totaal en de grootste termen. Per thema hooguit één keer per 7 dagen gekocht (hooguit `ZV_MAX`, standaard $0,60, binnen de dagrem),
+daarna uit `zoekvraag/<thema>.json`. Henkjan 9 nov 2026: "Doe goed onderzoek met demand radar waar mensen naar zoeken en optimaliseer de site
+daarop". Eerste thema: curacao (US, NL, DE, CA, CO, BR) voor curacao.day. Nieuw thema = één regel in `THEMA`. ZICHT (hjdk-api) gebruikt dit
+in de werkwijze: zoekvraag naast de eigen pagina's leggen en de gaten vullen.
+
 ### connector — gebruik vanuit andere chats
 `/api/mcp` (`/mcp?key=<teamsleutel>`): tools `check_demand`, `opportunity_map`, `demand_radar`, `report_outcome`,
 `handover`, `handover_note`, `live_signals`.
