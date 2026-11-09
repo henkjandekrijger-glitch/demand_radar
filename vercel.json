@@ -1,6 +1,10 @@
 {
   "cleanUrls": true,
-  "git": { "deploymentEnabled": { "fill": false } },
+  "git": {
+    "deploymentEnabled": {
+      "fill": false
+    }
+  },
   "trailingSlash": false,
   "outputDirectory": "public",
   "framework": null,
@@ -61,6 +65,9 @@
     },
     "api/feed.js": {
       "maxDuration": 300
+    },
+    "api/zoekvraag.js": {
+      "maxDuration": 120
     }
   },
   "crons": [
