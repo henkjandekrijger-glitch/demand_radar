@@ -168,7 +168,7 @@ erin (DataForSEO Labs top_searches met een regex, alle zoekintenties, volume ≥
 onderwerp (vluchten, hotels, stranden, duiken, weer, geld, reisregels, veiligheid, eten, doen, uitgaan, cruise, vervoer, wonen, kaart, taal,
 nieuws) het totaal en de grootste termen. Per thema hooguit één keer per 7 dagen gekocht (hooguit `ZV_MAX`, standaard $0,60, binnen de dagrem),
 daarna uit `zoekvraag/<thema>.json`. Henkjan 9 nov 2026: "Doe goed onderzoek met demand radar waar mensen naar zoeken en optimaliseer de site
-daarop". Eerste thema: curacao (US, NL, DE, CA, CO, BR) voor curacao.day. Nieuw thema = één regel in `THEMA`. ZICHT (hjdk-api) gebruikt dit
+daarop". Eerste thema: curacao (US, NL, DE, CA, CO, BR) voor curacao.day. Sinds 10 nov 2026 ook kadoly-wonen, kadoly-hobby en kadoly-cadeau (NL, BE) op de soorten producten die Kadoly echt heeft plus cadeauvragen, met eigen onderwerpgroepen (`ow` in het thema); hjdk-api `/api/gids?op=vraagkansen` legt ze naast het aanbod en de gidsen van gids.kadoly.com (Henkjan: onderwerpen die ChatGPT naar boven haalt en die in de winkel komen). Nieuw thema = één regel in `THEMA`, optioneel met eigen `ow` (lijst [naam, regex]). ZICHT (hjdk-api) gebruikt dit
 in de werkwijze: zoekvraag naast de eigen pagina's leggen en de gaten vullen.
 
 ### connector — gebruik vanuit andere chats

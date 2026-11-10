@@ -8,8 +8,37 @@ import { getStore, getJSON, putJSON } from '../lib/store.js';
 import { topSearches, budget } from '../lib/dfs.js';
 
 const M = { US: [2840, 'en'], NL: [2528, 'nl'], DE: [2276, 'de'], CA: [2124, 'en'], CO: [2170, 'es'], BR: [2076, 'pt'], GB: [2826, 'en'], BE: [2056, 'nl'] };
+// Kadoly (10 nov 2026, Henkjan: "Vind voor kadoly.com ook onderwerpen voor chatgpt om naar boven te halen en in de winkel te brengen"):
+// drie thema's op de soorten producten die de winkel echt heeft (titels uit de catalogus) plus cadeauvragen, NL en BE (Nederlands).
+// hjdk-api (/api/gids?op=vraagkansen) legt dit naast het aanbod en de gidsen van gids.kadoly.com.
+const KADOLY_MARKT = ['NL', 'BE'];
+const OW_KADOLY = [
+  ['kerst', /kerst|advent|sinterklaas|sint |schoencadeau|pakjesavond/],
+  ['vazen', /vaas|vazen|vaasje/],
+  ['potten en plantenbakken', /bloempot|plantenpot|sierpot|plantenbak|plantenstandaard|plantenrek|plantentafel|plantenmand|plantenzuil/],
+  ['planten en bloemen', /orchidee|kunstplant|kunstbloem|nepplant|kamerplant|droogbloem/],
+  ['muurdecoratie', /muurcirkel|wandcirkel|wanddecoratie|muurdecoratie|wandkleed|tuinposter|poster|muursticker|wandbord|wereldkaart/],
+  ['verlichting', /lamp|lampje|verlichting|lichtsnoer/],
+  ['kaarsen en lantaarns', /kaars|lantaarn|windlicht|kandelaar|theelicht/],
+  ['tuin', /windgong|windspinner|tuinbeeld|tuindecoratie|tuinsteker|vogelhuis|tuin /],
+  ['textiel', /plaid|deken|kussen|sokken/],
+  ['opbergen', /mand|manden|opberg|krat/],
+  ['geuren', /geur|diffuser|wierook/],
+  ['tafel en keuken', /servies|mok|beker|theepot|dienblad|bord|schaal|glazen|bijzettafel|onderzetter/],
+  ['puzzels en bouwpakketten', /puzzel|bouwpakket|modelbouw|muziekdoos|spaarpot/],
+  ['verzorging', /zeep|scheer|baard|haarborstel|badzout/],
+  ['voor wie', /voor (hem|haar|mannen|man|vrouwen|vrouw|moeder|mama|vader|papa|oma|opa|vriendin|vriend|collega|kind|kinderen|baby|tiener|juf|meester|leraar|zus|broer)|mannen|vrouwen|moederdag|vaderdag/],
+  ['gelegenheid', /verjaardag|jarig|pensioen|afscheid|geboorte|kraam|huwelijk|bruiloft|jubileum|valentijn|housewarming|nieuwe woning|bedankt|beterschap|sterkte|geslaagd|diploma/],
+  ['budget', /euro|onder|goedkoop|budget|klein /],
+];
 export const THEMA = {
   curacao: { naam: 'Curaçao', regex: '(cura[cç]ao|curazao|kòrsou|korsou|willemstad)', markten: ['US', 'NL', 'DE', 'CA', 'CO', 'BR'] },
+  'kadoly-wonen': { naam: 'Kadoly wonen', markten: KADOLY_MARKT, ow: OW_KADOLY,
+    regex: '(vaas|vazen|bloempot|plantenpot|sierpot|plantenbak|plantenstandaard|plantenrek|plantentafel|kunstplant|kunstbloem|orchidee|muurcirkel|wandcirkel|wanddecoratie|muurdecoratie|wandkleed|tuinposter|muursticker|tafellamp|hanglamp|leeslamp|oplaadbare lamp|lantaarn|windlicht|kandelaar|geurkaars|windgong|windspinner|bijzettafel|dienblad|plaid|sierkussen|wasmand|opbergmand|rieten mand|diffuser|geurstokjes|tuindecoratie|tuinbeeld)' },
+  'kadoly-hobby': { naam: 'Kadoly hobby en seizoen', markten: KADOLY_MARKT, ow: OW_KADOLY,
+    regex: '(3d puzzel|houten puzzel|puzzel volwassenen|bouwpakket|legpuzzel|muziekdoos|spaarpot|kerstbal|kerstversiering|kerstdecoratie|kerstkrans|kerststal|kerstboomversiering|schoencadeau|sinterklaascadeau|alpaca sokken|handzeep|scheerset|scheermes|servies|mokken|theepot|wollen deken)' },
+  'kadoly-cadeau': { naam: 'Kadoly cadeauvragen', markten: KADOLY_MARKT, ow: OW_KADOLY,
+    regex: '(cadeau|kado|cadeautje|kadootje|geschenk|presentje|cadeaubox|giftset)' },
 };
 // onderwerpen: woorden in vijf talen, eerste treffer wint
 const ONDERWERP = [
@@ -31,7 +60,7 @@ const ONDERWERP = [
   ['taal', /papiamento|papiamentu|language|taal|sprache|idioma|dutch|nederlands/],
   ['nieuws', /news|nieuws|nachrichten|noticias|notícias|today|vandaag|heute|hoy|hoje|election|verkiezing|world cup|wk|football|voetbal/],
 ];
-const onderwerp = k => (ONDERWERP.find(([, r]) => r.test(k)) || ['overig'])[0];
+const onderwerp = (k, lijst = ONDERWERP) => (lijst.find(([, r]) => r.test(k)) || ['overig'])[0];
 
 export default async function handler(req, res) {
   const id = String(req.query.thema || '').toLowerCase(), T = THEMA[id];
@@ -43,7 +72,7 @@ export default async function handler(req, res) {
     for (const cc of T.markten) {
       const [loc, lang] = M[cc];
       const items = await topSearches({ loc, lang }, b, { by: 'volume', anyGrowth: true, minVolume: 20, limit: 700, regex: T.regex, intent: null }).catch(() => []);
-      markten[cc] = { taal: lang, termen: items.map(x => ({ k: x.k, v: x.volume, y: x.trend && x.trend.y, i: x.intent, o: onderwerp(x.k), m: (x.monthly || []).slice(0, 12).map(z => z.v) })) };
+      markten[cc] = { taal: lang, termen: items.map(x => ({ k: x.k, v: x.volume, y: x.trend && x.trend.y, i: x.intent, o: onderwerp(x.k, T.ow), m: (x.monthly || []).slice(0, 12).map(z => z.v) })) };
     }
     const n = Object.values(markten).reduce((s, x) => s + x.termen.length, 0);
     if (n) { uit = { thema: id, naam: T.naam, t: Date.now(), kosten: Math.round(b.spent * 1000) / 1000, fouten: b.errors.slice(0, 5), markten }; if (store) await putJSON(store, pad, uit).catch(() => {}); }
