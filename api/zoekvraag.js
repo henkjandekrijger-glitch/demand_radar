@@ -32,6 +32,7 @@ const OW_KADOLY = [
   ['budget', /euro|onder|goedkoop|budget|klein /],
 ];
 export const THEMA = {
+  verzekeringen: { naam: 'Verzekeringen Nederland', markten: ['NL'], regex: '(verzekering|zorgpolis|zorgpremie|arbeidsongeschiktheid|overlijdensrisico|aov)', ow: [['zorg', /zorgverzekering|zorgpolis|zorgpremie|basisverzekering|tandarts|eigen risico/], ['auto en motor', /auto|motor|bromfiets|scooter|camper|caravan/], ['wonen', /woon|inboedel|opstal|huiseigenaar/], ['reizen', /reis|annulering/], ['aansprakelijkheid en rechtsbijstand', /aansprakelijk|rechtsbijstand/], ['huisdieren', /huisdier|dieren|hond|kat/], ['fiets', /fiets|ebike|e-bike|fatbike/], ['inkomen en nabestaanden', /arbeidsongeschiktheid|aov|overlijdensrisico|uitvaart/], ['zakelijk', /zakelijk|bedrijf|zzp|beroep|cyber/]] },
   curacao: { naam: 'Curaçao', regex: '(cura[cç]ao|curazao|kòrsou|korsou|willemstad)', markten: ['US', 'NL', 'DE', 'CA', 'CO', 'BR'] },
   'kadoly-wonen': { naam: 'Kadoly wonen', markten: KADOLY_MARKT, ow: OW_KADOLY,
     regex: '(vaas|vazen|bloempot|plantenpot|sierpot|plantenbak|plantenstandaard|plantenrek|plantentafel|kunstplant|kunstbloem|orchidee|muurcirkel|wandcirkel|wanddecoratie|muurdecoratie|wandkleed|tuinposter|muursticker|tafellamp|hanglamp|leeslamp|oplaadbare lamp|lantaarn|windlicht|kandelaar|geurkaars|windgong|windspinner|bijzettafel|dienblad|plaid|sierkussen|wasmand|opbergmand|rieten mand|diffuser|geurstokjes|tuindecoratie|tuinbeeld)' },
