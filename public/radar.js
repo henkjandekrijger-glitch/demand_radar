@@ -225,7 +225,7 @@
     var q = [];
     if (L.tracked) q.push(L.tracked + ' topics remembered');
     if (L.noiseWords) q.push(L.noiseWords + ' noise words learned');
-    if (L.checked >= 30 && L.hitRate != null) q.push(L.hitRate + '% of the picks held up the month after (' + (L.baseRate != null ? L.baseRate + '% for all searches' : 'checked') + ')');
+    if (L.checked >= 30 && L.hitRate != null && L.baseRate != null) q.push(L.hitRate + '% of the picks held up the month after (' + L.baseRate + '% for all searches)');
     if (d.period) q.push('search volumes up to ' + mon(d.period, true) + ', daily trend up to today');
     $('#dr-learn').textContent = q.length ? 'Now: ' + q.join(', ') + '.' : '';
   }
