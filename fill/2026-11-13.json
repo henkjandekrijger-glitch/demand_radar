@@ -1,0 +1,1638 @@
+{
+"day": "2026-11-13",
+"eventsDay": "2026-11-13",
+"items": {
+"US:iphone": {
+"keep": true,
+"title": "iPhones",
+"cat": "products",
+"topic": "iphone",
+"what": "A new iPhone, often the 17 Pro",
+"idea": "Run trade-in and accessory bundles before Black Friday",
+"unexpected": false
+},
+"US:coffee shop near me": {
+"keep": true,
+"title": "Coffee shops nearby",
+"cat": "services",
+"topic": "local coffee shops",
+"what": "A good coffee shop close by",
+"idea": "Local cafés: push holiday drinks and gift cards on maps",
+"unexpected": false
+},
+"US:hotel near me": {
+"keep": true,
+"title": "Hotels nearby",
+"cat": "trips",
+"topic": "hotels nearby",
+"what": "A hotel room close by, often tonight",
+"idea": "Last-minute hotel deals for holiday travel weekends",
+"unexpected": false
+},
+"US:ps5": {
+"keep": true,
+"title": "PS5 consoles",
+"cat": "products",
+"topic": "ps5",
+"what": "A PlayStation 5 or PS5 Pro",
+"idea": "Bundle PS5 with games for Black Friday and Christmas",
+"unexpected": false
+},
+"US:deals": {
+"keep": true,
+"title": "Black Friday deals",
+"cat": "products",
+"topic": "black friday deals",
+"what": "Discounts, mostly Black Friday",
+"idea": "Start a deals page now and collect emails before Black Friday",
+"unexpected": false
+},
+"US:massage near me": {
+"keep": true,
+"title": "Massages nearby",
+"cat": "services",
+"topic": "massage",
+"what": "A massage appointment close by",
+"idea": "Sell massage gift cards for Christmas",
+"unexpected": false
+},
+"DE:adventskalender": {
+"keep": true,
+"title": "Advent calendars",
+"cat": "products",
+"topic": "advent calendars",
+"what": "An Advent calendar for December",
+"idea": "Sell themed Advent calendars now, stock runs out end of November",
+"unexpected": false
+},
+"US:3dprint": {
+"keep": true,
+"title": "3D printing",
+"cat": "products",
+"topic": "3d printing",
+"what": "3D printers and printed objects",
+"idea": "Bundle a beginner 3D printer with filament as a Christmas gift",
+"unexpected": false
+},
+"US:3d printable": {
+"keep": true,
+"title": "3D printable models",
+"cat": "products",
+"topic": "3d printing",
+"what": "Files and ideas to 3D print",
+"idea": "Sell printable gift designs and starter printers for the holidays",
+"unexpected": false
+},
+"DE:ps5": {
+"keep": true,
+"title": "PS5 consoles",
+"cat": "products",
+"topic": "ps5",
+"what": "A PlayStation 5 or PS5 Pro",
+"idea": "Bundle PS5 with games for Black Friday and Christmas",
+"unexpected": false
+},
+"DE:kalender 2027": {
+"keep": true,
+"title": "2027 calendars",
+"cat": "products",
+"topic": "2027 calendars",
+"what": "A wall or desk calendar for 2027",
+"idea": "Sell photo and family calendars for 2027 as Christmas gifts",
+"unexpected": false
+},
+"DE:heizöl 24": {
+"keep": true,
+"title": "Heating oil",
+"cat": "money",
+"topic": "heating oil",
+"what": "Heating oil at the best price",
+"idea": "Compare heating oil prices; advertise fill-up deals before frost",
+"unexpected": false
+},
+"US:meta glasses": {
+"keep": true,
+"title": "Meta smart glasses",
+"cat": "products",
+"topic": "smart glasses",
+"what": "Meta Ray-Ban smart glasses",
+"idea": "Gift guides for smart glasses before Christmas",
+"unexpected": false
+},
+"US:dentists": {
+"keep": true,
+"title": "Dentists",
+"cat": "services",
+"topic": "dentists",
+"what": "A dentist appointment",
+"idea": "Dentists: promote year-end appointments before insurance resets",
+"unexpected": false
+},
+"US:movie theater near me": {
+"keep": true,
+"title": "Cinemas nearby",
+"cat": "services",
+"topic": "cinema",
+"what": "A cinema showing new films",
+"idea": "Sell movie gift cards and holiday film nights",
+"unexpected": false
+},
+"US:cheapest gas near me": {
+"keep": true,
+"title": "Cheap fuel nearby",
+"cat": "money",
+"topic": "cheap fuel",
+"what": "The cheapest gas station nearby",
+"idea": "Fuel price apps and fuel-saving gadgets while prices rise",
+"unexpected": false
+},
+"US:auto insurance car": {
+"keep": true,
+"title": "Car insurance",
+"cat": "money",
+"topic": "car insurance",
+"what": "A cheaper car insurance quote",
+"idea": "Compare car insurance quotes; target year-end renewals",
+"unexpected": false
+},
+"US:medical insurance insurance": {
+"keep": true,
+"title": "Health insurance",
+"cat": "money",
+"topic": "health insurance",
+"what": "Health insurance cover, often a new plan",
+"idea": "Open enrollment: compare health plans before the deadline",
+"unexpected": false
+},
+"US:auto insurance vehicle": {
+"keep": true,
+"title": "Car insurance",
+"cat": "money",
+"topic": "car insurance",
+"what": "A cheaper car insurance quote",
+"idea": "Compare car insurance quotes; target year-end renewals",
+"unexpected": false
+},
+"DE:elektroauto": {
+"keep": true,
+"title": "Electric cars",
+"cat": "products",
+"topic": "electric cars",
+"what": "An electric car, new or used",
+"idea": "Promote EV leasing and home chargers while fuel is expensive",
+"unexpected": false
+},
+"US:personal loan loans": {
+"keep": true,
+"title": "Personal loans",
+"cat": "money",
+"topic": "personal loans",
+"what": "A personal loan, often for holidays or debt",
+"idea": "Compare personal loan rates before holiday spending",
+"unexpected": false
+},
+"DE:tanken clever": {
+"keep": true,
+"title": "Cheap fuel",
+"cat": "money",
+"topic": "cheap fuel",
+"what": "The cheapest petrol station nearby",
+"idea": "Fuel price apps and fuel cards while prices are high",
+"unexpected": false
+},
+"US:today's fixed mortgage rate": {
+"keep": true,
+"title": "Mortgage rates",
+"cat": "money",
+"topic": "mortgage rates",
+"what": "Today's fixed mortgage rate",
+"idea": "Mortgage rate alerts ahead of the Fed decision",
+"unexpected": false
+},
+"DE:kaffee": {
+"keep": true,
+"title": "Coffee",
+"cat": "products",
+"topic": "coffee",
+"what": "Coffee beans and ground coffee",
+"idea": "Coffee gift boxes and subscriptions for Christmas",
+"unexpected": false
+},
+"US:learn to code": {
+"keep": true,
+"title": "Learn to code",
+"cat": "courses",
+"topic": "learn to code",
+"what": "A way to learn programming",
+"idea": "Beginner coding courses with a New Year start",
+"unexpected": false
+},
+"DE:kreuzfahrtschiffe": {
+"keep": true,
+"title": "Cruise ships",
+"cat": "trips",
+"topic": "cruises",
+"what": "A cruise and which ship to pick",
+"idea": "Cruise deals for winter and early 2027 bookings",
+"unexpected": false
+},
+"NL:uggs": {
+"keep": true,
+"title": "UGG boots",
+"cat": "products",
+"topic": "ugg boots",
+"what": "UGG boots for winter",
+"idea": "Push UGG boots and slippers as winter gifts",
+"unexpected": false
+},
+"US:best notebook gaming": {
+"keep": true,
+"title": "Gaming laptops",
+"cat": "products",
+"topic": "gaming laptops",
+"what": "The best gaming laptop to buy",
+"idea": "Gaming laptop buying guide with Black Friday prices",
+"unexpected": false
+},
+"US:online course": {
+"keep": true,
+"title": "Online courses",
+"cat": "courses",
+"topic": "online courses",
+"what": "An online course to learn a skill",
+"idea": "Course bundles with a New Year resolution angle",
+"unexpected": false
+},
+"DE:soundboard": {
+"keep": true,
+"title": "Soundboards",
+"cat": "apps",
+"topic": "soundboards",
+"what": "A soundboard app or device for sounds",
+"idea": "Soundboard apps and streaming gear for Christmas",
+"unexpected": false
+},
+"NL:benzine": {
+"keep": true,
+"title": "Fuel prices",
+"cat": "money",
+"topic": "cheap fuel",
+"what": "The current petrol price and where it is cheap",
+"idea": "Fuel price apps and fuel-saving tips while prices are high",
+"unexpected": false
+},
+"US:knott's berry farm theme park california": {
+"keep": true,
+"title": "Theme park tickets",
+"cat": "trips",
+"topic": "theme parks",
+"what": "Tickets for Knott's Berry Farm",
+"idea": "Holiday theme park tickets and season passes",
+"unexpected": false
+},
+"US:generator gif": {
+"keep": true,
+"title": "GIF makers",
+"cat": "apps",
+"topic": "gif makers",
+"what": "A tool to make GIFs",
+"idea": "Promote a simple GIF maker app",
+"unexpected": false
+},
+"DE:movie park freizeitpark": {
+"keep": true,
+"title": "Theme park tickets",
+"cat": "trips",
+"topic": "theme parks",
+"what": "Tickets for Movie Park Germany",
+"idea": "Sell next season passes as Christmas gifts",
+"unexpected": false
+},
+"NL:iphone 18": {
+"keep": true,
+"title": "iPhone 18",
+"cat": "products",
+"topic": "iphone",
+"what": "News and preorders for the iPhone 18",
+"idea": "Collect emails for iPhone 18 preorders and trade-in deals",
+"unexpected": false
+},
+"DE:tagesgeld konto": {
+"keep": true,
+"title": "Savings accounts",
+"cat": "money",
+"topic": "savings accounts",
+"what": "A savings account with good interest",
+"idea": "Compare savings rates; people move money at year end",
+"unexpected": false
+},
+"US:font generator": {
+"keep": true,
+"title": "Font generators",
+"cat": "apps",
+"topic": "font generators",
+"what": "A tool to make fancy text fonts",
+"idea": "Promote font and design apps to creators",
+"unexpected": false
+},
+"DE:günstiger tanken": {
+"keep": true,
+"title": "Cheap fuel",
+"cat": "money",
+"topic": "cheap fuel",
+"what": "Where to fill up cheaper",
+"idea": "Fuel price apps and fuel cards while prices are high",
+"unexpected": false
+},
+"DE:versicherung": {
+"keep": true,
+"title": "Car insurance comparison",
+"cat": "money",
+"topic": "car insurance",
+"what": "A cheaper car insurance",
+"idea": "Car insurance switch deadline is 30 November: advertise now",
+"unexpected": false
+},
+"NL:thuisbatterij": {
+"keep": true,
+"title": "Home batteries",
+"cat": "products",
+"topic": "home batteries",
+"what": "A home battery before net metering ends",
+"idea": "Plug-in batteries before net metering ends on 1 January 2027",
+"unexpected": false
+},
+"NL:elektriciteit auto": {
+"keep": true,
+"title": "Electric cars",
+"cat": "products",
+"topic": "electric cars",
+"what": "An electric car and charging",
+"idea": "EV leasing and home chargers while fuel is expensive",
+"unexpected": false
+},
+"US:codebar generator": {
+"keep": true,
+"title": "Barcode generators",
+"cat": "apps",
+"topic": "barcode generators",
+"what": "A tool to make barcodes",
+"idea": "Barcode label tools for small sellers before the holidays",
+"unexpected": false
+},
+"US:music lessons violin": {
+"keep": true,
+"title": "Violin lessons",
+"cat": "courses",
+"topic": "music lessons",
+"what": "Violin lessons, often for children",
+"idea": "Gift vouchers for music lessons at Christmas",
+"unexpected": false
+},
+"DE:führerschein-app": {
+"keep": true,
+"title": "Driving theory apps",
+"cat": "courses",
+"topic": "driving theory apps",
+"what": "An app to practise for the driving test",
+"idea": "Advertise a theory app to learners now",
+"unexpected": false
+},
+"US:vocal lessons for singers": {
+"keep": true,
+"title": "Singing lessons",
+"cat": "courses",
+"topic": "music lessons",
+"what": "Singing lessons",
+"idea": "Gift vouchers for singing lessons at Christmas",
+"unexpected": false
+},
+"DE:e-scooter": {
+"keep": true,
+"title": "E-scooters",
+"cat": "products",
+"topic": "e-scooters",
+"what": "An electric scooter",
+"idea": "E-scooters as Christmas gifts with Black Friday prices",
+"unexpected": false
+},
+"NL:berekenen hypotheek": {
+"keep": true,
+"title": "Mortgage calculators",
+"cat": "money",
+"topic": "mortgages",
+"what": "How much mortgage you can get",
+"idea": "Mortgage advice with a calculator as lead magnet",
+"unexpected": false
+},
+"NL:ps5": {
+"keep": true,
+"title": "PS5 consoles",
+"cat": "products",
+"topic": "ps5",
+"what": "A PlayStation 5",
+"idea": "Bundle PS5 with games for Sinterklaas and Christmas",
+"unexpected": false
+},
+"DE:klimaanlage": {
+"keep": true,
+"title": "Portable air conditioners",
+"cat": "products",
+"topic": "portable air conditioners",
+"what": "An air conditioner that also heats",
+"idea": "Sell split units that heat as winter heaters",
+"unexpected": false
+},
+"US:coding bootcamp": {
+"keep": true,
+"title": "Coding bootcamps",
+"cat": "courses",
+"topic": "learn to code",
+"what": "An intensive coding course for a new job",
+"idea": "Bootcamps with a January start and payment plans",
+"unexpected": false
+},
+"NL:energiecontract": {
+"keep": true,
+"title": "Energy contracts",
+"cat": "money",
+"topic": "energy contracts",
+"what": "A cheaper energy contract",
+"idea": "Compare energy deals before the winter bills",
+"unexpected": false
+},
+"DE:krankenversicherung": {
+"keep": true,
+"title": "Health insurance",
+"cat": "money",
+"topic": "health insurance",
+"what": "Private or public health insurance",
+"idea": "Health insurance switch before the new year",
+"unexpected": false
+},
+"US:great adventure theme park": {
+"keep": true,
+"title": "Theme park tickets",
+"cat": "trips",
+"topic": "theme parks",
+"what": "Tickets for Six Flags Great Adventure",
+"idea": "Season passes as Christmas gifts",
+"unexpected": false
+},
+"NL:macbook neo": {
+"keep": true,
+"title": "MacBook Neo",
+"cat": "products",
+"topic": "macbook",
+"what": "Apple's cheaper MacBook Neo",
+"idea": "MacBook Neo deals and accessories for Sinterklaas",
+"unexpected": false
+},
+"US:chromebook": {
+"keep": true,
+"title": "Chromebooks",
+"cat": "products",
+"topic": "chromebooks",
+"what": "A cheap laptop for school or browsing",
+"idea": "Chromebook deals for students before Christmas",
+"unexpected": false
+},
+"DE:world of warcraft abonnement": {
+"keep": true,
+"title": "Game subscriptions",
+"cat": "apps",
+"topic": "game subscriptions",
+"what": "A World of Warcraft subscription",
+"idea": "Game time cards as Christmas gifts",
+"unexpected": false
+},
+"DE:check24 stromanbieter": {
+"keep": true,
+"title": "Energy contracts",
+"cat": "money",
+"topic": "energy contracts",
+"what": "A cheaper electricity supplier",
+"idea": "Compare power deals before winter",
+"unexpected": false
+},
+"DE:silvesterkreuzfahrt 2026": {
+"keep": true,
+"title": "New Year's Eve cruises",
+"cat": "trips",
+"topic": "new year cruises",
+"what": "A cruise over New Year's Eve 2026",
+"idea": "Last cabins for New Year's Eve cruises: advertise now",
+"unexpected": false
+},
+"DE:heide park freizeitpark": {
+"keep": true,
+"title": "Theme park tickets",
+"cat": "trips",
+"topic": "theme parks",
+"what": "Tickets for Heide Park",
+"idea": "Season passes as Christmas gifts",
+"unexpected": false
+},
+"NL:zonnepanelen": {
+"keep": true,
+"title": "Solar panels",
+"cat": "products",
+"topic": "solar panels",
+"what": "Solar panels and what happens after net metering",
+"idea": "Solar plus battery packages before net metering ends",
+"unexpected": false
+},
+"DE:freizeitpark geiselwind": {
+"keep": true,
+"title": "Theme park tickets",
+"cat": "trips",
+"topic": "theme parks",
+"what": "Tickets for Freizeit-Land Geiselwind",
+"idea": "Season passes as Christmas gifts",
+"unexpected": false
+},
+"DE:dyson zahnbürste": {
+"keep": true,
+"title": "Dyson toothbrush",
+"cat": "products",
+"topic": "dyson toothbrush",
+"what": "Dyson's electric toothbrush",
+"idea": "Stock and advertise it as a premium Christmas gift",
+"unexpected": true,
+"why": "Came out of nowhere, a new Dyson product"
+},
+"NL:long sleeve": {
+"keep": true,
+"title": "Long sleeve tops",
+"cat": "products",
+"topic": "long sleeve tops",
+"what": "Long sleeve shirts for colder days",
+"idea": "Layering basics bundles for winter",
+"unexpected": false
+},
+"DE:fahrprüfung app": {
+"keep": true,
+"title": "Driving theory apps",
+"cat": "courses",
+"topic": "driving theory apps",
+"what": "An app to practise for the driving test",
+"idea": "Advertise a theory app to learners now",
+"unexpected": false
+},
+"US:pc notebook laptop": {
+"keep": true,
+"title": "Laptops",
+"cat": "products",
+"topic": "laptops",
+"what": "A new laptop",
+"idea": "Laptop buying guide with Black Friday prices",
+"unexpected": false
+},
+"DE:tankrabatt": {
+"keep": true,
+"title": "Fuel discount",
+"cat": "money",
+"topic": "cheap fuel",
+"what": "Whether the fuel tax cut comes back",
+"idea": "Fuel price apps and fuel cards while prices are high",
+"unexpected": true,
+"why": "A fuel tax cut is back in the news"
+},
+"DE:physiotherapeuten": {
+"keep": true,
+"title": "Physiotherapists",
+"cat": "services",
+"topic": "physiotherapy",
+"what": "A physiotherapist nearby",
+"idea": "Physio practices: online booking ads",
+"unexpected": false
+},
+"DE:flüge-de": {
+"keep": true,
+"title": "Cheap flights",
+"cat": "trips",
+"topic": "cheap flights",
+"what": "Cheap flights from Germany",
+"idea": "Winter sun flight deals for January",
+"unexpected": false
+},
+"NL:kookboek": {
+"keep": true,
+"title": "Cookbooks",
+"cat": "books",
+"topic": "cookbooks",
+"what": "A cookbook, often a gift",
+"idea": "Cookbooks as Sinterklaas and Christmas gifts",
+"unexpected": false
+},
+"NL:zorgverzekering vergelijk": {
+"keep": true,
+"title": "Health insurance comparison",
+"cat": "money",
+"topic": "health insurance",
+"what": "A cheaper health insurance for next year",
+"idea": "Comparison ads from 12 November until 31 December",
+"unexpected": false
+},
+"DE:ohne makler": {
+"keep": true,
+"title": "Homes without agent",
+"cat": "services",
+"topic": "property without agent",
+"what": "Buy or rent a home without an agent",
+"idea": "Private listing platforms for buyers and sellers",
+"unexpected": false
+},
+"DE:kfz-versicherungsvergleich": {
+"keep": true,
+"title": "Car insurance comparison",
+"cat": "money",
+"topic": "car insurance",
+"what": "A cheaper car insurance",
+"idea": "Car insurance switch deadline is 30 November: advertise now",
+"unexpected": false
+},
+"DE:pflegeversicherung": {
+"keep": true,
+"title": "Care insurance",
+"cat": "money",
+"topic": "care insurance",
+"what": "Long-term care insurance",
+"idea": "Explain extra care insurance before the year ends",
+"unexpected": false
+},
+"DE:freizeitpark tripsdrill": {
+"keep": true,
+"title": "Theme park tickets",
+"cat": "trips",
+"topic": "theme parks",
+"what": "Tickets for Erlebnispark Tripsdrill",
+"idea": "Season passes as Christmas gifts",
+"unexpected": false
+},
+"DE:balkonkraftwerk mit speicher": {
+"keep": true,
+"title": "Balcony solar with battery",
+"cat": "products",
+"topic": "balcony solar with battery",
+"what": "A balcony solar kit with a battery",
+"idea": "Sell plug-in solar with storage as a winter saving",
+"unexpected": false
+},
+"DE:tiptoi bücher": {
+"keep": true,
+"title": "Tiptoi books",
+"cat": "books",
+"topic": "tiptoi books",
+"what": "Tiptoi audio books for children",
+"idea": "Tiptoi sets as Christmas gifts",
+"unexpected": false
+},
+"DE:kurzurlaub deutschland": {
+"keep": true,
+"title": "Short breaks in Germany",
+"cat": "trips",
+"topic": "short breaks",
+"what": "A short holiday in Germany",
+"idea": "Winter short-break packages and gift vouchers",
+"unexpected": false
+},
+"NL:bezorg bloemen": {
+"keep": true,
+"title": "Flower delivery",
+"cat": "services",
+"topic": "flower delivery",
+"what": "Flowers or groceries delivered at home",
+"idea": "Flower subscriptions and gift deliveries for the holidays",
+"unexpected": false
+},
+"DE:freida mcfadden bücher": {
+"keep": true,
+"title": "Freida McFadden books",
+"cat": "books",
+"topic": "freida mcfadden books",
+"what": "Thrillers by Freida McFadden",
+"idea": "Bundle her thrillers as Christmas gifts",
+"unexpected": false
+},
+"NL:abonnement videoland": {
+"keep": true,
+"title": "Streaming subscriptions",
+"cat": "apps",
+"topic": "streaming subscriptions",
+"what": "A Videoland subscription",
+"idea": "Streaming gift cards for Christmas",
+"unexpected": false
+},
+"NL:thuisbezorgd kortingscode": {
+"keep": true,
+"title": "Food delivery discounts",
+"cat": "services",
+"topic": "food delivery discounts",
+"what": "A discount code for takeaway",
+"idea": "Restaurants: own discount codes in the dark winter months",
+"unexpected": false
+},
+"DE:tagebücher der apothekerin": {
+"keep": true,
+"title": "Die Tagebücher der Apothekerin",
+"cat": "books",
+"topic": "apothecary diaries",
+"what": "The Apothecary Diaries books and manga",
+"idea": "Manga and anime gift sets for Christmas",
+"unexpected": false
+},
+"NL:chromebook": {
+"keep": true,
+"title": "Chromebooks",
+"cat": "products",
+"topic": "chromebooks",
+"what": "A cheap laptop for school",
+"idea": "Chromebook deals for students before Christmas",
+"unexpected": false
+},
+"US:practice test psat": {
+"keep": true,
+"title": "PSAT practice tests",
+"cat": "courses",
+"topic": "psat prep",
+"what": "Practice tests for the PSAT",
+"idea": "Test prep packages for spring exams",
+"unexpected": false
+},
+"DE:autoversicherung vergleich": {
+"keep": true,
+"title": "Car insurance comparison",
+"cat": "money",
+"topic": "car insurance",
+"what": "A cheaper car insurance",
+"idea": "Car insurance switch deadline is 30 November: advertise now",
+"unexpected": false
+},
+"US:hp notebook computer": {
+"keep": true,
+"title": "Laptops",
+"cat": "products",
+"topic": "laptops",
+"what": "An HP or Dell laptop",
+"idea": "Laptop buying guide with Black Friday prices",
+"unexpected": false
+},
+"DE:festgeldzinsen vergleich": {
+"keep": true,
+"title": "Fixed-term deposits",
+"cat": "money",
+"topic": "fixed-term deposits",
+"what": "The best fixed-term deposit rate",
+"idea": "Compare deposit rates; people move money at year end",
+"unexpected": false
+},
+"NL:weekendjes weg nederland": {
+"keep": true,
+"title": "Weekend breaks in NL",
+"cat": "trips",
+"topic": "short breaks",
+"what": "A weekend away in the Netherlands",
+"idea": "Winter weekend packages and gift vouchers",
+"unexpected": false
+},
+"US:app for selling clothes": {
+"keep": true,
+"title": "Clothing resale apps",
+"cat": "apps",
+"topic": "resale apps",
+"what": "An app to sell used clothes",
+"idea": "Resale apps after the holidays: sell unwanted gifts",
+"unexpected": false
+},
+"NL:frm schoonmaak": {
+"keep": true,
+"title": "Cleaning products",
+"cat": "products",
+"topic": "cleaning products",
+"what": "FRM cleaning products",
+"idea": "Bulk cleaning products for small businesses",
+"unexpected": true,
+"why": "Sudden jump for one cleaning brand"
+},
+"NL:wordfeud app helper": {
+"keep": true,
+"title": "Word game helpers",
+"cat": "apps",
+"topic": "word game helpers",
+"what": "A helper app for Wordfeud",
+"idea": "Promote a word finder app to puzzle fans",
+"unexpected": false
+},
+"NL:makelaars": {
+"keep": true,
+"title": "Estate agents",
+"cat": "services",
+"topic": "estate agents",
+"what": "An estate agent to buy or sell",
+"idea": "Agents: free valuation ads before spring listings",
+"unexpected": false
+},
+"NL:abonnement pathe": {
+"keep": true,
+"title": "Cinema subscriptions",
+"cat": "services",
+"topic": "cinema subscriptions",
+"what": "A Pathé cinema subscription",
+"idea": "Cinema subscriptions as Christmas gifts",
+"unexpected": false
+},
+"US:aulani resort hawaii": {
+"keep": true,
+"title": "Aulani Hawaii resort",
+"cat": "trips",
+"topic": "hawaii resorts",
+"what": "A stay at Disney's Aulani resort",
+"idea": "Hawaii family packages for spring break",
+"unexpected": false
+},
+"DE:reinigungen": {
+"keep": true,
+"title": "Dry cleaners",
+"cat": "services",
+"topic": "dry cleaning",
+"what": "A dry cleaner nearby",
+"idea": "Dry cleaners: party season coat and suit cleaning",
+"unexpected": false
+},
+"NL:spaarrekening": {
+"keep": true,
+"title": "Savings accounts",
+"cat": "money",
+"topic": "savings accounts",
+"what": "A savings account with good interest",
+"idea": "Compare savings rates; people move money at year end",
+"unexpected": false
+},
+"DE:umtausch führerschein": {
+"keep": true,
+"title": "Driving licence exchange",
+"cat": "services",
+"topic": "driving licence exchange",
+"what": "Exchange an old driving licence before the deadline",
+"idea": "Remind drivers born 1971+ of the January deadline; sell photos and help",
+"unexpected": false
+},
+"NL:spotify abonnement": {
+"keep": true,
+"title": "Spotify subscriptions",
+"cat": "apps",
+"topic": "streaming subscriptions",
+"what": "A Spotify subscription",
+"idea": "Streaming gift cards for Christmas",
+"unexpected": false
+},
+"US:weekend getaway for couples near me": {
+"keep": true,
+"title": "Couples weekend getaways",
+"cat": "trips",
+"topic": "short breaks",
+"what": "A romantic weekend away nearby",
+"idea": "Couples packages and gift vouchers for the holidays",
+"unexpected": false
+},
+"DE:backlink tool checker": {
+"keep": true,
+"title": "Backlink checkers",
+"cat": "apps",
+"topic": "seo tools",
+"what": "A tool to check backlinks",
+"idea": "Promote SEO tools to small website owners",
+"unexpected": false
+},
+"NL:theatercursus utrecht": {
+"keep": true,
+"title": "Theatre courses",
+"cat": "courses",
+"topic": "theatre courses",
+"what": "A theatre course in Utrecht",
+"idea": "Courses starting in January with a New Year angle",
+"unexpected": false
+},
+"DE:ausbildung fluglotse": {
+"keep": true,
+"title": "Air traffic controller training",
+"cat": "courses",
+"topic": "air traffic controller training",
+"what": "Training to become an air traffic controller",
+"idea": "Career course ads around the January application window",
+"unexpected": false
+},
+"US:app for hairstyles": {
+"keep": true,
+"title": "Hairstyle apps",
+"cat": "apps",
+"topic": "hairstyle apps",
+"what": "An app to try hairstyles",
+"idea": "Party season: promote hairstyle try-on apps",
+"unexpected": false
+},
+"NL:psychosomatische fysiotherapeut": {
+"keep": true,
+"title": "Psychosomatic physiotherapy",
+"cat": "services",
+"topic": "physiotherapy",
+"what": "Physiotherapy for stress complaints",
+"idea": "Practices: online booking ads in the dark months",
+"unexpected": false
+},
+"NL:kookboekrek": {
+"keep": true,
+"title": "Cookbook stands",
+"cat": "products",
+"topic": "cookbook stands",
+"what": "A stand to hold a cookbook",
+"idea": "Bundle cookbook stands with cookbooks as gifts",
+"unexpected": false
+},
+"US:app for receipts": {
+"keep": true,
+"title": "Receipt scanner apps",
+"cat": "apps",
+"topic": "receipt apps",
+"what": "An app to keep receipts",
+"idea": "Tax season: promote receipt apps from January",
+"unexpected": false
+},
+"NL:overstappen energie": {
+"keep": true,
+"title": "Energy contracts",
+"cat": "money",
+"topic": "energy contracts",
+"what": "Switch to a cheaper energy supplier",
+"idea": "Compare energy deals before the winter bills",
+"unexpected": false
+},
+"NL:ebook readers": {
+"keep": true,
+"title": "E-readers",
+"cat": "products",
+"topic": "e-readers",
+"what": "An e-reader like a Kindle",
+"idea": "E-readers as Sinterklaas and Christmas gifts",
+"unexpected": false
+},
+"NL:online cursussen gratis": {
+"keep": true,
+"title": "Free online courses",
+"cat": "courses",
+"topic": "online courses",
+"what": "Free online courses",
+"idea": "Free first lesson as lead for paid courses in January",
+"unexpected": false
+},
+"NL:energieleverancier goedkoopste": {
+"keep": true,
+"title": "Energy contracts",
+"cat": "money",
+"topic": "energy contracts",
+"what": "The cheapest energy supplier",
+"idea": "Compare energy deals before the winter bills",
+"unexpected": false
+},
+"NL:boedelbak aanhanger verhuur": {
+"keep": true,
+"title": "Trailer rental",
+"cat": "services",
+"topic": "trailer rental",
+"what": "A trailer to rent for moving",
+"idea": "Trailer rental ads for moving and garden clean-ups",
+"unexpected": false
+},
+"US:things to do in dc today": {
+"keep": true,
+"title": "Things to do in DC",
+"cat": "trips",
+"topic": "city trips",
+"what": "Activities in Washington DC today",
+"idea": "Sell tours and tickets for holiday visitors",
+"unexpected": false
+},
+"DE:buch über wechseljahre": {
+"keep": true,
+"title": "Menopause books",
+"cat": "books",
+"topic": "menopause books",
+"what": "A book about menopause",
+"idea": "Recommend menopause books and guides",
+"unexpected": false
+},
+"NL:bijles aan huis": {
+"keep": true,
+"title": "Home tutoring",
+"cat": "courses",
+"topic": "tutoring",
+"what": "A tutor who comes home",
+"idea": "Tutoring packages before the winter exams",
+"unexpected": false
+},
+"NL:app voor benzineprijzen": {
+"keep": true,
+"title": "Fuel price apps",
+"cat": "apps",
+"topic": "fuel price apps",
+"what": "An app to find cheap petrol",
+"idea": "Promote fuel price apps while prices are high",
+"unexpected": false
+},
+"NL:kentekenplaat laten maken": {
+"keep": true,
+"title": "Number plates",
+"cat": "services",
+"topic": "number plates",
+"what": "A new number plate made",
+"idea": "Number plate makers: fast online ordering ads",
+"unexpected": false
+},
+"US:weekend getaways from dc": {
+"keep": true,
+"title": "Weekend getaways from DC",
+"cat": "trips",
+"topic": "short breaks",
+"what": "A weekend trip from Washington DC",
+"idea": "Winter weekend packages near DC",
+"unexpected": false
+},
+"NL:online cursus theorie auto": {
+"keep": true,
+"title": "Driving theory courses",
+"cat": "courses",
+"topic": "driving theory apps",
+"what": "An online course for the car theory exam",
+"idea": "Theory course ads to learners now",
+"unexpected": false
+},
+"US:hilton hawaiian village beach resort waikiki": {
+"keep": true,
+"title": "Waikiki beach resorts",
+"cat": "trips",
+"topic": "hawaii resorts",
+"what": "A stay at the Hilton Hawaiian Village",
+"idea": "Hawaii packages for winter and spring break",
+"unexpected": false
+},
+"DE:app für ladestationen": {
+"keep": true,
+"title": "EV charging apps",
+"cat": "apps",
+"topic": "ev charging apps",
+"what": "An app to find charging stations",
+"idea": "Promote charging apps to new EV drivers",
+"unexpected": false
+},
+"DE:hähnchenflügel im airfryer": {
+"keep": true,
+"title": "Air fryer recipes",
+"cat": "books",
+"topic": "air fryer recipes",
+"what": "Recipes for chicken wings in the air fryer",
+"idea": "Air fryer cookbooks as Christmas gifts",
+"unexpected": false
+},
+"NL:opleiding tot psychiater": {
+"keep": true,
+"title": "Psychiatry training",
+"cat": "courses",
+"topic": "psychiatry training",
+"what": "How to become a psychiatrist",
+"idea": "Study guidance and prep courses for medical school",
+"unexpected": false
+},
+"US:coffe shop near me": {
+"keep": false
+},
+"US:loves near me": {
+"keep": false
+},
+"DE:adventskalder": {
+"keep": false
+},
+"DE:gts 6": {
+"keep": false
+},
+"US:dick's near me": {
+"keep": false
+},
+"US:targets near me": {
+"keep": false
+},
+"US:planet fitness near me": {
+"keep": false
+},
+"US:floc camera": {
+"keep": false
+},
+"NL:automated intelligence": {
+"keep": false
+},
+"US:harbor tool near me": {
+"keep": false
+},
+"DE:rares für bares": {
+"keep": false
+},
+"DE:mottorrad": {
+"keep": false
+},
+"DE:notebook im": {
+"keep": false
+},
+"DE:automated intelligence": {
+"keep": false
+},
+"US:notebooklm": {
+"keep": false
+},
+"NL:iphone duo": {
+"keep": false
+},
+"DE:in der nähe restaurant": {
+"keep": false
+},
+"DE:medimops bücher": {
+"keep": false
+},
+"DE:panettiere hayden": {
+"keep": false
+},
+"US:asus notebook power button": {
+"keep": false
+},
+"DE:gärtnerplatztheater": {
+"keep": false
+},
+"NL:notebooklm": {
+"keep": false
+},
+"DE:deutsche rentenversicherung": {
+"keep": false
+},
+"DE:zwischenprüfung groß und außenhandel 2018 lösungen": {
+"keep": false
+},
+"NL:breukelen hotel van der valk": {
+"keep": false
+},
+"NL:van der valk hotel schiedam": {
+"keep": false
+},
+"DE:gärtnerplatz": {
+"keep": false
+},
+"DE:areas where ai is used": {
+"keep": false
+},
+"DE:web app whatsapp": {
+"keep": false
+},
+"DE:health app huawei": {
+"keep": false
+},
+"NL:notebook im": {
+"keep": false
+},
+"NL:sweet lake wellness": {
+"keep": false
+},
+"NL:van der valk hotel utrecht": {
+"keep": false
+},
+"NL:van der valk hotel apeldoorn": {
+"keep": false
+},
+"DE:farin urlaub": {
+"keep": false
+},
+"NL:vd valk hotel apeldoorn": {
+"keep": false
+},
+"US:theme park kings dominion": {
+"keep": true,
+"title": "Theme park tickets",
+"cat": "trips",
+"topic": "theme parks",
+"what": "Tickets for Kings Dominion",
+"idea": "Season passes as Christmas gifts",
+"unexpected": false
+},
+"US:hp pc notebook": {
+"keep": true,
+"title": "Laptops",
+"cat": "products",
+"topic": "laptops",
+"what": "An HP laptop",
+"idea": "Laptop buying guide with Black Friday prices",
+"unexpected": false
+},
+"DE:bücher momox kaufen": {
+"keep": false
+},
+"NL:take two interactive software stock": {
+"keep": false
+},
+"NL:uva ai chat": {
+"keep": false
+},
+"NL:a boeken fabric and notions shop": {
+"keep": false
+},
+"NL:word app online": {
+"keep": false
+},
+"NL:bruna boeken top 10": {
+"keep": false
+},
+"NL:a boeken stoffen & fournituren winkel": {
+"keep": false
+},
+"NL:transavia boek een vlucht": {
+"keep": false
+},
+"NL:cursus en vergadercentrum domstad": {
+"keep": false
+},
+"NL:duo examenlocatie rotterdam": {
+"keep": false
+},
+"NL:web app whatsapp": {
+"keep": false
+},
+"DE:entertainment software association": {
+"keep": false
+},
+"NL:lassus tandarts": {
+"keep": false
+},
+"NL:web app fc 27": {
+"keep": false
+},
+"DE:app für personalausweis": {
+"keep": false
+},
+"DE:web app outlook": {
+"keep": false
+},
+"DE:app für fahrzeugschein": {
+"keep": false
+},
+"DE:buch über umgangsformen 6 buchstaben": {
+"keep": false
+},
+"DE:bücherschrank": {
+"keep": false
+}
+},
+"rise": {
+"US:f:carnival cruise": {
+"keep": true,
+"oneoff": false,
+"title": "Carnival cruises",
+"cat": "trips",
+"topic": "cruises",
+"what": "A Carnival cruise, booked for winter or spring",
+"idea": "Wave season starts in January: advertise cruise deals from December"
+},
+"US:f:rccl cruises": {
+"keep": true,
+"oneoff": false,
+"title": "Royal Caribbean cruises",
+"cat": "trips",
+"topic": "cruises",
+"what": "A Royal Caribbean cruise",
+"idea": "Wave season starts in January: advertise cruise deals from December"
+},
+"NL:zorgverzekering vergelijk": {
+"keep": true,
+"oneoff": false,
+"title": "Health insurance comparison",
+"cat": "money",
+"topic": "health insurance",
+"what": "A cheaper health insurance for next year",
+"idea": "Comparison ads now until 31 December, peak in December"
+},
+"DE:f:führerschein umtauschen": {
+"keep": true,
+"oneoff": false,
+"title": "Driving licence exchange",
+"cat": "services",
+"topic": "driving licence exchange",
+"what": "Exchange an old driving licence before the deadline",
+"idea": "Start in December: photos, appointments and reminders before the January deadline"
+},
+"DE:f:atomuhr": {
+"keep": true,
+"oneoff": false,
+"title": "Radio-controlled clocks",
+"cat": "products",
+"topic": "radio clocks",
+"what": "A radio-controlled clock",
+"idea": "Sell radio clocks as Christmas gifts in December"
+},
+"DE:f:ferienwohnung": {
+"keep": true,
+"oneoff": false,
+"title": "Holiday apartments",
+"cat": "trips",
+"topic": "holiday homes",
+"what": "A holiday apartment for next year",
+"idea": "Early-booking ads for summer from January"
+},
+"NL:f:vliegticket": {
+"keep": true,
+"oneoff": false,
+"title": "Flight tickets",
+"cat": "trips",
+"topic": "cheap flights",
+"what": "Cheap flight tickets for next year",
+"idea": "Summer early-booking flight deals from January"
+},
+"NL:f:v v v cadeaukaart": {
+"keep": true,
+"oneoff": false,
+"title": "VVV gift cards",
+"cat": "products",
+"topic": "gift cards",
+"what": "A VVV gift card as a present",
+"idea": "Sell gift cards for Christmas from early December"
+},
+"US:aulani resort hawaii": {
+"keep": true,
+"oneoff": false,
+"title": "Aulani Hawaii resort",
+"cat": "trips",
+"topic": "hawaii resorts",
+"what": "A stay at Disney's Aulani resort",
+"idea": "Hawaii family packages for spring break from December"
+},
+"DE:umtausch führerschein": {
+"keep": true,
+"oneoff": false,
+"title": "Driving licence exchange",
+"cat": "services",
+"topic": "driving licence exchange",
+"what": "Exchange an old driving licence before the deadline",
+"idea": "Start in December: photos and appointments before the January deadline"
+},
+"DE:f:dirndl": {
+"keep": true,
+"oneoff": false,
+"title": "Dirndls",
+"cat": "products",
+"topic": "dirndls",
+"what": "A dirndl for next year's festivals",
+"idea": "Wait: advertise dirndls again from spring"
+},
+"NL:f:kortingsdag": {
+"keep": true,
+"oneoff": false,
+"title": "Discount days",
+"cat": "products",
+"topic": "discount days",
+"what": "Shop discount days and sales",
+"idea": "Collect emails for January sales from December"
+},
+"DE:silvesterkreuzfahrt 2026": {
+"keep": true,
+"oneoff": false,
+"title": "New Year's Eve cruises",
+"cat": "trips",
+"topic": "new year cruises",
+"what": "A cruise over New Year's Eve",
+"idea": "Last cabins now; then advertise next year's New Year cruises"
+},
+"DE:f:muttertagsgeschenk 2026": {
+"keep": true,
+"oneoff": false,
+"title": "Mother's Day gifts",
+"cat": "products",
+"topic": "mothers day gifts",
+"what": "A gift for Mother's Day",
+"idea": "Start Mother's Day gift ads in April"
+},
+"DE:pflegeversicherung": {
+"keep": true,
+"oneoff": false,
+"title": "Care insurance",
+"cat": "money",
+"topic": "care insurance",
+"what": "Long-term care insurance",
+"idea": "Explain extra care insurance in January when contributions change"
+},
+"DE:ausbildung fluglotse": {
+"keep": true,
+"oneoff": false,
+"title": "Air traffic controller training",
+"cat": "courses",
+"topic": "air traffic controller training",
+"what": "Training to become an air traffic controller",
+"idea": "Career ads around the January application window"
+},
+"DE:ausbildung zum fluglotsen": {
+"keep": true,
+"oneoff": false,
+"title": "Air traffic controller training",
+"cat": "courses",
+"topic": "air traffic controller training",
+"what": "Training to become an air traffic controller",
+"idea": "Career ads around the January application window"
+},
+"NL:weekendjes weg nederland": {
+"keep": true,
+"oneoff": false,
+"title": "Weekend breaks in NL",
+"cat": "trips",
+"topic": "short breaks",
+"what": "A weekend away in the Netherlands",
+"idea": "Winter weekend packages, peak in January"
+},
+"NL:weekendje weg nederland": {
+"keep": true,
+"oneoff": false,
+"title": "Weekend breaks in NL",
+"cat": "trips",
+"topic": "short breaks",
+"what": "A weekend away in the Netherlands",
+"idea": "Winter weekend packages, peak in January"
+},
+"US:f:email providers free": {
+"keep": true,
+"oneoff": false,
+"title": "Free email providers",
+"cat": "apps",
+"topic": "email providers",
+"what": "A free email address",
+"idea": "Promote a free mail app with privacy angle"
+},
+"NL:f:airco mobiel": {
+"keep": true,
+"oneoff": false,
+"title": "Portable air conditioners",
+"cat": "products",
+"topic": "portable air conditioners",
+"what": "A mobile air conditioner, also for heating",
+"idea": "Sell units that also heat this winter"
+},
+"US:weekend getaway for couples near me": {
+"keep": true,
+"oneoff": false,
+"title": "Couples weekend getaways",
+"cat": "trips",
+"topic": "short breaks",
+"what": "A romantic weekend away nearby",
+"idea": "Valentine's packages from January"
+},
+"US:f:costco travels": {
+"keep": false
+},
+"US:f:near me restaurants open": {
+"keep": false
+},
+"DE:f:wunschgutschein einlösen": {
+"keep": false
+},
+"DE:f:michelles": {
+"keep": false
+},
+"DE:f:buttinette": {
+"keep": false
+},
+"NL:f:prijsvrij": {
+"keep": false
+},
+"NL:f:vakantiediscounter": {
+"keep": false
+},
+"DE:f:sonnenklar tv": {
+"keep": false
+},
+"DE:f:schwimmbades": {
+"keep": false
+},
+"NL:f:darts gerwen": {
+"keep": false
+},
+"DE:f:bud bunny": {
+"keep": false
+},
+"NL:f:voordeeluitjes": {
+"keep": false
+},
+"NL:f:natuurhuisjes": {
+"keep": false
+},
+"US:f:standing yankees": {
+"keep": false
+},
+"NL:sweet lake wellness": {
+"keep": false
+},
+"NL:sweetlake wellness": {
+"keep": false
+},
+"NL:transavia boek een vlucht": {
+"keep": false
+}
+},
+"today": [
+{
+"cc": "US",
+"name": "power outages",
+"title": "Home backup power",
+"angle": "Outages push people to generators and power stations",
+"cat": "products",
+"idea": "Advertise portable power stations and generators where outages hit"
+}
+],
+"events": [
+{
+"n": 1,
+"effect": "If the Fed raises rates in December, Americans shop for high-yield savings and lock mortgage rates.",
+"dir": "more",
+"cc": [
+"US"
+],
+"terms": {
+"US": [
+"high yield savings account",
+"mortgage rates",
+"cd rates"
+]
+}
+},
+{
+"n": 51,
+"effect": "Oil at $90 raises fuel prices: more searches for cheap fuel, fuel price apps and electric cars.",
+"dir": "more",
+"cc": [
+"NL",
+"DE",
+"US"
+],
+"terms": {
+"NL": [
+"benzineprijs",
+"goedkoop tanken"
+],
+"DE": [
+"spritpreise",
+"günstig tanken"
+],
+"US": [
+"gas prices",
+"cheap gas near me"
+]
+}
+},
+{
+"n": 45,
+"effect": "A Spider-Man box office hit lifts Spider-Man toys and LEGO as Christmas gifts.",
+"dir": "more",
+"cc": [
+"NL",
+"DE",
+"US"
+],
+"terms": {
+"NL": [
+"spider-man speelgoed",
+"lego spider-man"
+],
+"DE": [
+"spider-man spielzeug",
+"lego spider-man"
+],
+"US": [
+"spider-man toys",
+"lego spider-man"
+]
+}
+},
+{
+"n": 27,
+"effect": "An Anthropic IPO by mid-December makes retail investors look for how to buy the shares.",
+"dir": "more",
+"cc": [
+"US",
+"DE",
+"NL"
+],
+"terms": {
+"US": [
+"anthropic stock",
+"buy anthropic stock"
+],
+"DE": [
+"anthropic aktie"
+],
+"NL": [
+"anthropic aandeel"
+]
+}
+}
+]
+}
