@@ -206,7 +206,7 @@
     var c = (S.d.charts && S.d.charts[kind]) || [];
     c = c.filter(function (g) { return S.mk === 'ALL' || g.cc === S.mk || g.cc === 'WW'; });
     if (!c.length) return null;
-    return h('div', { class: 'chartsbox' }, h('h3', null, kind === 'books' ? 'In the book charts today' : kind === 'apps' ? 'In the app charts today' : 'Selling most in the shops today'),
+    return h('div', { class: 'chartsbox' }, h('h3', null, kind === 'books' ? 'In the book charts today' : kind === 'apps' ? 'In the app, game and AI charts today' : 'Selling most and new on the market today'),
       h('div', { class: 'chartgrid' }, c.map(function (g) {
         return h('div', { class: 'card chartcard' }, h('p', { class: 'eyebrow', style: 'margin:12px 0 6px', text: g.label + (g.cc !== 'WW' ? ' · ' + g.cc : '') }),
           h('ol', { class: 'chart' }, g.list.slice(0, 10).map(function (x) { return h('li', null, h('a', { href: x.url, target: '_blank', rel: 'noopener' }, x.title), x.by ? h('span', { class: 'lsub', text: ' · ' + x.by }) : null, x.isNew ? h('span', { class: 'badge p-early mini', text: 'new' }) : null); })));
@@ -219,12 +219,13 @@
     p.push(byCountry(d.items || []).length + ' topics');
     if (L.day) p.push('learning day ' + L.day);
     var FB = d.forecast && d.forecast.backtest, FL = d.forecast && d.forecast.live;
-    if (FL && FL.n >= 20) p.push(Math.round(100 * FL.hit10 / FL.n) + '% of predicted rises came true (' + FL.n + ' checked)');
+    if (FL && FL.n >= 20) p.push(FL.hit + '% of predicted rises came true (' + FL.n + ' checked live; ' + (FL.base != null ? FL.base + '% for all searches' : 'tested') + ')');
     else if (FB) p.push('forecasts tested on ' + FB.series.toLocaleString('en-US') + ' searches: ' + Math.round((FB.rise.right40 || FB.rise.right10) / 10) + ' in 10 predicted rises came true');
     $('#dr-status').textContent = p.join(' · ');
     var q = [];
     if (L.tracked) q.push(L.tracked + ' topics remembered');
     if (L.noiseWords) q.push(L.noiseWords + ' noise words learned');
+    if (L.checked >= 30 && L.hitRate != null) q.push(L.hitRate + '% of the picks held up the month after (' + (L.baseRate != null ? L.baseRate + '% for all searches' : 'checked') + ')');
     if (d.period) q.push('search volumes up to ' + mon(d.period, true) + ', daily trend up to today');
     $('#dr-learn').textContent = q.length ? 'Now: ' + q.join(', ') + '.' : '';
   }
@@ -236,6 +237,11 @@
   function day(s) { if (!s) return ''; var a = s.split('-'); return +a[2] + ' ' + MON[+a[1] - 1]; }
   function stat(n, l, c) { return h('div', { class: 'rec' + (c ? ' ' + c : '') }, h('b', { text: String(n || 0) }), h('span', { text: l })); }
   function testLine(t) {
+    if (t.daily) { // dagtest uit Google Trends (bv. p3, p4)
+      var dg = t.vs ? '"' + t.k + '" ' + (t.more ? 'above' : 'below') + ' "' + t.vs + '" ' + (t.from === t.to ? 'on ' + day(t.from) : day(t.from) + ' – ' + day(t.to)) : '"' + t.k + '" on ' + day(t.at) + ' at most ' + Math.round((1 - t.drop) * 100) + '% of its peak';
+      var dgot = t.state === 'waiting' ? 'waiting for the daily numbers' : num(t.value) + ' vs ' + num(t.ref) + (t.state === 'pass' ? '  ✓' : '  ✗');
+      return h('li', { class: 'wt ' + t.state }, h('span', { class: 'mk', text: t.cc }), dg + ' → ', h('b', { text: dgot }));
+    }
     var m = mon(t.month, true), ly = MON[+t.month.slice(5) - 1] + ' ' + (+t.month.slice(0, 4) - 1);
     var goal = t.yoy ? 'at least ' + t.yoy + '× ' + ly : t.vs ? 'at least ' + t.times + '× "' + t.vs + '"' : t.min != null ? 'at least ' + num(t.min) : 'at most ' + num(t.max);
     var got = t.state === 'waiting' ? 'waiting for the ' + m + ' numbers' : num(t.value) + (t.ref != null ? ' vs ' + num(t.ref) : '') + (t.state === 'pass' ? '  ✓' : '  ✗');

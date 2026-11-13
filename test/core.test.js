@@ -223,7 +223,10 @@ test('demand radar: categories, missing, coming up, daily learning', async () =>
   assert.ok(Array.isArray(d1.rise) && d1.views[0].id === 'rise' && d1.forecast && d1.forecast.backtest.series > 4000);
   assert.equal(d1.learning.day, 1); assert.ok(d1.learning.saved);
   assert.equal(d2.learning.day, 2);
-  assert.ok(d2.learning.checked > 0, 'yesterday graded');
+  // sinds 13 nov 2026: geen dagelijks 'nog bovenaan'-nakijken meer, maar elke getoonde tip in het voorspellingsboek
+  assert.ok(d1.learning.ledger && d1.learning.ledger.added > 0, 'voorspellingsboek vastgelegd');
+  const { getJSON: gj } = await import('../lib/store.js'), open = await gj(store, 'ledger/open.json', null);
+  assert.ok(Object.values(open.items).some(e => e.kind === 'now' && /^\d{4}-\d\d$/.test(e.base)), 'nu-tips met meetlat');
   assert.ok(d2.items.some(i => i.firstSeen === '2026-10-13' && i.seen === 2), 'remembered');
   assert.ok(!d2.items.some(i => / vs /.test(i.name)), 'sports filtered');
 });
@@ -445,7 +448,7 @@ test('productfeed: Google-velden, korting, verzendkosten, escapen', async () => 
   const { feedXml } = await import('../lib/feed.js');
   const x = feedXml('yoors', [{ id: 'oc_1', title: 'Lamp & kap <groot>', price: 20, original_price: 25, brand: 'Mica', photos: [{ src: 'https://cdn/x.jpg' }, { src: 'https://cdn/y.jpg' }], type: 'physical', in_stock: true, delivery_days: 4, shipping_cost: 6.45, shop_category: 'home', shop_sub: 'lighting' }, { id: 'v1', title: 'Pass', price: 5, photos: [{ src: 'a' }], type: 'virtual' }], { cc: 'NL', titles: { oc_1: 'Hanglamp met kap' } });
   assert.ok(x.includes('<g:title>Hanglamp met kap</g:title>') && x.includes('<g:price>25.00 EUR</g:price>') && x.includes('<g:sale_price>20.00 EUR</g:sale_price>'));
-  assert.ok(x.includes('<g:link>https://yoo.rs/product/oc_1?lang=nl</g:link>') && x.includes('<g:additional_image_link>https://cdn/y.jpg') && x.includes('<g:price>6.45 EUR</g:price></g:shipping>'));
+  assert.ok(x.includes('<g:link>https://kadoly.com/product/oc_1?lang=nl</g:link>') && x.includes('<g:additional_image_link>https://cdn/y.jpg') && x.includes('<g:price>6.45 EUR</g:price></g:shipping>'));
   assert.ok(x.includes('Lamp &amp; kap &lt;groot&gt;') && !x.includes('Pass'));
 });
 
@@ -522,4 +525,44 @@ test('claudefill: openstaande teksten, toepassen op radar, geheugen en events', 
   assert.ok(memo['NL|thuis batterij'] && memo['NL|chatgpts'].v.keep === false);
   assert.equal((await getJSON(store, 'events/latest.json')).items[0].effect, 'Cheaper loans');
   assert.equal((await pendingFill(store)).items.length, 0);
+});
+
+// Leren (13 nov 2026): voorspellingsboek, bijstellen van de kansen, gewichten tegen toeval, dagtests van de wildcards.
+test('leren: voorspellingsboek nakijken tegen toeval, kansen bijstellen, gewichten', async () => {
+  const L = await import('../lib/ledger.js'), A = await import('../lib/adapt.js'), W = await import('../lib/wildcards.js'), D = await import('../lib/demandlearn.js');
+  const { memoryStore, putJSON, getJSON } = await import('../lib/store.js');
+  const store = memoryStore();
+  // kijklijst: 300 termen, een derde stijgt in oktober met 50%
+  const kw = {}; for (let i = 0; i < 300; i++) kw[`t${i}`] = { m: [[2026, 8, 200], [2026, 9, 200], [2026, 10, i % 3 ? 200 : 300], [2026, 11, 200]] };
+  kw['airfryer glas'] = { m: [[2026, 8, 100], [2026, 9, 100], [2026, 10, 180], [2026, 11, 90]] };
+  await putJSON(store, 'early/series-NL.json', { month: '2026-11', kw });
+  const r = await L.recordPredictions(store, [
+    { kind: 'rise', cc: 'NL', k: 'Airfryer Glas', p: 88, now: '2026-09', target: '2026-10', cat: 'products' },
+    { kind: 'now', cc: 'NL', k: 'airfryer glas', base: '2026-10', cat: 'products', srcs: ['jump'] },
+    { kind: 'src', cc: 'NL', k: 'airfryer glas', base: '2026-09', src: 'mastodon' },
+    { kind: 'rise', cc: 'NL', k: 'onbekend', p: 80, now: '2026-11', target: '2027-01' },
+  ], '2026-11-13');
+  assert.equal(r.added, 4);
+  assert.equal((await L.recordPredictions(store, [{ kind: 'rise', cc: 'NL', k: 'airfryer glas', p: 88, now: '2026-09', target: '2026-10' }])).added, 0, 'één keer per term en maand');
+  const g = await L.gradeLedger(store, new Date('2026-11-14T10:00:00Z'));
+  assert.equal(g.graded, 3); assert.equal(g.open, 1);
+  const sum = await getJSON(store, 'ledger/summary.json', null), v = L.ledgerView(sum);
+  assert.equal(v.kinds.rise.n, 1); assert.equal(v.kinds.rise.hit, 100); assert.equal(v.kinds.rise.base, 34, 'basiskans uit de kijklijst (101 van 301)');
+  assert.equal(v.kinds.now.hit, 0, 'november zakte: nu-tip mis');
+  assert.equal((await L.gradeLedger(store, new Date('2026-11-14T12:00:00Z'))).ledger, 'up to date');
+  // gewichten: beter dan toeval omhoog, slechter omlaag, zonder gegevens 1
+  const mem = D.freshMemory(); mem.score = { cat: { good: { hit: 60, miss: 40, exp: 30 }, bad: { hit: 10, miss: 90, exp: 30 } }, src: {} };
+  assert.ok(D.weight(mem, 'good', []) > 1.2 && D.weight(mem, 'bad', []) < 0.9 && D.weight(mem, 'none', []) === 1);
+  assert.equal(D.weight({ score: { cat: { old: { hit: 99, miss: 1 } }, src: {} } }, 'old', []), 1, 'oude nep-score telt niet');
+  // bijstellen: model zegt 90%, het komt in 50% uit → kans omlaag, met rem bij weinig rijen
+  const rows = Array.from({ length: 2000 }, (_, i) => ({ s: 0.9, y: i % 2, raw: 0.8 }));
+  const f = A.fitCalib(rows); assert.ok(f.now < 60 && f.now > 45 && f.loglossNew < f.loglossOld, JSON.stringify(f));
+  assert.ok(A.fitCalib(rows.slice(0, 10)).now > 80, 'rem bij weinig rijen');
+  assert.equal(A.applyAdapter({ fits: { NL: { ...f, use: true } } }, 'NL', 90), f.now);
+  assert.equal(A.applyAdapter({ fits: { NL: { ...f, use: false } } }, 'NL', 90), 90);
+  // dagtests (p3/p4)
+  const data = { walibi: [{ d: '2026-10-17', v: 80 }, { d: '2026-10-18', v: 60 }], efteling: [{ d: '2026-10-17', v: 50 }, { d: '2026-10-18', v: 50 }] };
+  assert.equal(W.judgeDaily({ k: 'walibi', vs: 'efteling', from: '2026-10-17', to: '2026-10-18', more: true }, data).state, 'pass');
+  assert.equal(W.judgeDaily({ k: 'walibi', peak: ['2026-10-17', '2026-10-17'], at: '2026-10-18', drop: 0.9 }, data).state, 'fail');
+  assert.equal(W.judgeDaily({ k: 'walibi', vs: 'efteling', from: '2026-11-03', to: '2026-11-08', more: false }, data).state, 'waiting');
 });

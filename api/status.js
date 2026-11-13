@@ -30,6 +30,14 @@ export default async function handler(req, res) {
     time('OpenStreetMap places', () => places('bakkerij', gouda)),
     time('Public holidays', () => holidays()),
     time('Apple charts', () => appleCharts()),
+    // extra gratis bronnen (13 nov 2026, lib/extra.js) en Manifold (lib/events.js)
+    time('Mastodon NL', () => import('../lib/extra.js').then(m => m.mastodonTrends('NL'))),
+    time('Mastodon DE', () => import('../lib/extra.js').then(m => m.mastodonTrends('DE'))),
+    time('Steam top sellers NL', () => import('../lib/extra.js').then(m => m.steamTop('NL'))),
+    time('Hugging Face trending', () => import('../lib/extra.js').then(m => m.hfTrending())),
+    time('Open Food Facts new NL', () => import('../lib/extra.js').then(m => m.offNew('NL'))),
+    time('RDW new cars NL', () => import('../lib/extra.js').then(m => m.rdwRisers())),
+    time('Manifold markets', () => get('https://api.manifold.markets/v0/search-markets?term=&sort=liquidity&filter=open&contractType=BINARY&limit=5')),
   ]);
   let radar = null;
   try { const r = await getRadar(req); radar = { generatedAt: r.generatedAt, buildMs: r.ms, watch: r.watch.length, rising: r.rising.length, productSpikes: r.spikes.products.length, search: r.spikes.search.map(g => `${g.geo}:${g.items.length}`), attention: r.spikes.attention.map(g => `${g.lang}:${g.items.length}`), calendar: r.upcoming.calendar.length, seasonal: r.upcoming.seasonal.length, weather: (r.upcoming.weather || []).length, charts: (r.charts || []).length }; } catch (e) { radar = { error: String(e.message || e) }; }

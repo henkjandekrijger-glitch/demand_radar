@@ -36,7 +36,7 @@ andere regel). De test `test/core.test.js` controleert dat elk eindpunt in `api/
 | Taak | Wanneer | Wat |
 |---|---|---|
 | `/api/warm` | elk uur :07 | radaroverzicht verversen; **nachtelijke opbouw** van de radar vanaf 04:00 (als de radar niet van vandaag is, max 2 pogingen); Events van vandaag klaarzetten |
-| `/api/loop` | elk uur :23 | signalen en kliks optellen, bol-momentopname, vroege signalen (één zware stap per uur), wildcards nakijken, Amazon-verkoop (maandelijks), Shopping-titels, marktprijzen Yoors, Keepa, leerlus pagina/mail |
+| `/api/loop` | elk uur :23 | signalen en kliks optellen, bol-momentopname, vroege signalen (één zware stap per uur), wildcards nakijken, **voorspellingsboek nakijken** (dagelijks) en **kansen bijstellen** (bij een nieuwe datamaand), Amazon-verkoop (maandelijks), Shopping-titels, marktprijzen Yoors, Keepa, leerlus pagina/mail |
 | `/api/warmmap` | 04:15 | kansenkaart (alleen met `AUTO_BUILD=on`) |
 | `/api/daily` | 05:40 | dagmail "Demand of the day" (Resend), alleen als mail is ingesteld |
 
@@ -58,15 +58,57 @@ Elke taak schrijft na afloop een hartslag (`status/<taak>.json`); de overdracht 
 
 ### radar — de radar zelf
 `lib/demand.js` (`buildDemand`), `lib/data.js` (`getDemand`), `/api/demand`. Per land de meetbare vraag uit DataForSEO (Labs,
-Google Ads 48 maanden, Trends) plus zoeksuggesties, Reddit, Hacker News, trending (Google, Bluesky), hitlijsten (Apple,
-Open Library). AI geeft nette titels; de echte zoekterm blijft `keyword`. **Elke nacht** opgebouwd (zie §2), kost ± $2–3.
+Google Ads 48 maanden, Trends) plus zoeksuggesties, Reddit, Hacker News, trending (Google, Bluesky, Mastodon), hitlijsten (Apple,
+Open Library, bol, Steam, Hugging Face, Open Food Facts, RDW; zie `### extra`). AI of Claude (`### fill`) geeft nette titels; de
+echte zoekterm blijft `keyword`. De ruwe trending van vandaag staat in `trendRaw` (voor `/api/fill`). Elke getoonde tip gaat in het
+voorspellingsboek (`### ledger`); de rangorde weegt per categorie en bron hoe vaak hun tips de maand erna echt uitkwamen. **Elke nacht** opgebouwd (zie §2), kost ± $2–3.
 Opslag: `maps/demand.json` (de laatste opbouw), `demand/attempt-<dag>.json`. Eigenaar: `/api/demand?rebuild=1&key=…`.
 
 ### forecast — de voorspeller ("Will rise")
 `lib/forecast.js`, `lib/ml.js`, `lib/model.js` (LightGBM-bomen als JS, model v2). Kans dat een zoekterm ≥ 40% boven nu
 uitkomt; getoond vanaf 70%, gekalibreerd. Getoetst: 90% van de voorspelde stijgingen kwam uit. Hertrainen: `tools/mlrows.mjs` +
 `tools/train_forecast.py` (zie README). Drijvers: weer (NASA POWER, MET Norway), kalender, schoolvakanties, voor geldonderwerpen
-rente/energie/vertrouwen/aankoopplannen (`lib/drivers.js`).
+rente/energie/vertrouwen/aankoopplannen (`lib/drivers.js`). Sinds 13 nov 2026 stelt `### adapt` de getoonde kans per land bij
+op de nieuwste maanden (`predict(…, { adapt })`); het model zelf (`modelSaid`) en de bijgestelde kans (`chance`) staan allebei in
+de uitkomst, en onder 60% na bijstellen toont de radar geen stijger meer. Live trefkans: `forecast.live` uit het voorspellingsboek.
+
+### ledger — voorspellingsboek (13 nov 2026)
+`lib/ledger.js`. Henkjan 13 nov: "verbeter totaal en zorg dat je blijft leren". Elke nacht legt de opbouw alles vast wat de radar
+toont, met een vooraf vastgelegde meetlat (`RULES`, nooit achteraf aanpassen):
+- `rise` (Will rise): de voorspelde maand ≥ 40% boven de maand "nu", met de getoonde kans;
+- `now` (Rising now, 60 per land): de maand erna minstens even hoog als de maand die de radar zag;
+- `src` (tips van bronnen: Google trending, Bluesky, Mastodon, Apple, bol, Steam, Hugging Face, Open Food Facts, RDW; hooguit
+  200 per bron per land per maand): binnen 3 maanden ≥ 40% boven de maand waarin de bron hem aanwees;
+- `event` (gekozen gebeurtenissen van voorspellingsmarkten, zoektermen per land): de maand erna ≥ 20% hoger (more) of lager
+  (less) dan de maand ervoor.
+De termen gaan op de kijklijst van de vroege signalen (de maanddata komt binnen het DataForSEO-plafond). Elke dag (uurronde)
+nagekeken tegen `early/series-<cc>.json`; elke uitkomst krijgt de **basiskans**: dezelfde meetlat op alle termen van de kijklijst
+(≥ 100 zoekopdrachten) in dezelfde maanden. Na 270 dagen zonder data vervalt een regel. Opslag `ledger/open.json`,
+`ledger/graded.json` (laatste 6.000), `ledger/summary.json` (per soort, land, categorie, bron, kansklasse en maand: n, raak, verwacht).
+Uitkomst in `/api/demand` als `ledger` (raak % tegen toeval %), op de site in de statusregel, in de overdracht (onderdelen
+ledger en extra). **Leren**: `ledgerScores` → `mem.score` → `weight()` in `lib/demandlearn.js`: categorieën en bronnen die vaker
+dan toeval uitkomen wegen tot 1,4× zwaarder, slechtere tot 0,6× (met rem bij weinig nagekeken tips). Het oude dagelijkse
+nakijken ("staat wat gisteren bovenaan vandaag nog bovenaan", 94% raak) mat alleen dat maanddata niet per dag verandert en is weg.
+
+### adapt — model bijleren (13 nov 2026)
+`lib/adapt.js`. Bij elke nieuwe maand op de kijklijst (± 20.000 termen per land) rekent de uurronde voor de doelmaanden die het
+model bij het trainen niet zag (vanaf de trainmaand, hooguit de laatste 12) wat het model toen gezegd zou hebben (precies de
+productiekenmerken) en wat er echt gebeurde. Per land een bijstelling q = σ(a + b·logit(getoonde kans)) met een rem richting
+"niets veranderen" (40 denkbeeldige rijen). In gebruik alleen bij ≥ 150 nagekeken stijgers én een betere logloss; anders
+ongewijzigd. Eén land per uurronde, gratis (alleen lezen en rekenen). Opslag `learn/forecast-adapt.json` (per land: wat het model
+zei, hoe vaak het uitkwam, de bijstelling, een logboek). Volledig hertrainen (nieuwe bomen) blijft `tools/mlrows.mjs` +
+`tools/train_forecast.py` met het nieuwste jaar; het voorspellingsboek en deze bijstelling laten zien wanneer dat nodig is.
+
+### extra — extra gratis bronnen (13 nov 2026)
+`lib/extra.js`, zonder sleutels en kosten: **Mastodon** trending hashtags (NL mastodon.nl, DE troet.cafe, US mastodon.social;
+naast Bluesky in "trending"), **Steam** best verkochte games per land, **Hugging Face** snelst stijgende AI-apps (Spaces),
+**Open Food Facts** nieuwe producten in de schappen per land (laatste 45 dagen), **RDW** nieuw geregistreerde personenauto's in NL
+(laatste 30 dagen tegen de 30 ervoor, snelste stijgers). Ze staan als hitlijsten op de radar (apps, producten) en hun termen gaan
+als `src` in het voorspellingsboek: zo toetst de radar per bron of zijn tips vaker doorbreken dan toeval, voordat een bron in het
+model mag. **Manifold** (speelgeld-voorspellingsmarkt) zit in `### events`. Bereikbaarheid per bron: `/api/status`.
+Op een gratis sleutel of account wachten nog: Google Shopping-bestsellers (Merchant API, Kadoly-account), USPTO-merkaanvragen
+(gratis API-sleutel), Copernicus seizoensweer en pollen (gratis CDS/ADS-account; Open-Meteo is alleen gratis voor niet-commercieel
+gebruik).
 
 ### early — vroege signalen
 `lib/early.js`, `lib/early-model.js`, `lib/earlydata.js`, `/api/early`. Zoektermen die nog niet zijn doorgebroken maar het
@@ -77,6 +119,8 @@ Uitkomst `early/latest.json`.
 ### wildcards — gedurfde voorspellingen met trackrecord
 `lib/wildcards.js`. Elke voorspelling met kans, nakijkdatum en een vooraf vastgelegde meetlat; dagelijks automatisch nagekeken
 (`wild/state.json`, `wild/verdicts.json`). Handmatige uitkomst: `/api/early?op=wild&id=…&status=hit|partly|miss&key=…`.
+Sinds 13 nov 2026 ook **dagtests** (`daily: true`, p3 en p4): Google Trends-dagdata via DataForSEO, één vraag per wildcard en
+land (± $0,01, binnen het plafond), automatisch zodra de laatste dag + 2 dagen voorbij is (`judgeDaily`).
 
 ### coming — komende momenten
 `lib/calendar.js` (vaste momenten, feestdagen via Nager.Date), schoolvakanties (`lib/drivers.js`, OpenHolidays),
@@ -85,7 +129,8 @@ Uitkomst `early/latest.json`.
 Wikidata; wekelijks, `launches/<cc>.json`). Per moment zoektermen in de eigen taal met het verloop van vorig jaar.
 
 ### events — wat de wereld verwacht
-`lib/events.js`, `/api/events`, tegel "Events". Open vragen op voorspellingsmarkten (Polymarket, Kalshi; gratis, alleen lezen).
+`lib/events.js`, `/api/events`, tegel "Events". Open vragen op voorspellingsmarkten (Polymarket, Kalshi, Manifold; gratis, alleen lezen).
+Elke gekozen gebeurtenis gaat met zijn zoektermen in het voorspellingsboek (`### ledger`, soort `event`).
 Eén AI-vraag per dag kiest er tot 18 die de vraag in NL/DE/US verschuiven, met effect, richting en zoektermen per land.
 Opslag `events/latest.json` en een dagelijkse momentopname `events/<dag>.json` om later na te kijken.
 
@@ -152,11 +197,14 @@ In Vercel `GDELT_PROXY=https://<railway-domein>`. Nog te toetsen of nieuws de vo
 ### sources — koppelingen die op een sleutel wachten
 Bing (`BING_WEBMASTER_KEY`, `lib/bing.js`), YouTube (`YOUTUBE_API_KEY`, `lib/youtube.js`), Meta-advertentiebibliotheek
 (`META_AD_TOKEN`, `lib/meta.js`, na ID-bevestiging van Henkjan), Pinterest (app-aanvraag loopt), TikTok (account nodig),
-Google-bestsellerlijst (Merchant API, toegang regelen), Google Trends API (alpha, aangevraagd).
+Google-bestsellerlijst (Merchant API, toegang regelen, `MERCHANT_API_KEY`), Google Trends API (alpha, aangevraagd),
+USPTO-merkaanvragen (`USPTO_API_KEY`, gratis), Copernicus seizoensweer en pollen (`CDS_API_KEY`, gratis account).
 
 ### learning — leren van bezoekers en uitkomsten
 `lib/learn.js`, `lib/demandlearn.js`, `/api/e`, `/api/feedback`, `/api/outcome`, `/api/learn`, `/api/ab`, `/api/go`:
 kliks, "Useful / Not real demand", campagne-uitkomsten en A/B-varianten van pagina en mail; uurronde telt op.
+Of de radar zelf goed voorspelt en waar hij van leert: `### ledger` (voorspellingsboek, gewichten per categorie en bron) en
+`### adapt` (kansen bijstellen op de nieuwste maanden).
 
 ### accounts — inloggen en abonnement
 `lib/access.js` (teamsleutel `TEAM_KEY`, persoonlijke sleutels), `lib/account.js` (plannen), `/api/unlock`, `/api/me`,
