@@ -108,7 +108,7 @@ termen waar Bing te weinig ziet blijven betaald. Stand in de overdracht (onderde
 
 ### gsc — Search Console van alle eigen sites (14 nov 2026)
 `lib/gscfeed.js`. Gratis Google-bron: hjdk-api leest Search Console (Workload Identity, geen sleutel) en geeft via
-`https://hjdk-api-henq.vercel.app/api/gsc?op=radar` per site de zoekvragen per land met vertoningen nu (14 dagen) en de 14 dagen ervoor.
+`https://keuzehulp.best/api/gsc?op=radar` per site de zoekvragen per land met vertoningen nu (14 dagen) en de 14 dagen ervoor.
 Alleen dit Vercel-project mag dat lezen: de radar stuurt zijn eigen ondertekende Vercel OIDC-token mee, hjdk-api controleert het
 (geen gedeeld geheim). Eén keer per dag vanuit de uurronde; opslag `gsc/latest.json`. Zoekvragen met ≥ 30 vertoningen en ≥ 1,5× de
 periode ervoor gaan als tip van bron `gsc` in het voorspellingsboek (toets tegen toeval). Ook bruikbaar voor de keuzehulpen: echte
