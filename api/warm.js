@@ -17,7 +17,7 @@ export default async function handler(req, res) {
       }
     }
     // Events (voorspellingsmarkten) één keer per dag klaarzetten
-    let events = null; try { const { getEvents } = await import('../lib/events.js'), { getStore } = await import('../lib/store.js'), { gatewayToken } = await import('../lib/ai.js'); const ev = await getEvents(getStore(), { token: gatewayToken(req) }); events = { day: ev.day, items: (ev.items || []).length, errors: ev.errors || [] }; } catch (e) { events = { error: String(e.message || e).slice(0, 120) }; }
+    let events = null; try { const { getEvents } = await import('../lib/events.js'), { getStore } = await import('../lib/store.js'), { radarToken } = await import('../lib/ai.js'); const ev = await getEvents(getStore(), { token: radarToken(req) }); events = { day: ev.day, items: (ev.items || []).length, errors: ev.errors || [] }; } catch (e) { events = { error: String(e.message || e).slice(0, 120) }; }
     // Teksten die Claude invulde (tak `fill`, fill/<dag>.json) toepassen; zonder Vercel AI Gateway
     let fill = null; try { const { fillFromRepo } = await import('../lib/claudefill.js'), { getStore } = await import('../lib/store.js'), { demandDay } = await import('../lib/data.js'); fill = await fillFromRepo(getStore(), demandDay()); } catch (e) { fill = { error: String(e.message || e).slice(0, 100) }; }
     // klein stand-bestand en hartslag voor de overdracht

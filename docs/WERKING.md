@@ -135,6 +135,11 @@ Eén AI-vraag per dag kiest er tot 18 die de vraag in NL/DE/US verschuiven, met 
 Opslag `events/latest.json` en een dagelijkse momentopname `events/<dag>.json` om later na te kijken.
 
 ### fill — teksten door Claude in plaats van de Vercel AI Gateway (4 nov 2026)
+**14 nov 2026** (Henkjan: "zet taak aan maar wel op vercel niet afh van mijn account of computer"): met `ANTHROPIC_API_KEY` in
+Vercel (eigen Anthropic-sleutel, rechtstreeks naar api.anthropic.com, **niet** de AI Gateway) schrijft de nachtelijke opbouw de
+teksten zelf met het goedkoopste model (haiku, met het geheugen per zoekterm, ± $0,10–0,20 per dag) en kiest de warm-ronde de
+events (`radarToken` in `lib/ai.js`). Prijsoordelen en feedtitels van Kadoly blijven uit (alleen met de gateway). Zonder sleutel
+werkt de route hieronder (Claude via de tak `fill`) nog steeds.
 Henkjan 4 nov: "Vul content gewoon aan met jouw tokens. Niet Vercel gateway!!". De AI Gateway staat uit tenzij `AI_GATEWAY=on`
 (lib/ai.js `gatewayToken` geeft dan pas een sleutel). De nachtelijke opbouw meet gewoon en past toe wat in het geheugen staat
 (onderwerpen 5 dagen, stijgers 7 dagen). Wat nog een titel, categorie, wat-het-is en idee mist, vult Claude in:

@@ -8,7 +8,7 @@ import { getEvents } from '../lib/events.js';
 export default async function handler(req, res) {
   const store = getStore(); if (!store) return res.status(503).json({ error: 'no storage' });
   try {
-    const d = await getEvents(store, { token: gatewayToken(req), force: !!(req.query.refresh && isPro(req)) });
+    const d = await getEvents(store, { token: (await import('../lib/ai.js')).radarToken(req), force: !!(req.query.refresh && isPro(req)) });
     res.setHeader('Cache-Control', 'public, max-age=600');
     res.status(200).json(d);
   } catch (e) { res.status(500).json({ error: String(e.message || e).slice(0, 200) }); }
