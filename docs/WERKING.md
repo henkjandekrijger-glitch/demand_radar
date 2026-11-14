@@ -99,6 +99,13 @@ ongewijzigd. Eén land per uurronde, gratis (alleen lezen en rekenen). Opslag `l
 zei, hoe vaak het uitkwam, de bijstelling, een logboek). Volledig hertrainen (nieuwe bomen) blijft `tools/mlrows.mjs` +
 `tools/train_forecast.py` met het nieuwste jaar; het voorspellingsboek en deze bijstelling laten zien wanneer dat nodig is.
 
+### bingnow — Bing als gratis nu-signaal (14 nov 2026)
+`lib/bingnow.js`. De nachtelijke opbouw vraagt per land voor ± 90 termen hoe het NU gaat. De bovenste 20 krijgen Google Trends-dagdata
+(DataForSEO), de rest DataForSEO Trends (betaald). Eerst toetsen: voor de 20 Google-termen haalt de radar ook Bing op (Bing Webmaster
+Tools, gratis, weekcijfers: laatste 2 weken tegen de 6 ervoor) en telt hoe vaak de richting gelijk is (stijgt / gelijk / daalt;
+`learn/bing-now.json`). Zodra een land ≥ 150 vergelijkingen heeft met ≥ 70% overeenstemming, gebruikt de radar daar Bing voor de rest;
+termen waar Bing te weinig ziet blijven betaald. Stand in de overdracht (onderdeel bingnow).
+
 ### extra — extra gratis bronnen (13 nov 2026)
 `lib/extra.js`, zonder sleutels en kosten: **Mastodon** trending hashtags (NL mastodon.nl, DE troet.cafe, US mastodon.social;
 naast Bluesky in "trending"), **Steam** best verkochte games per land, **Hugging Face** snelst stijgende AI-apps (Spaces),
