@@ -7,7 +7,21 @@
 import { getStore, getJSON, putJSON } from '../lib/store.js';
 import { topSearches, budget } from '../lib/dfs.js';
 
-const M = { US: [2840, 'en'], NL: [2528, 'nl'], DE: [2276, 'de'], CA: [2124, 'en'], CO: [2170, 'es'], BR: [2076, 'pt'], GB: [2826, 'en'], BE: [2056, 'nl'] };
+const M = { US: [2840, 'en'], NL: [2528, 'nl'], DE: [2276, 'de'], CA: [2124, 'en'], CO: [2170, 'es'], BR: [2076, 'pt'], GB: [2826, 'en'], BE: [2056, 'nl'], AU: [2036, 'en'] };
+// Plastische chirurgie (14 nov 2026, Henkjan: keuzehulp "waar je moet zijn" voor NL, US en wereldwijd): de landen waar patiënten
+// vandaan komen; ingrepen in NL, EN en DE, en wie naar het buitenland gaat (Turkije, Mexico, Colombia, Dominicaanse Republiek …).
+const OW_PLASTISCH = [
+  ['buitenland', /turkije|turkey|türkei|turkei|istanbul|antalya|izmir|mexico|mexiko|tijuana|cancun|colombia|kolumbien|medellin|cali\b|dominican|dominicaanse|dominikan|punta cana|santo domingo|thailand|bangkok|korea|seoul|brazil|brazilië|brasilien|costa rica|poland|polen|hungary|hongarije|ungarn|belgi|belgium|abroad|buitenland|ausland/],
+  ['kosten', /kosten|kost |prijs|prijzen|cost|price|how much|wat kost|preis|kosten|euro|dollar|\$|financ|vergoed|insurance|verzekering|krankenkasse/],
+  ['arts en kliniek', /kliniek|clinic|klinik|chirurg|surgeon|arzt|ärzt|dokter|doctor|near me|in de buurt|in der nähe|best |beste|top |review|ervaring|erfahrung|board certified/],
+  ['herstel en risico', /herstel|recovery|heilung|genesung|na de operatie|after surgery|nach der op|complicat|komplikation|risico|risk|gone wrong|mislukt|pijn|pain|schmerz|littekens|scar|narbe/],
+  ['ooglid', /ooglid|eyelid|blepharo|lidstraff|oberlid|unterlid|wallen|bovenooglid|onderooglid/],
+  ['borsten', /borst|breast|brust|implant|mammo|siliconen/],
+  ['buik en lichaam', /buikwand|tummy tuck|abdominoplast|bauchdeck|lipo|fettabsaug|bbl|brazilian butt|butt lift|po-lift|mommy makeover|body lift|bodylift|arm lift|armlift|oberarmstraff|thigh lift|dijbeen|skin removal|huidoverschot|hautstraff|ozempic|glp/],
+  ['gezicht', /facelift|face lift|gesichtsstraff|neck lift|halslift|brow lift|wenkbrauw|neus|nose|rhino|nasen|kin|chin|ohr|ear|oor|lip|fat graft|vetinjectie|eigenfett/],
+  ['haar', /haartransplant|hair transplant|haarimplant|fue\b|dhi\b|haarverplant|hair restoration/],
+  ['botox en fillers', /botox|filler|hyaluron|injectable|neuromodulator|dysport|lippen|lip filler/],
+];
 // Kadoly (10 nov 2026, Henkjan: "Vind voor kadoly.com ook onderwerpen voor chatgpt om naar boven te halen en in de winkel te brengen"):
 // drie thema's op de soorten producten die de winkel echt heeft (titels uit de catalogus) plus cadeauvragen, NL en BE (Nederlands).
 // hjdk-api (/api/gids?op=vraagkansen) legt dit naast het aanbod en de gidsen van gids.kadoly.com.
@@ -33,6 +47,8 @@ const OW_KADOLY = [
 ];
 export const THEMA = {
   verzekeringen: { naam: 'Verzekeringen Nederland', markten: ['NL'], regex: '(verzekering|zorgpolis|zorgpremie|arbeidsongeschiktheid|overlijdensrisico|aov)', ow: [['zorg', /zorgverzekering|zorgpolis|zorgpremie|basisverzekering|tandarts|eigen risico/], ['auto en motor', /auto|motor|bromfiets|scooter|camper|caravan/], ['wonen', /woon|inboedel|opstal|huiseigenaar/], ['reizen', /reis|annulering/], ['aansprakelijkheid en rechtsbijstand', /aansprakelijk|rechtsbijstand/], ['huisdieren', /huisdier|dieren|hond|kat/], ['fiets', /fiets|ebike|e-bike|fatbike/], ['inkomen en nabestaanden', /arbeidsongeschiktheid|aov|overlijdensrisico|uitvaart/], ['zakelijk', /zakelijk|bedrijf|zzp|beroep|cyber/]] },
+  'plastische-chirurgie': { naam: 'Plastische chirurgie (waar ga je heen)', markten: ['NL', 'US', 'GB', 'DE', 'CA', 'AU'], ow: OW_PLASTISCH, max: 0.9,
+    regex: '(plastisch|plastic surg|cosmetic surg|aesthetic surg|schönheits|schoenheits|ästhetisch|cosmetisch|cosmetic clinic|ooglid|eyelid|blepharo|lidstraff|borstvergroting|borstverkleining|borstlift|breast augment|breast lift|breast reduction|boob job|brustvergr|bruststraff|brustverkl|liposuc|liposuct|lipo |fettabsaug|buikwandcorrectie|tummy tuck|abdominoplast|bauchdeckenstraff|neuscorrectie|rhinoplast|nose job|nasenkorrektur|nasen-op|facelift|face lift|gesichtsstraff|neck lift|halslift|brow lift|bbl|brazilian butt|butt lift|mommy makeover|bodylift|body lift|armlift|arm lift|thigh lift|haartransplant|hair transplant|haarimplant)' },
   curacao: { naam: 'Curaçao', regex: '(cura[cç]ao|curazao|kòrsou|korsou|willemstad)', markten: ['US', 'NL', 'DE', 'CA', 'CO', 'BR'] },
   'kadoly-wonen': { naam: 'Kadoly wonen', markten: KADOLY_MARKT, ow: OW_KADOLY,
     regex: '(vaas|vazen|bloempot|plantenpot|sierpot|plantenbak|plantenstandaard|plantenrek|plantentafel|kunstplant|kunstbloem|orchidee|muurcirkel|wandcirkel|wanddecoratie|muurdecoratie|wandkleed|tuinposter|muursticker|tafellamp|hanglamp|leeslamp|oplaadbare lamp|lantaarn|windlicht|kandelaar|geurkaars|windgong|windspinner|bijzettafel|dienblad|plaid|sierkussen|wasmand|opbergmand|rieten mand|diffuser|geurstokjes|tuindecoratie|tuinbeeld)' },
@@ -69,7 +85,7 @@ export default async function handler(req, res) {
   const store = getStore(), pad = `zoekvraag/${id}.json`, oud = await getJSON(store, pad, null);
   let uit = oud;
   if (!oud || Date.now() - (oud.t || 0) > 7 * 864e5) {
-    const b = budget(+(process.env.ZV_MAX || 0.6)), markten = {};
+    const b = budget(+(T.max || process.env.ZV_MAX || 0.6)), markten = {};
     for (const cc of T.markten) {
       const [loc, lang] = M[cc];
       const items = await topSearches({ loc, lang }, b, { by: 'volume', anyGrowth: true, minVolume: 20, limit: 700, regex: T.regex, intent: null }).catch(() => []);

@@ -224,6 +224,9 @@ nieuws) het totaal en de grootste termen. Per thema hooguit één keer per 7 dag
 daarna uit `zoekvraag/<thema>.json`. Henkjan 9 nov 2026: "Doe goed onderzoek met demand radar waar mensen naar zoeken en optimaliseer de site
 daarop". Eerste thema: curacao (US, NL, DE, CA, CO, BR) voor curacao.day. Sinds 10 nov 2026 ook kadoly-wonen, kadoly-hobby en kadoly-cadeau (NL, BE) op de soorten producten die Kadoly echt heeft plus cadeauvragen, met eigen onderwerpgroepen (`ow` in het thema); hjdk-api `/api/gids?op=vraagkansen` legt ze naast het aanbod en de gidsen van gids.kadoly.com (Henkjan: onderwerpen die ChatGPT naar boven haalt en die in de winkel komen). Nieuw thema = één regel in `THEMA`, optioneel met eigen `ow` (lijst [naam, regex]). ZICHT (hjdk-api) gebruikt dit
 in de werkwijze: zoekvraag naast de eigen pagina's leggen en de gaten vullen.
+Sinds 14 nov 2026 ook **plastische-chirurgie** (NL, US, GB, DE, CA, AU; eigen plafond `max` $0,90 per thema): ingrepen in NL/EN/DE
+en wie naar het buitenland gaat, per onderwerp buitenland, kosten, arts en kliniek, herstel en risico, ooglid, borsten, buik en lichaam,
+gezicht, haar, botox en fillers. Voor Henkjans keuzehulp "waar moet je zijn" (NL, US, wereldwijd).
 
 ### connector — gebruik vanuit andere chats
 `/api/mcp` (`/mcp?key=<teamsleutel>`): tools `check_demand`, `opportunity_map`, `demand_radar`, `report_outcome`,
