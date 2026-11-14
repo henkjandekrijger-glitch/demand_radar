@@ -106,6 +106,14 @@ Tools, gratis, weekcijfers: laatste 2 weken tegen de 6 ervoor) en telt hoe vaak 
 `learn/bing-now.json`). Zodra een land ≥ 150 vergelijkingen heeft met ≥ 70% overeenstemming, gebruikt de radar daar Bing voor de rest;
 termen waar Bing te weinig ziet blijven betaald. Stand in de overdracht (onderdeel bingnow).
 
+### gsc — Search Console van alle eigen sites (14 nov 2026)
+`lib/gscfeed.js`. Gratis Google-bron: hjdk-api leest Search Console (Workload Identity, geen sleutel) en geeft via
+`https://hjdk-api-henq.vercel.app/api/gsc?op=radar` per site de zoekvragen per land met vertoningen nu (14 dagen) en de 14 dagen ervoor.
+Alleen dit Vercel-project mag dat lezen: de radar stuurt zijn eigen ondertekende Vercel OIDC-token mee, hjdk-api controleert het
+(geen gedeeld geheim). Eén keer per dag vanuit de uurronde; opslag `gsc/latest.json`. Zoekvragen met ≥ 30 vertoningen en ≥ 1,5× de
+periode ervoor gaan als tip van bron `gsc` in het voorspellingsboek (toets tegen toeval). Ook bruikbaar voor de keuzehulpen: echte
+Google-vertoningen per zoekvraag en land.
+
 ### extra — extra gratis bronnen (13 nov 2026)
 `lib/extra.js`, zonder sleutels en kosten: **Mastodon** trending hashtags (NL mastodon.nl, DE troet.cafe, US mastodon.social;
 naast Bluesky in "trending"), **Steam** best verkochte games per land, **Hugging Face** snelst stijgende AI-apps (Spaces),
