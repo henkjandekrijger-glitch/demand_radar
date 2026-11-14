@@ -37,6 +37,7 @@ export default async function handler(req, res) {
     time('Hugging Face trending', () => import('../lib/extra.js').then(m => m.hfTrending())),
     time('Open Food Facts new NL', () => import('../lib/extra.js').then(m => m.offNew('NL'))),
     time('RDW new cars NL', () => import('../lib/extra.js').then(m => m.rdwRisers())),
+    time('Keepa Amazon.de high ticket', () => import('../lib/extra.js').then(m => m.keepaTop('DE', { min: 300, n: 3 }))),
     time('Manifold markets', () => get('https://api.manifold.markets/v0/search-markets?term=&sort=liquidity&filter=open&contractType=BINARY&limit=5')),
   ]);
   let radar = null;

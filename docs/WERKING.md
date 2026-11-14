@@ -103,7 +103,8 @@ zei, hoe vaak het uitkwam, de bijstelling, een logboek). Volledig hertrainen (ni
 `lib/extra.js`, zonder sleutels en kosten: **Mastodon** trending hashtags (NL mastodon.nl, DE troet.cafe, US mastodon.social;
 naast Bluesky in "trending"), **Steam** best verkochte games per land, **Hugging Face** snelst stijgende AI-apps (Spaces),
 **Open Food Facts** nieuwe producten in de schappen per land (laatste 45 dagen), **RDW** nieuw geregistreerde personenauto's in NL
-(laatste 30 dagen tegen de 30 ervoor, snelste stijgers). Ze staan als hitlijsten op de radar (apps, producten) en hun termen gaan
+(laatste 30 dagen tegen de 30 ervoor, snelste stijgers), **Keepa** (sinds 14 nov 2026; `KEEPA_KEY`) best verkocht op Amazon.de en
+Amazon.com vorige maand ("bought in past month"), high ticket (300+) en 30–300, ± 100 tokens per nacht. Ze staan als hitlijsten op de radar (apps, producten) en hun termen gaan
 als `src` in het voorspellingsboek: zo toetst de radar per bron of zijn tips vaker doorbreken dan toeval, voordat een bron in het
 model mag. **Manifold** (speelgeld-voorspellingsmarkt) zit in `### events`. Bereikbaarheid per bron: `/api/status`.
 Op een gratis sleutel of account wachten nog: Google Shopping-bestsellers (Merchant API, Kadoly-account), USPTO-merkaanvragen
