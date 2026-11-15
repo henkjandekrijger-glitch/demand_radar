@@ -145,7 +145,53 @@ const onderwerp = (k, lijst = ONDERWERP) => (lijst.find(([, r]) => r.test(k)) ||
 // 15 nov 2026: executives liep tegen zijn plafond aan (US half, GB leeg); US en GB apart en volledig.
 THEMA['executives-en'] = { ...THEMA.executives, naam: 'Executives (US en GB volledig)', markten: ['US', 'GB'], max: 0.6 };
 
+// Nichescan (15 nov 2026, Henkjan: "Los dit dan op voor producten . Vind de intenties en maak er paginas voor": zoals "beste tandarts in
+// Willemstad" weinig concurrentie heeft, zoeken we koopvragen voor producten met een doelgroep of situatie waar geen grote vergelijker op staat).
+// GET /api/zoekvraag?niche=NL (ook US, DE). Stap 1, hooguit één keer per 7 dagen: koop- en vergelijkvragen met een situatiewoord
+// (voor, zonder, met, onder ...) uit DataForSEO top_searches, met volume en keyword difficulty (kd, 0-100, organische moeilijkheid).
+// Stap 2, bij elke aanroep hooguit NICHE_SERP (40) nieuwe: wie staat er in de top 10 (± $0,002 per zoekterm), en hoeveel daarvan zijn
+// echte vergelijkpagina's (grote vergelijkers of titels met beste/test/vergelijk). Kans = volume x zwakte. Alles binnen de dagrem van lib/dfs.js.
+const NICHE = {
+  NL: { re: '( voor | zonder | met | onder | tot | in de | op de |klein|stil|licht|goedkoop|budget)', groot: /(^|\.)(consumentenbond\.nl|tweakers\.net|kieskeurig\.nl|coolblue\.nl|hln\.be|ad\.nl|nu\.nl|androidplanet\.nl|iculture\.nl|test-aankoop\.be|testaankoop\.be|bright\.nl|kassa\.bnnvara\.nl|independer\.nl|vergelijk\.nl|beslist\.nl|tefal\.nl|mediamarkt\.nl|wehkamp\.nl|ikea\.com|praxis\.nl|gamma\.nl|hornbach\.nl)$/ },
+  US: { re: '( for | without | with | under | in a |small|quiet|cheap|budget|lightweight)', groot: /(^|\.)(nytimes\.com|rtings\.com|cnn\.com|tomsguide\.com|goodhousekeeping\.com|consumerreports\.org|pcmag\.com|techradar\.com|theverge\.com|bestreviews\.com|popularmechanics\.com|seriouseats\.com|thespruce\.com|bobvila\.com|forbes\.com|usatoday\.com|wired\.com|cnet\.com|engadget\.com|foodandwine\.com|bhg\.com|businessinsider\.com|buzzfeed\.com|nbcnews\.com|today\.com|people\.com|gearlab\.com|outdoorgearlab\.com|techgearlab\.com)$/ },
+  DE: { re: '( für | ohne | mit | unter | bis |klein|leise|leicht|günstig|budget)', groot: /(^|\.)(test\.de|chip\.de|computerbild\.de|testsieger\.de|vergleich\.org|stern\.de|focus\.de|t3n\.de|idealo\.de|netzwelt\.de|techbook\.de|guter-rat\.de|haushaltstipps\.net|konsument\.at|ktipp\.ch|rtl\.de|bild\.de|welt\.de|faz\.net|spiegel\.de|testberichte\.de|check24\.de|otto\.de|mediamarkt\.de)$/ },
+};
+const NICHE_MARKT = /(^|\.)(bol\.com|amazon\.[a-z.]+|ebay\.[a-z.]+|marktplaats\.nl|etsy\.com|aliexpress\.com|temu\.com|walmart\.com|target\.com|kleinanzeigen\.de|kaufland\.de|bestbuy\.com|homedepot\.com|lowes\.com)$/;
+const NICHE_FORUM = /(^|\.)(reddit\.com|quora\.com|gathering\.tweakers\.net|forum\.|gutefrage\.net|youtube\.com|pinterest\.[a-z.]+|facebook\.com|tiktok\.com)$/;
+const REDACTIE = /\b(beste|best|top ?\d+|test|getest|vergelijk|vergleich|review|reviews|kaufberatung|testsieger|ranked|tested)\b/i;
+function nicheZwakte(r, cc) {
+  const og = (r && r.organic) || [];
+  let sterk = 0, forum = 0, markt = 0;
+  for (const o of og) { const d = String(o.domain || '').replace(/^www\./, '').toLowerCase();
+    if (NICHE_FORUM.test(d)) forum++; else if (NICHE_MARKT.test(d)) markt++; else if (NICHE[cc].groot.test(d) || REDACTIE.test(o.title || '')) sterk++; }
+  // 0 = top 10 vol met vergelijkpagina's, 1 = niemand heeft er een echte vergelijkpagina voor
+  return { zwakte: Math.round(Math.max(0, Math.min(1, 1 - sterk / 7 + forum * 0.04)) * 100) / 100, sterk, forum, markt, top3: og.slice(0, 3).map(o => String(o.domain || '').replace(/^www\./, '')) };
+}
+async function nicheScan(req, res) {
+  const cc = String(req.query.niche || '').toUpperCase(), N = NICHE[cc]; if (!N) return res.status(400).json({ error: 'markt', markten: Object.keys(NICHE) });
+  const store = getStore(), pad = `zoekvraag/niche-${cc}.json`; let uit = await getJSON(store, pad, null); const [loc, lang] = M[cc];
+  const b = budget(+(process.env.NICHE_MAX || 0.35));
+  if (!uit || Date.now() - (uit.t || 0) > 7 * 864e5) {
+    const items = await topSearches({ loc, lang }, b, { by: 'volume', anyGrowth: true, minVolume: 30, limit: 1000, regex: N.re, intent: ['commercial', 'transactional'] }).catch(() => []);
+    if (items.length) { const oudSerp = Object.fromEntries(((uit && uit.items) || []).filter(x => x.serp).map(x => [x.k, x])); uit = { cc, t: Date.now(), kosten: 0, items: items.map(x => ({ k: x.k, v: x.volume, kd: x.kd, cpc: x.cpc, y: x.trend && x.trend.y, m: (x.monthly || []).slice(0, 12).map(z => z.v), ...(oudSerp[x.k] ? { serp: oudSerp[x.k].serp, zw: oudSerp[x.k].zw } : {}) })) }; }
+  }
+  if (!uit) return res.status(503).json({ error: 'geen data (budget of DataForSEO)', fouten: b.errors.slice(0, 5) });
+  // vaste vraag: de laagste van de laatste 6 maanden telt (een piek in één maand is een gebeurtenis, les curacao.day)
+  const vast = x => { const m = (x.m || []).slice(0, 6).filter(v => v != null); return m.length ? Math.min(x.v || 0, ...m) : (x.v || 0); };
+  const voorlopig = x => vast(x) * Math.pow(1 - Math.min(100, x.kd ?? 30) / 100, 2);
+  const nSerp = Math.max(0, Math.min(80, +(req.query.n || process.env.NICHE_SERP || 40)));
+  const te = uit.items.filter(x => !x.serp).sort((a, c) => voorlopig(c) - voorlopig(a)).slice(0, nSerp);
+  for (const x of te) { const r = await serp(x.k, { loc, lang }, b).catch(() => null); if (!r) break; x.serp = 1; x.zw = nicheZwakte(r, cc); }
+  uit.kosten = Math.round(((uit.kosten || 0) + b.spent) * 1000) / 1000;
+  if (store && (te.length || b.spent)) await putJSON(store, pad, uit).catch(() => {});
+  const kansen = uit.items.filter(x => x.zw).map(x => ({ k: x.k, v: x.v, vast: vast(x), kd: x.kd, cpc: x.cpc, y: x.y, zwakte: x.zw.zwakte, sterk: x.zw.sterk, forum: x.zw.forum, markt: x.zw.markt, top3: x.zw.top3, kans: Math.round(vast(x) * x.zw.zwakte) }))
+    .sort((a, c) => c.kans - a.kans);
+  res.setHeader('Cache-Control', 'public, s-maxage=1800, stale-while-revalidate=86400');
+  return res.status(200).json({ markt: cc, uitleg: 'Koopvragen met een situatie of doelgroep, gesorteerd op kans = vaste maandvraag x zwakte van de top 10 in Google (1 = geen echte vergelijkpagina, 0 = vol). sterk = vergelijkpagina\'s in de top 10, forum en markt = fora en winkels/marktplaatsen.', bijgewerkt: new Date(uit.t).toISOString(), termen: uit.items.length, gecontroleerd: kansen.length, nogTeControleren: uit.items.length - kansen.length, kosten: uit.kosten, fouten: b.errors.slice(0, 3), kansen: kansen.slice(0, Math.min(500, +(req.query.max || 200))) });
+}
+
 export default async function handler(req, res) {
+  if (req.query.niche) return nicheScan(req, res);
   const id = String(req.query.thema || '').toLowerCase(), T = THEMA[id];
   if (!T) return res.status(400).json({ error: 'onbekend thema', themas: Object.keys(THEMA) });
   const store = getStore(), pad = `zoekvraag/${id}.json`, oud = await getJSON(store, pad, null);
