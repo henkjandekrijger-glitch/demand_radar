@@ -5,7 +5,7 @@
 // (hooguit ZV_MAX dollar, standaard $0,60, binnen de dagrem van lib/dfs.js), daarna altijd uit de opslag (zoekvraag/<thema>.json).
 // Nieuw thema: één regel in THEMA hieronder (regex op de zoekterm + markten met taal).
 import { getStore, getJSON, putJSON } from '../lib/store.js';
-import { topSearches, budget } from '../lib/dfs.js';
+import { topSearches, budget, serp } from '../lib/dfs.js';
 
 const M = { US: [2840, 'en'], NL: [2528, 'nl'], DE: [2276, 'de'], CA: [2124, 'en'], CO: [2170, 'es'], BR: [2076, 'pt'], GB: [2826, 'en'], BE: [2056, 'nl'], AU: [2036, 'en'] };
 // Plastische chirurgie (14 nov 2026, Henkjan: keuzehulp "waar je moet zijn" voor NL, US en wereldwijd): de landen waar patiënten
@@ -45,6 +45,18 @@ const OW_KADOLY = [
   ['gelegenheid', /verjaardag|jarig|pensioen|afscheid|geboorte|kraam|huwelijk|bruiloft|jubileum|valentijn|housewarming|nieuwe woning|bedankt|beterschap|sterkte|geslaagd|diploma/],
   ['budget', /euro|onder|goedkoop|budget|klein /],
 ];
+// Bedrijfsverkoop (15 nov 2026, Henkjan: leads van duizenden tot honderdduizenden euro's; "Doe onderzoek hoe de concurrenten het doen
+// met bedrijfsdeals en kijk ook naar zoektermen"): verkopers, kopers, waardebepaling, adviseurs, platforms, opvolging, per sector.
+const OW_BEDRIJF = [
+  ['platform', /bedrijventekoop|brookz|overnamemarkt|dealsuite|bizbuysell|dub\.de|nexxt|flippa|acquire\.com|empire flippers|loopnet|bizquest|businessesforsale/],
+  ['waarde', /waard|waarde|waardering|valuation|value|worth|bewertung|wert|multiple|ebitda|calculat|rekentool|rechner/],
+  ['kosten en belasting', /kosten|tarief|fee|commission|provision|belasting|tax|steuer|doorschuif|aanmerkelijk|box 2|capital gains/],
+  ['adviseur', /makelaar|advis|broker|berater|m&a|fusie|overnamekantoor|intermediair|consultant/],
+  ['opvolging', /opvolg|overdracht|succession|nachfolge|nachfolger|familie|family|personeel|management buy|employee/],
+  ['sector', /webshop|praktijk|horeca|restaurant|cafe|kapsalon|garage|apotheek|tandarts|huisarts|accountant|installat|bouw|transport|dental|vet |ecommerce|e-commerce|amazon|saas|agency|winkel|bakkerij|hotel|camping|franchise|laundromat|car wash|gas station|liquor|daycare|kinderopvang/],
+  ['koper', /te koop|for sale|kopen|overnemen|kaufen|zu verkaufen|buy|buying|acquisition|acquire/],
+  ['verkoper', /verkopen|verkaufen|sell|selling|verkoop|verkauf/],
+];
 export const THEMA = {
   verzekeringen: { naam: 'Verzekeringen Nederland', markten: ['NL'], regex: '(verzekering|zorgpolis|zorgpremie|arbeidsongeschiktheid|overlijdensrisico|aov)', ow: [['zorg', /zorgverzekering|zorgpolis|zorgpremie|basisverzekering|tandarts|eigen risico/], ['auto en motor', /auto|motor|bromfiets|scooter|camper|caravan/], ['wonen', /woon|inboedel|opstal|huiseigenaar/], ['reizen', /reis|annulering/], ['aansprakelijkheid en rechtsbijstand', /aansprakelijk|rechtsbijstand/], ['huisdieren', /huisdier|dieren|hond|kat/], ['fiets', /fiets|ebike|e-bike|fatbike/], ['inkomen en nabestaanden', /arbeidsongeschiktheid|aov|overlijdensrisico|uitvaart/], ['zakelijk', /zakelijk|bedrijf|zzp|beroep|cyber/]] },
   'plastische-chirurgie': { naam: 'Plastische chirurgie (waar ga je heen)', markten: ['NL', 'US', 'GB', 'DE', 'CA', 'AU'], ow: OW_PLASTISCH, max: 0.9,
@@ -53,6 +65,9 @@ export const THEMA = {
     // vanaf 16 nov (nieuwe DataForSEO-dag, na de rem van vandaag); tot dan blijft de oude meting staan.
     v: 2, vanaf: '2026-11-16',
     regex: '(plastische chirurg|plastisch chirurg|plastische op|plastic surg|cosmetic surg|aesthetic surg|schönheitsop|schönheitschirurg|schoenheitschirurg|schönheitsklinik|ästhetische chirurg|ästhetische op|cosmetische chirurg|cosmetische kliniek|cosmetic clinic|ooglidcorrectie|ooglid correctie|oogleden correctie|bovenooglid|eyelid surg|eyelid lift|blepharoplast|lidstraff|lidkorrektur|borstvergroting|borstverkleining|borstlift|borstimplant|breast augment|breast lift|breast reduction|breast implant|boob job|brustvergr|bruststraff|brustverkl|brustimplant|liposuc|liposuct|fettabsaug|buikwandcorrectie|buikwand correctie|tummy tuck|abdominoplast|bauchdeckenstraff|neuscorrectie|rhinoplast|nose job|nasenkorrektur|nasen-op|nasenop|facelift|face lift|gesichtsstraff|neck lift|halslift|brow lift|brazilian butt lift|brazilian buttlift|butt lift|po-lift|mommy makeover|bodylift|body lift|armlift|arm lift|oberarmstraff|thigh lift|haartransplant|hair transplant|haarimplant)' },
+  'bedrijf-verkopen': { naam: 'Bedrijf verkopen en overnemen', markten: ['NL', 'BE', 'DE', 'US'], ow: OW_BEDRIJF, max: 0.45,
+    serp: { NL: ['bedrijf verkopen', 'wat is mijn bedrijf waard', 'bedrijfsovername', 'bedrijf te koop'], BE: ['bedrijf verkopen', 'bedrijf overnemen'], DE: ['firma verkaufen', 'unternehmensbewertung', 'unternehmensnachfolge'], US: ['sell my business', 'business broker', 'what is my business worth', 'business for sale'] },
+    regex: '(bedrijf verkopen|bedrijf te koop|bedrijven te koop|onderneming verkopen|onderneming te koop|bedrijfsovername|bedrijf overnemen|overname bedrijf|bedrijfsoverdracht|overdracht bedrijf|bedrijfsopvolging|bedrijfswaardering|waardering bedrijf|waarde bedrijf|waarde van een bedrijf|waarde van mijn bedrijf|bedrijf waard|bedrijfswaarde|bv verkopen|bv te koop|holding verkopen|aandelen bv|webshop verkopen|webshop te koop|praktijk verkopen|praktijk te koop|zaak verkopen|zaak te koop|bedrijfsmakelaar|overnameadvi|overnamemakelaar|fusies en overnames|fusie en overname|bedrijventekoop|brookz|overnamemarkt|dealsuite|firma verkaufen|unternehmen verkaufen|unternehmensverkauf|unternehmensnachfolge|nachfolger gesucht|nachfolgebörse|firmenbewertung|unternehmensbewertung|unternehmenswert|firma zu verkaufen|unternehmen zu verkaufen|unternehmensbörse|gmbh verkaufen|gmbh kaufen|firma kaufen|unternehmen kaufen|m&a berater|sell my business|sell a business|selling a business|sell your business|sell my company|selling my company|sell a company|business for sale|businesses for sale|business broker|m&a advisor|m&a firm|business valuation|value my business|value of my business|my business worth|business worth|company valuation|valuation of a business|exit planning|succession planning|buy a business|buying a business|buy an existing business|small business for sale|business acquisition|bizbuysell)' },
   curacao: { naam: 'Curaçao', regex: '(cura[cç]ao|curazao|kòrsou|korsou|willemstad)', markten: ['US', 'NL', 'DE', 'CA', 'CO', 'BR'] },
   'kadoly-wonen': { naam: 'Kadoly wonen', markten: KADOLY_MARKT, ow: OW_KADOLY,
     regex: '(vaas|vazen|bloempot|plantenpot|sierpot|plantenbak|plantenstandaard|plantenrek|plantentafel|kunstplant|kunstbloem|orchidee|muurcirkel|wandcirkel|wanddecoratie|muurdecoratie|wandkleed|tuinposter|muursticker|tafellamp|hanglamp|leeslamp|oplaadbare lamp|lantaarn|windlicht|kandelaar|geurkaars|windgong|windspinner|bijzettafel|dienblad|plaid|sierkussen|wasmand|opbergmand|rieten mand|diffuser|geurstokjes|tuindecoratie|tuinbeeld)' },
@@ -94,17 +109,20 @@ export default async function handler(req, res) {
     for (const cc of T.markten) {
       const [loc, lang] = M[cc];
       const items = await topSearches({ loc, lang }, b, { by: 'volume', anyGrowth: true, minVolume: 20, limit: 700, regex: T.regex, intent: null }).catch(() => []);
-      markten[cc] = { taal: lang, termen: items.map(x => ({ k: x.k, v: x.volume, y: x.trend && x.trend.y, i: x.intent, o: onderwerp(x.k, T.ow), m: (x.monthly || []).slice(0, 12).map(z => z.v) })) };
+      markten[cc] = { taal: lang, termen: items.map(x => ({ k: x.k, v: x.volume, y: x.trend && x.trend.y, i: x.intent, c: x.cpc, cp: x.competition, o: onderwerp(x.k, T.ow), m: (x.monthly || []).slice(0, 12).map(z => z.v) })) };
     }
+    // wie staat er bovenaan en wie adverteert (± $0,002 per zoekterm): de concurrenten volgens Google zelf
+    const serps = {};
+    for (const [cc, kws] of Object.entries(T.serp || {})) { const [loc, lang] = M[cc]; serps[cc] = {}; for (const k of kws) { const r = await serp(k, { loc, lang }, b).catch(() => null); if (r) serps[cc][k] = r; } }
     const n = Object.values(markten).reduce((s, x) => s + x.termen.length, 0);
-    if (n) { uit = { thema: id, naam: T.naam, ...(T.v ? { v: T.v } : {}), t: Date.now(), kosten: Math.round(b.spent * 1000) / 1000, fouten: b.errors.slice(0, 5), markten }; if (store) await putJSON(store, pad, uit).catch(() => {}); }
+    if (n) { uit = { thema: id, naam: T.naam, ...(T.v ? { v: T.v } : {}), t: Date.now(), kosten: Math.round(b.spent * 1000) / 1000, fouten: b.errors.slice(0, 5), markten, ...(T.serp ? { serp: serps } : {}) }; if (store) await putJSON(store, pad, uit).catch(() => {}); }
     else if (!oud) return res.status(503).json({ error: 'geen data (budget of DataForSEO)', fouten: b.errors.slice(0, 5) });
   }
   // samenvatting per onderwerp over alle markten: totaal volume en de grootste termen
   const per = {};
-  for (const [cc, m] of Object.entries(uit.markten || {})) for (const x of m.termen) { const o = per[x.o] ||= { v: 0, top: [] }; o.v += x.v || 0; o.top.push({ cc, k: x.k, v: x.v, y: x.y }); }
+  for (const [cc, m] of Object.entries(uit.markten || {})) for (const x of m.termen) { const o = per[x.o] ||= { v: 0, top: [] }; o.v += x.v || 0; o.top.push({ cc, k: x.k, v: x.v, y: x.y, ...(x.c != null ? { c: x.c } : {}) }); }
   for (const o of Object.values(per)) o.top = o.top.sort((a, b) => b.v - a.v).slice(0, 12);
   const cc = String(req.query.cc || '').toUpperCase();
   res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
-  return res.status(200).json({ thema: uit.thema, naam: uit.naam, bijgewerkt: new Date(uit.t).toISOString(), onderwerpen: Object.fromEntries(Object.entries(per).sort((a, b) => b[1].v - a[1].v)), ...(cc && uit.markten[cc] ? { markt: { cc, ...uit.markten[cc] } } : { markten: Object.fromEntries(Object.entries(uit.markten).map(([k, m]) => [k, { taal: m.taal, n: m.termen.length, top: m.termen.slice(0, 60) }])) }) });
+  return res.status(200).json({ thema: uit.thema, naam: uit.naam, bijgewerkt: new Date(uit.t).toISOString(), ...(uit.serp ? { serp: uit.serp } : {}), onderwerpen: Object.fromEntries(Object.entries(per).sort((a, b) => b[1].v - a[1].v)), ...(cc && uit.markten[cc] ? { markt: { cc, ...uit.markten[cc] } } : { markten: Object.fromEntries(Object.entries(uit.markten).map(([k, m]) => [k, { taal: m.taal, n: m.termen.length, top: m.termen.slice(0, 60) }])) }) });
 }
