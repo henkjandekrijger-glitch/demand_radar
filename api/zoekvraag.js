@@ -133,6 +133,9 @@ export function splitRegex(re, max = 600) {
 }
 const onderwerp = (k, lijst = ONDERWERP) => (lijst.find(([, r]) => r.test(k)) || ['overig'])[0];
 
+// 15 nov 2026: executives liep tegen zijn plafond aan (US half, GB leeg); US en GB apart en volledig.
+THEMA['executives-en'] = { ...THEMA.executives, naam: 'Executives (US en GB volledig)', markten: ['US', 'GB'], max: 0.6 };
+
 export default async function handler(req, res) {
   const id = String(req.query.thema || '').toLowerCase(), T = THEMA[id];
   if (!T) return res.status(400).json({ error: 'onbekend thema', themas: Object.keys(THEMA) });
