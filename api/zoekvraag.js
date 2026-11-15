@@ -96,6 +96,15 @@ const ONDERWERP = [
   ['taal', /papiamento|papiamentu|language|taal|sprache|idioma|dutch|nederlands/],
   ['nieuws', /news|nieuws|nachrichten|noticias|notícias|today|vandaag|heute|hoy|hoje|election|verkiezing|world cup|wk|football|voetbal/],
 ];
+// DataForSEO weigert een te lange regex ("regexp max length exceeded"; ± 700 tekens gaat goed, 960 niet): splits een lijst
+// (a|b|c) in stukken van hooguit 600 tekens; per stuk één vraag, daarna samenvoegen (elke zoekterm één keer).
+export function splitRegex(re, max = 600) {
+  const m = /^\((.*)\)$/.exec(re); if (!m || re.length <= max || /[()]/.test(m[1])) return [re];
+  const out = []; let cur = [];
+  for (const alt of m[1].split('|')) { if (cur.length && `(${[...cur, alt].join('|')})`.length > max) { out.push(`(${cur.join('|')})`); cur = []; } cur.push(alt); }
+  if (cur.length) out.push(`(${cur.join('|')})`);
+  return out;
+}
 const onderwerp = (k, lijst = ONDERWERP) => (lijst.find(([, r]) => r.test(k)) || ['overig'])[0];
 
 export default async function handler(req, res) {
@@ -108,7 +117,9 @@ export default async function handler(req, res) {
     const b = budget(+(T.max || process.env.ZV_MAX || 0.6)), markten = {};
     for (const cc of T.markten) {
       const [loc, lang] = M[cc];
-      const items = await topSearches({ loc, lang }, b, { by: 'volume', anyGrowth: true, minVolume: 20, limit: 700, regex: T.regex, intent: null }).catch(() => []);
+      const seen = new Set(), items = [];
+      for (const re of splitRegex(T.regex)) for (const x of await topSearches({ loc, lang }, b, { by: 'volume', anyGrowth: true, minVolume: 20, limit: 700, regex: re, intent: null }).catch(() => [])) if (!seen.has(x.k)) { seen.add(x.k); items.push(x); }
+      items.sort((a, c) => (c.volume || 0) - (a.volume || 0));
       markten[cc] = { taal: lang, termen: items.map(x => ({ k: x.k, v: x.volume, y: x.trend && x.trend.y, i: x.intent, c: x.cpc, cp: x.competition, o: onderwerp(x.k, T.ow), m: (x.monthly || []).slice(0, 12).map(z => z.v) })) };
     }
     // wie staat er bovenaan en wie adverteert (± $0,002 per zoekterm): de concurrenten volgens Google zelf
