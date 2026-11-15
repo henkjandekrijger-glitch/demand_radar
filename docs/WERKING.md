@@ -297,3 +297,11 @@ Scripts in `tools/` (toetsen van bronnen en het model).
 Wikipedia-bezoeken, griep, vacatures, VS als voorloper, energieprijzen, Keepa-verkoophistorie: geen winst in de toets.
 Energy-Charts (stroomprijs) mag niet doorgegeven worden. Amazon-bestsellerpagina's, Pinterest- en TikTok-websites, eBay/Etsy:
 geblokkeerd vanaf de server.
+
+
+
+### surgery-zoekvraag
+
+Surgery-keuzemenu en schone vraagdata (15 november 2026)
+
+Het bestaande thema plastische-chirurgie ondersteunt nu ook ooglaseren, lenzen, staar, tandheelkunde en aanvullende keuze-ingrepen. Versie 3 koopt pas vanaf 16 november, binnen dezelfde thema- en dagrem; geen force refresh. De bestaande cache wordt bij lezen met de strikte ingreep-regex gefilterd en opnieuw ingedeeld. quality meldt bronversie, verwijderde termen en ontbrekende dekking. Ontbrekend volume is onbekend, geen nul. Keywordvolumes zijn overlappende zoekschattingen, geen unieke personen. todayin surgery koppelt alleen ingrepen met aantoonbare aanbiedersbronnen aan publieke dossiers; dunne selecties worden niet geïndexeerd.
