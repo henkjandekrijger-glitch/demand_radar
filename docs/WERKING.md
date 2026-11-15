@@ -241,7 +241,7 @@ daarop". Eerste thema: curacao (US, NL, DE, CA, CO, BR) voor curacao.day. Sinds 
 in de werkwijze: zoekvraag naast de eigen pagina's leggen en de gaten vullen.
 Sinds 14 nov 2026 ook **plastische-chirurgie** (NL, US, GB, DE, CA, AU; eigen plafond `max` $0,90 per thema): ingrepen in NL/EN/DE
 en wie naar het buitenland gaat, per onderwerp buitenland, kosten, arts en kliniek, herstel en risico, ooglid, borsten, buik en lichaam,
-gezicht, haar, botox en fillers. Voor Henkjans keuzehulp "waar moet je zijn" (NL, US, wereldwijd).
+gezicht, haar, botox en fillers. Voor Henkjans keuzehulp "waar moet je zijn" (NL, US, wereldwijd). Een thema kan een versie hebben (`v`, `vanaf`): wordt de regex verbeterd, dan koopt de radar vanaf die datum één keer opnieuw (ook binnen 7 dagen); plastische-chirurgie v2 (15 nov): alleen ingrepen, want "bbl" ving ook bubble/kibble/MBO-BBL/Big Bash League en "ooglid/eyelid" ook strontjes en trillende oogleden.
 
 ### connector — gebruik vanuit andere chats
 `/api/mcp` (`/mcp?key=<teamsleutel>`): tools `check_demand`, `opportunity_map`, `demand_radar`, `report_outcome`,

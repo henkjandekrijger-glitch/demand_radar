@@ -14,10 +14,10 @@ const OW_PLASTISCH = [
   ['buitenland', /turkije|turkey|türkei|turkei|istanbul|antalya|izmir|mexico|mexiko|tijuana|cancun|colombia|kolumbien|medellin|cali\b|dominican|dominicaanse|dominikan|punta cana|santo domingo|thailand|bangkok|korea|seoul|brazil|brazilië|brasilien|costa rica|poland|polen|hungary|hongarije|ungarn|belgi|belgium|abroad|buitenland|ausland/],
   ['kosten', /kosten|kost |prijs|prijzen|cost|price|how much|wat kost|preis|kosten|euro|dollar|\$|financ|vergoed|insurance|verzekering|krankenkasse/],
   ['arts en kliniek', /kliniek|clinic|klinik|chirurg|surgeon|arzt|ärzt|dokter|doctor|near me|in de buurt|in der nähe|best |beste|top |review|ervaring|erfahrung|board certified/],
-  ['herstel en risico', /herstel|recovery|heilung|genesung|na de operatie|after surgery|nach der op|complicat|komplikation|risico|risk|gone wrong|mislukt|pijn|pain|schmerz|littekens|scar|narbe/],
+  ['herstel en risico', /voor en na|before and after|vorher nachher|herstel|recovery|heilung|genesung|na de operatie|after surgery|nach der op|complicat|komplikation|risico|risk|gone wrong|mislukt|pijn|pain|schmerz|littekens|scar|narbe/],
   ['ooglid', /ooglid|eyelid|blepharo|lidstraff|oberlid|unterlid|wallen|bovenooglid|onderooglid/],
   ['borsten', /borst|breast|brust|implant|mammo|siliconen/],
-  ['buik en lichaam', /buikwand|tummy tuck|abdominoplast|bauchdeck|lipo|fettabsaug|bbl|brazilian butt|butt lift|po-lift|mommy makeover|body lift|bodylift|arm lift|armlift|oberarmstraff|thigh lift|dijbeen|skin removal|huidoverschot|hautstraff|ozempic|glp/],
+  ['buik en lichaam', /buikwand|tummy tuck|abdominoplast|bauchdeck|lipo|fettabsaug|bbl|brazilian butt lift|brazilian buttlift|butt lift|po-lift|mommy makeover|body lift|bodylift|arm lift|armlift|oberarmstraff|thigh lift|dijbeen|skin removal|huidoverschot|hautstraff|ozempic|glp/],
   ['gezicht', /facelift|face lift|gesichtsstraff|neck lift|halslift|brow lift|wenkbrauw|neus|nose|rhino|nasen|kin|chin|ohr|ear|oor|lip|fat graft|vetinjectie|eigenfett/],
   ['haar', /haartransplant|hair transplant|haarimplant|fue\b|dhi\b|haarverplant|hair restoration/],
   ['botox en fillers', /botox|filler|hyaluron|injectable|neuromodulator|dysport|lippen|lip filler/],
@@ -48,7 +48,11 @@ const OW_KADOLY = [
 export const THEMA = {
   verzekeringen: { naam: 'Verzekeringen Nederland', markten: ['NL'], regex: '(verzekering|zorgpolis|zorgpremie|arbeidsongeschiktheid|overlijdensrisico|aov)', ow: [['zorg', /zorgverzekering|zorgpolis|zorgpremie|basisverzekering|tandarts|eigen risico/], ['auto en motor', /auto|motor|bromfiets|scooter|camper|caravan/], ['wonen', /woon|inboedel|opstal|huiseigenaar/], ['reizen', /reis|annulering/], ['aansprakelijkheid en rechtsbijstand', /aansprakelijk|rechtsbijstand/], ['huisdieren', /huisdier|dieren|hond|kat/], ['fiets', /fiets|ebike|e-bike|fatbike/], ['inkomen en nabestaanden', /arbeidsongeschiktheid|aov|overlijdensrisico|uitvaart/], ['zakelijk', /zakelijk|bedrijf|zzp|beroep|cyber/]] },
   'plastische-chirurgie': { naam: 'Plastische chirurgie (waar ga je heen)', markten: ['NL', 'US', 'GB', 'DE', 'CA', 'AU'], ow: OW_PLASTISCH, max: 0.9,
-    regex: '(plastisch|plastic surg|cosmetic surg|aesthetic surg|schönheits|schoenheits|ästhetisch|cosmetisch|cosmetic clinic|ooglid|eyelid|blepharo|lidstraff|borstvergroting|borstverkleining|borstlift|breast augment|breast lift|breast reduction|boob job|brustvergr|bruststraff|brustverkl|liposuc|liposuct|lipo |fettabsaug|buikwandcorrectie|tummy tuck|abdominoplast|bauchdeckenstraff|neuscorrectie|rhinoplast|nose job|nasenkorrektur|nasen-op|facelift|face lift|gesichtsstraff|neck lift|halslift|brow lift|bbl|brazilian butt|butt lift|mommy makeover|bodylift|body lift|armlift|arm lift|thigh lift|haartransplant|hair transplant|haarimplant)' },
+    // v2 (15 nov 2026): de eerste meting ving "bbl" ook in bubble, kibble en pebble (MBO-BBL, Big Bash League, olievaten) en
+    // "eyelid"/"ooglid" in strontjes en trillende oogleden; die vulden de 700 plekken per land. Nu alleen ingrepen. Opnieuw kopen pas
+    // vanaf 16 nov (nieuwe DataForSEO-dag, na de rem van vandaag); tot dan blijft de oude meting staan.
+    v: 2, vanaf: '2026-11-16',
+    regex: '(plastische chirurg|plastisch chirurg|plastische op|plastic surg|cosmetic surg|aesthetic surg|schönheitsop|schönheitschirurg|schoenheitschirurg|schönheitsklinik|ästhetische chirurg|ästhetische op|cosmetische chirurg|cosmetische kliniek|cosmetic clinic|ooglidcorrectie|ooglid correctie|oogleden correctie|bovenooglid|eyelid surg|eyelid lift|blepharoplast|lidstraff|lidkorrektur|borstvergroting|borstverkleining|borstlift|borstimplant|breast augment|breast lift|breast reduction|breast implant|boob job|brustvergr|bruststraff|brustverkl|brustimplant|liposuc|liposuct|fettabsaug|buikwandcorrectie|buikwand correctie|tummy tuck|abdominoplast|bauchdeckenstraff|neuscorrectie|rhinoplast|nose job|nasenkorrektur|nasen-op|nasenop|facelift|face lift|gesichtsstraff|neck lift|halslift|brow lift|brazilian butt lift|brazilian buttlift|butt lift|po-lift|mommy makeover|bodylift|body lift|armlift|arm lift|oberarmstraff|thigh lift|haartransplant|hair transplant|haarimplant)' },
   curacao: { naam: 'Curaçao', regex: '(cura[cç]ao|curazao|kòrsou|korsou|willemstad)', markten: ['US', 'NL', 'DE', 'CA', 'CO', 'BR'] },
   'kadoly-wonen': { naam: 'Kadoly wonen', markten: KADOLY_MARKT, ow: OW_KADOLY,
     regex: '(vaas|vazen|bloempot|plantenpot|sierpot|plantenbak|plantenstandaard|plantenrek|plantentafel|kunstplant|kunstbloem|orchidee|muurcirkel|wandcirkel|wanddecoratie|muurdecoratie|wandkleed|tuinposter|muursticker|tafellamp|hanglamp|leeslamp|oplaadbare lamp|lantaarn|windlicht|kandelaar|geurkaars|windgong|windspinner|bijzettafel|dienblad|plaid|sierkussen|wasmand|opbergmand|rieten mand|diffuser|geurstokjes|tuindecoratie|tuinbeeld)' },
@@ -84,7 +88,8 @@ export default async function handler(req, res) {
   if (!T) return res.status(400).json({ error: 'onbekend thema', themas: Object.keys(THEMA) });
   const store = getStore(), pad = `zoekvraag/${id}.json`, oud = await getJSON(store, pad, null);
   let uit = oud;
-  if (!oud || Date.now() - (oud.t || 0) > 7 * 864e5) {
+  const nieuweVersie = T.v && (oud && oud.v) !== T.v && new Date().toISOString().slice(0, 10) >= (T.vanaf || '');
+  if (!oud || nieuweVersie || Date.now() - (oud.t || 0) > 7 * 864e5) {
     const b = budget(+(T.max || process.env.ZV_MAX || 0.6)), markten = {};
     for (const cc of T.markten) {
       const [loc, lang] = M[cc];
@@ -92,7 +97,7 @@ export default async function handler(req, res) {
       markten[cc] = { taal: lang, termen: items.map(x => ({ k: x.k, v: x.volume, y: x.trend && x.trend.y, i: x.intent, o: onderwerp(x.k, T.ow), m: (x.monthly || []).slice(0, 12).map(z => z.v) })) };
     }
     const n = Object.values(markten).reduce((s, x) => s + x.termen.length, 0);
-    if (n) { uit = { thema: id, naam: T.naam, t: Date.now(), kosten: Math.round(b.spent * 1000) / 1000, fouten: b.errors.slice(0, 5), markten }; if (store) await putJSON(store, pad, uit).catch(() => {}); }
+    if (n) { uit = { thema: id, naam: T.naam, ...(T.v ? { v: T.v } : {}), t: Date.now(), kosten: Math.round(b.spent * 1000) / 1000, fouten: b.errors.slice(0, 5), markten }; if (store) await putJSON(store, pad, uit).catch(() => {}); }
     else if (!oud) return res.status(503).json({ error: 'geen data (budget of DataForSEO)', fouten: b.errors.slice(0, 5) });
   }
   // samenvatting per onderwerp over alle markten: totaal volume en de grootste termen
