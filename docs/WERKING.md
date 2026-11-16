@@ -246,6 +246,8 @@ Eenmalige budgetuitzonderingen per UTC-dag staan in `lib/dfs.js` (EXTRA; 15 nov 
 
 
 Sinds 16 nov 2026 ook kdp-boeken (US, CA, GB, DE): de zoekvragen achter de eigen boekgidsen op whichtobuy.best en kaufberater.best (stocking stuffers, feitenboeken, adventskalender, grill- en slowcookerboeken, bijbel, puzzels, gewoonte, munten) plus serp van zes hoofdtermen (wie staat bovenaan).
+
+Sinds 16 nov 2026 ook taniakross (NL, BE, US; plafond $0,60): Tania Kross en spellingvarianten, haar podcast A Kross en de gasten, opera en zang (mezzosopraan, operazangeres, masterclass, Podium Klassiek, Katibu di Shon), tv en radio, dagvoorzitter en Curaçaose cultuur; serp van vier NL-hoofdtermen. Voor het SEO- en AI-plan van taniakross.media.
 Nichescan (15 nov 2026): `/api/zoekvraag?niche=NL` (ook US, DE). Koop- en vergelijkvragen met een situatiewoord (voor, zonder, met, onder; for, without; für, ohne) uit DataForSEO top_searches, eens per 7 dagen, met keyword difficulty. Per aanroep hooguit 40 nieuwe top-10-controles (± $0,002 per zoekterm): hoeveel echte vergelijkpagina's er staan. Kans = vaste maandvraag x zwakte (1 = geen vergelijkpagina). Opslag `zoekvraag/niche-<cc>.json`, hooguit NICHE_MAX ($0,35) per aanroep binnen de dagrem. Voor hjdk-api: welke productkeuzehulpen weinig concurrentie hebben.
 ### connector — gebruik vanuit andere chats
 `/api/mcp` (`/mcp?key=<teamsleutel>`): tools `check_demand`, `opportunity_map`, `demand_radar`, `report_outcome`,
