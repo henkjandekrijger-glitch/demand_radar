@@ -374,3 +374,8 @@ Eén partij per maand (± $2–5) om de gratis schattingen bij te stellen en het
 ### Alleen Henkjan
 Teamsleutel vervangen (taak 4) · ANTHROPIC_API_KEY in Vercel voor de radarteksten · akkoord op de vraagmeter-campagne ·
 gratis sleutel Companies House · Ticketmaster-account · CZDS-aanvraag (.com-zonebestand) als we domeinregistraties willen.
+
+
+
+### Sealed Intent vraagonderzoek (16 november 2026)
+Op expliciet verzoek: twee 7-daagse gecachete thema's in api/zoekvraag.js. sealed-beslismomenten meet NL/DE/US/GB/CA/AU (max $0,95); sealed-talen FR/ES/IT (max $0,55). De eenmalige extra dagruimte stijgt vandaag met $2; morgen vervalt die automatisch. API geeft aankoopkosten, bronfouten en ontbrekende markten terug. Dit zijn overlappende zoektermramingen, geen unieke mensen of volledige marktvraag. Geen herhaalde refresh of betaalde advertenties.

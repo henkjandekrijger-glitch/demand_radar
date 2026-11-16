@@ -7,7 +7,7 @@
 import { getStore, getJSON, putJSON } from '../lib/store.js';
 import { topSearches, budget, serp } from '../lib/dfs.js';
 
-const M = { US: [2840, 'en'], NL: [2528, 'nl'], DE: [2276, 'de'], CA: [2124, 'en'], CO: [2170, 'es'], BR: [2076, 'pt'], GB: [2826, 'en'], BE: [2056, 'nl'], AU: [2036, 'en'], DO: [2214, 'es'], PA: [2591, 'es'], SR: [2740, 'nl'] };
+const M = { US: [2840, 'en'], NL: [2528, 'nl'], DE: [2276, 'de'], CA: [2124, 'en'], CO: [2170, 'es'], BR: [2076, 'pt'], GB: [2826, 'en'], BE: [2056, 'nl'], AU: [2036, 'en'], FR: [2250, 'fr'], ES: [2724, 'es'], IT: [2380, 'it'], DO: [2214, 'es'], PA: [2591, 'es'], SR: [2740, 'nl'] };
 // Plastische chirurgie (14 nov 2026, Henkjan: keuzehulp "waar je moet zijn" voor NL, US en wereldwijd): de landen waar patiënten
 // vandaan komen; ingrepen in NL, EN en DE, en wie naar het buitenland gaat (Turkije, Mexico, Colombia, Dominicaanse Republiek …).
 const OW_PLASTISCH = [
@@ -156,6 +156,14 @@ export const THEMA = {
   'kadoly-cadeau': { naam: 'Kadoly cadeauvragen', markten: KADOLY_MARKT, ow: OW_KADOLY,
     regex: '(cadeau|kado|cadeautje|kadootje|geschenk|presentje|cadeaubox|giftset)' },
 };
+
+// Henkjan 16 nov 2026: Sealed Intent totaalassessment; onderzoeksbudget expliciet toegestaan.
+// Twee begrensde aankopen, 7 dagen hergebruiken; geen unieke mensen of bewezen vraagdekking claimen.
+THEMA['sealed-beslismomenten'] = { naam: 'Sealed Intent: voorwaarden en beslismomenten', markten: ['NL', 'DE', 'US', 'GB', 'CA', 'AU'], max: 0.95,
+  regex: '(bedrijfsopvolging|bedrijf verkopen|investeerder zoeken|aandelen verkopen|management buyout|management buy in|praktijk verkopen|exit planning|succession planning|sell my business|sell my company|unsolicited offer|business broker fees|earnout|earn out|letter of intent business|sell dental practice|sell medical practice|find investors|investor for my business|confidential job search|executive outplacement|non executive director|board positions|interim executive|unternehmen verkaufen|unternehmensnachfolge|firma verkaufen|minderheitsbeteiligung|nachfolger gesucht|arztpraxis verkaufen|investor finden|diskrete jobsuche|aufsichtsrat werden|beirat werden|interim management)' };
+THEMA['sealed-talen'] = { naam: 'Sealed Intent: Franse, Spaanse en Italiaanse vraag', markten: ['FR', 'ES', 'IT'], max: 0.55,
+  regex: '(cession entreprise|vendre entreprise|vendre mon entreprise|transmission entreprise|reprise entreprise|cession cabinet|cession parts sociales|recherche investisseur|chasseur de têtes|outplacement dirigeant|administrateur indépendant|transition professionnelle dirigeant|vender mi empresa|venta de empresas|traspaso negocio|sucesión empresarial|buscar inversores|headhunter|outplacement|consejero independiente|vendere azienda|cessione azienda|passaggio generazionale|vendita quote|cercare investitori|ricerca dirigenti|amministratore indipendente)' };
+
 // onderwerpen: woorden in vijf talen, eerste treffer wint
 const ONDERWERP = [
   ['vluchten', /flight|vlucht|flug|vuelo|voo|klm|tui|airline|jetblue|american|airport|luchthaven|flughafen|aeropuerto|aeroporto|hato/],
@@ -277,5 +285,6 @@ export default async function handler(req, res) {
   for (const o of Object.values(per)) o.top = o.top.sort((a, b) => b.v - a.v).slice(0, 12);
   const cc = String(req.query.cc || '').toUpperCase();
   res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
-  return res.status(200).json({ thema: uit.thema, naam: uit.naam, bijgewerkt: new Date(uit.t).toISOString(), ...(quality ? {quality} : {}), ...(uit.serp ? { serp: uit.serp } : {}), onderwerpen: Object.fromEntries(Object.entries(per).sort((a, b) => b[1].v - a[1].v)), ...(cc && uit.markten[cc] ? { markt: { cc, ...uit.markten[cc] } } : { markten: Object.fromEntries(Object.entries(uit.markten).map(([k, m]) => [k, { taal: m.taal, n: m.termen.length, top: m.termen.slice(0, 60) }])) }) });
+  return res.status(200).json({ thema: uit.thema, naam: uit.naam, bijgewerkt: new Date(uit.t).toISOString(), kosten: uit.kosten, fouten: uit.fouten || [], verwachteMarkten: T.markten, ontbrekendeMarkten: T.markten.filter(c => !(uit.markten[c]?.termen?.length)), volumeNoot: 'Schattingen per zoekterm en markt; synoniemen overlappen. Een ontbrekende term of markt bewijst geen nulvraag.', ...(quality ? {quality} : {}), ...(uit.serp ? { serp: uit.serp } : {}), onderwerpen: Object.fromEntries(Object.entries(per).sort((a, b) => b[1].v - a[1].v)), ...(cc && uit.markten[cc] ? { markt: { cc, ...uit.markten[cc] } } : { markten: Object.fromEntries(Object.entries(uit.markten).map(([k, m]) => [k, { taal: m.taal, n: m.termen.length, top: m.termen.slice(0, 60) }])) }) });
 }
+
