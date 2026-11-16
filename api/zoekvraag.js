@@ -60,6 +60,22 @@ const OW_BEDRIJF = [
   ['verkoper', /verkopen|verkaufen|sell|selling|verkoop|verkauf/],
 ];
 // KDP-boeken (16 nov 2026): onderwerpen per boekgids.
+// Boek over angst (16 nov 2026, Henkjan: "ik wil een boek over FEAR maken . Check zoekvragen en competitie en wat de hook dan zou moeten worden"):
+// waar mensen bang voor zijn, hoe ze het willen oplossen, en wat ze al lezen. Merken en series (Fear of God, Fear Street, Fear the
+// Walking Dead, Five Nights) worden bij het lezen apart gezet in 'ruis', zodat ze de onderwerpen niet vullen.
+const OW_FEAR = [
+  ['ruis', /fear of god|essentials|fear street|walking dead|five nights|fnaf|fear factor|cape fear|fear and loathing|fear inoculum|fearless (taylor|tv)|taylor swift|primal fear|fear index|fear and greed|fear & greed|hoodie|cologne|shirt|shoes|game|movie|film|song|lyrics|chords|netflix|trailer|cast|season|episode/],
+  ['boeken', /book|books|buch|bücher|read|novel|author|audiobook|workbook|journal|kindle|quotes|zitate|sprüche/],
+  ['geloof', /bible|god|jesus|verse|scripture|psalm|bibel|prayer|gebet|lord|christian|faith/],
+  ['falen en oordeel', /failure|failing|rejection|judg|what people think|success|public speaking|speaking|abandonment|commitment|intimacy|love|change|missing out|fomo|versagen|ablehnung|bindungsangst|verlustangst|zukunftsangst|prüfungsangst/],
+  ['dood en ziekte', /death|dying|die |tod|sterben|cancer|illness|krank|hospital|needles|doctor/],
+  ['fobieën', /phobia|phobie|spiders|spider|heights|flying|dark|snakes|dogs|water|clowns|holes|trypophobia|claustrophobia|agoraphobia|höhenangst|flugangst|spinnen|dunkel/],
+  ['overwinnen', /overcome|overcoming|conquer|get over|stop being|how to stop|how to not|how to be|deal with|face your|facing|let go|überwinden|loswerden|besiegen|was tun|hilft|tips|ways to/],
+  ['moed', /courage|courageous|fearless|brave|bravery|mut|mutig|tapfer|confidence|selbstvertrauen/],
+  ['angst en paniek', /anxiety|anxious|panic|worry|worried|overthink|stress|nervous|angststörung|panikattacke|sorgen|grübeln/],
+  ['kinderen', /kids|child|children|toddler|kinder|kind |baby|teen/],
+  ['betekenis', /meaning|definition|what is|synonym|bedeutung|was ist|psychology|psychologie|brain|amygdala|biology|science/],
+];
 const OW_KDP = [
   ['adventskalender', /adventskalender|advent calendar/],
   ['grillboek', /pit boss|pellet|traeger|smoker|griddle|blackstone/],
@@ -122,6 +138,9 @@ export const THEMA = {
   'kdp-boeken': { naam: 'Boeken als cadeau (eigen KDP-boeken)', markten: ['US', 'CA', 'GB', 'DE'], max: 0.6, ow: OW_KDP,
     serp: { US: ['stocking stuffers for teens', 'fun facts book for adults', 'pit boss cookbook', 'apocrypha book', 'white elephant gifts for men'], DE: ['adventskalender für männer'] },
     regex: '(stocking stuffer|white elephant|secret santa|fun fact|facts book|trivia book|bathroom reader|gifts for teen|gift for teen|teen boy gift|adventskalender für männer|adventskalender männer|adventskalender mann|advent calendar for men|unnützes wissen|wichtelgeschenk|pit boss|pellet grill cookbook|pellet smoker|traeger cookbook|smoker cookbook|griddle cookbook|blackstone cookbook|crock pot cookbook|slow cooker cookbook|apocrypha|book of enoch|bible color|bible coloring|large print word search|word search large print|habit tracker|lasting change|coin collecting book)' },
+  'fear-boek': { naam: 'Angst en moed (boek over FEAR)', markten: ['US', 'GB', 'DE'], max: 0.45, ow: OW_FEAR,
+    serp: { US: ['books about fear', 'how to overcome fear', 'feel the fear and do it anyway', 'fear of failure'], DE: ['angst überwinden buch'] },
+    regex: '(fear|afraid|scared of|scared to|phobia|courage|fearless|overthink|angst|ängste|furcht|phobie|mutig|mut haben|panikattacke)' },
   // taniakross.media (16 nov 2026, Henkjan: "Ik zie te weinig bezoek maak een plan voor meer SEO en LLM bezoek en wat voor content daarvoor
   // nodig is kijk naar demand radar welke content of faq er bij moet"): Tania zelf, haar werk (opera, radio, tv, masterclass, dagvoorzitter)
   // en de gasten van haar podcast A Kross, in NL en BE (en de VS voor opera en Masked Singer).
