@@ -59,6 +59,20 @@ const OW_BEDRIJF = [
   ['koper', /te koop|for sale|kopen|overnemen|kaufen|zu verkaufen|buy|buying|acquisition|acquire/],
   ['verkoper', /verkopen|verkaufen|sell|selling|verkoop|verkauf/],
 ];
+// KDP-boeken (16 nov 2026): onderwerpen per boekgids.
+const OW_KDP = [
+  ['adventskalender', /adventskalender|advent calendar/],
+  ['grillboek', /pit boss|pellet|traeger|smoker|griddle|blackstone/],
+  ['slowcooker', /crock pot|slow cooker/],
+  ['bijbel', /apocrypha|enoch|bible/],
+  ['puzzel', /word search|wordsearch/],
+  ['gewoonte', /habit|lasting change/],
+  ['munten', /coin/],
+  ['tieners', /teen|tween|boys|girls/],
+  ['white elephant en wichtel', /white elephant|secret santa|wichtel/],
+  ['feitenboek', /fact|trivia|bathroom reader|unnützes wissen/],
+  ['stocking stuffers', /stocking stuffer/],
+];
 // Executives (15 nov 2026, Henkjan: "doe zelfde diepte-analyse zodat we ook meerdere ingangen kunnen maken, te vinden op SEO en LLM"):
 // wie discreet een volgende stap zoekt: headhunters, topvacatures, interim, toezicht/board, salaris, outplacement, platforms.
 const OW_EXEC = [
@@ -103,6 +117,11 @@ export const THEMA = {
   'korsou-reizen': { naam: 'Reizen van en naar Kòrsou per bestemming', markten: ['NL', 'CO', 'DO', 'BR', 'US', 'PA', 'SR'], max: 0.6,
     ow: [['medellin', /medell/], ['bogota', /bogot/], ['barranquilla', /barranq/], ['cartagena en santa marta', /cartagena|santa marta/], ['dominicaanse republiek', /santo domingo|punta cana|dominican|dominicana/], ['suriname', /surinam|paramaribo/], ['brazilie', /brasil|brazil|belo horizonte/], ['panama', /panam/], ['aruba', /aruba/], ['bonaire', /bonaire/], ['venezuela', /venezuel|caracas|maracaibo/], ['miami', /miami/], ['vanaf curacao', /desde|from|vanaf|van |saindo|ab /]],
     regex: '(cura[cç]ao|curazao|korsou|willemstad).*(medell|bogot|barranq|cartagena|santa marta|santo domingo|punta cana|dominican|dominicana|suriname|surinam|paramaribo|belo horizonte|brasil|brazil|panam|aruba|bonaire|venezuel|caracas|maracaibo|miami)|(medell|bogot|barranq|cartagena|santa marta|santo domingo|punta cana|dominican|dominicana|suriname|surinam|paramaribo|belo horizonte|brasil|brazil|panam|aruba|bonaire|venezuel|caracas|maracaibo|miami).*(cura[cç]ao|curazao|korsou|willemstad)|(desde|from|vanaf|saindo de) (cura[cç]ao|curazao|korsou|willemstad)' },
+  // Eigen KDP-boeken als cadeau (16 nov 2026, Henkjan: "Onderzoek met de demandradar of we kunnen scoren met google en LLM met de keuzehulpen
+  // voor boeken"): de zoekvragen achter de boekgidsen op whichtobuy.best en kaufberater.best, plus wie er bovenaan staat (serp).
+  'kdp-boeken': { naam: 'Boeken als cadeau (eigen KDP-boeken)', markten: ['US', 'CA', 'GB', 'DE'], max: 0.6, ow: OW_KDP,
+    serp: { US: ['stocking stuffers for teens', 'fun facts book for adults', 'pit boss cookbook', 'apocrypha book', 'white elephant gifts for men'], DE: ['adventskalender für männer'] },
+    regex: '(stocking stuffer|white elephant|secret santa|fun fact|facts book|trivia book|bathroom reader|gifts for teen|gift for teen|teen boy gift|adventskalender für männer|adventskalender männer|adventskalender mann|advent calendar for men|unnützes wissen|wichtelgeschenk|pit boss|pellet grill cookbook|pellet smoker|traeger cookbook|smoker cookbook|griddle cookbook|blackstone cookbook|crock pot cookbook|slow cooker cookbook|apocrypha|book of enoch|bible color|bible coloring|large print word search|word search large print|habit tracker|lasting change|coin collecting book)' },
   curacao: { naam: 'Curaçao', regex: '(cura[cç]ao|curazao|kòrsou|korsou|willemstad)', markten: ['US', 'NL', 'DE', 'CA', 'CO', 'BR'] },
   'kadoly-wonen': { naam: 'Kadoly wonen', markten: KADOLY_MARKT, ow: OW_KADOLY,
     regex: '(vaas|vazen|bloempot|plantenpot|sierpot|plantenbak|plantenstandaard|plantenrek|plantentafel|kunstplant|kunstbloem|orchidee|muurcirkel|wandcirkel|wanddecoratie|muurdecoratie|wandkleed|tuinposter|muursticker|tafellamp|hanglamp|leeslamp|oplaadbare lamp|lantaarn|windlicht|kandelaar|geurkaars|windgong|windspinner|bijzettafel|dienblad|plaid|sierkussen|wasmand|opbergmand|rieten mand|diffuser|geurstokjes|tuindecoratie|tuinbeeld)' },
