@@ -314,3 +314,63 @@ geblokkeerd vanaf de server.
 Surgery-keuzemenu en schone vraagdata (15 november 2026)
 
 Het bestaande thema plastische-chirurgie ondersteunt nu ook ooglaseren, lenzen, staar, tandheelkunde en aanvullende keuze-ingrepen. Versie 3 koopt pas vanaf 16 november, binnen dezelfde thema- en dagrem; geen force refresh. De bestaande cache wordt bij lezen met de strikte ingreep-regex gefilterd en opnieuw ingedeeld. quality meldt bronversie, verwijderde termen en ontbrekende dekking. Ontbrekend volume is onbekend, geen nul. Keywordvolumes zijn overlappende zoekschattingen, geen unieke personen. todayin surgery koppelt alleen ingrepen met aantoonbare aanbiedersbronnen aan publieke dossiers; dunne selecties worden niet geïndexeerd.
+
+## 8. PLAN 16 nov 2026: radar onafhankelijk van DataForSEO (Henkjan: "Ja", uitvoeren)
+
+Henkjan 16 nov: "Maak Radar extreem onafhankelijk van DataForSEO, ik vind ze duur" en daarna "Ja" op fase 1 plus de top 3 bronnen.
+Doel: DataForSEO van ± $45–60 per maand (plus uitzonderingen) naar ± $5 per maand, zonder slechter te voorspellen. Regel blijft:
+een gratis bron vervangt een betaalde pas na een eerlijke toets (≥ 150 vergelijkingen, ≥ 70% dezelfde richting, zoals `### bingnow`).
+
+### Stand bij overdracht (16 nov, 12:30 UTC)
+- Gedaan: 692533f budget van de nachtelijke opbouw gereserveerd tot hij betaald heeft of 08:00 UTC (losse aankopen verdrongen de
+  opbouw op 15 en 16 nov; laatste geslaagde opbouw 14 nov). 0915af7 thema `fear-boek` (US, GB, DE) voor Henkjans KDP-boek over FEAR:
+  nog niet gekocht (dagbudget 16 nov op). Haal op na de opbouw van 17 nov: één keer `/api/zoekvraag?thema=fear-boek`, groep `ruis`
+  negeren, en geef Henkjan de grootste angsten per markt, stijgers, echte vragen en of de hook klopt (zie hieronder).
+- Assessment 16 nov (cijfers 1-10): voorspellen 7,5 (live okt: NL zei 89% kwam 88%, US 93%/89%, DE 89%/81%); onderzoek voor eigen
+  projecten 8; kwaliteit metingen 5 (plastische chirurgie v1 vervuild, te lange regex, te krappe themaplafonds → GB/CA/AU leeg);
+  betrouwbaarheid 4 (opbouw faalde, tegoed twee keer op, voorpagina zonder teksten sinds 4 nov); kosten 6; leren 4 (0 uitkomsten
+  uit kliks/feedback in 29 dagen, voorspellingsboek 0 nagekeken); product 1 (geen domein, Paddle niet live, 0 klanten);
+  veiligheid: oude teamsleutel staat in de geschiedenis van de openbare repo (taak 4).
+
+### Fase 1 (eerst, deze week): zelfde data, ± 70% goedkoper
+1. Maanddata één keer per maand: `DFS_CACHE_DAYS` standaard 5 → 35 (lib/dfs.js `cacheDays`); Google Ads-volumes en Labs-lijsten
+   veranderen maandelijks.
+2. Wachtrij in plaats van live voor alles wat niet direct hoeft (Google Ads search_volume via task_post/task_get, zoals Amazon in
+   lib/amazonsales.js): goedkoper per taak, tot 1.000 termen per taak.
+3. Zoekvraag-thema's (api/zoekvraag.js) zonder Labs top_searches ($0,30–0,90 per thema): termen verzamelen via gratis suggesties
+   (Google `https://suggestqueries.google.com/complete/search?client=firefox&hl=<taal>&gl=<cc>&q=<zaad + a..z>`, Bing
+   `https://api.bing.com/osjson.aspx?query=`, YouTube `client=firefox&ds=yt`), daarna één partij volumes (search_volume, ≤ 1.000
+   termen per taak). Eerst toetsen op een bestaand thema (curacao, al in opslag): hoeveel van de top-200 termen vindt de gratis route?
+4. Bedrijvenlijsten Curaçao (api/reviews op=listings/gmb, CW_LISTINGS_USD $3/dag, GMB_DAY_USD $2,50/dag) voor hjdk-api: eenmaal
+   compleet, daarna hooguit maandelijks verversen.
+5. Kasboek: `/api/probe?t=ledger&days=30` (teamsleutel) vóór en na, per proces; MyLevel-vraagradar (repo mylevel) gebruikt hetzelfde
+   DataForSEO-account.
+
+### Top 3 bronnen erbij (gratis)
+1. Eigen archief van zoeksuggesties: elke dag per land (NL, DE, US, later wereldwijd) de suggesties voor de kijklijst-zaden
+   (Google, Bing, YouTube) vastleggen in Blob `suggest/<cc>/<dag>.json`; nieuw verschenen suggestie = tip van bron `suggest` in het
+   voorspellingsboek (`### ledger`). Na 90 dagen eigen dagreeksen.
+2. Bing-zoekwoorden (Bing Webmaster API, sleutel `BING_WEBMASTER_KEY` staat al in Vercel): volumes per land per week; verhouding
+   Google/Bing per land en categorie leren op de termen die al beide hebben; daarna Google schatten uit Bing. Uitbreiding van `### bingnow`.
+3. Vraagmeter via Clickmind (hjdk-api): één vaste PropellerAds-campagne, $1–2 per dag, CPA 0,01, 8 advertenties met elk een
+   onderwerp per land; klikratio en gedrag op de landingspagina = vraagindex per onderwerp per land. Starten kost een slot: alleen
+   met Henkjans akkoord, binnen de budgetregels (campagne-skill). Eerst ijken tegen zoekvolumes.
+Daarna: Wikipedia-paginaweergaven (wereldwijd, elke taal, gratis), Companies House (VK, gratis sleutel van Henkjan) en CBS StatLine
+(oprichtingen per sector), crt.sh (nieuwe sites met trefwoord), merkaanvragen (USPTO/EUIPO), Apple Podcasts-hitlijsten, YouTube Data
+API, Ticketmaster (account Henkjan), Curaçao Tourist Board en luchthaven (bezoekers per land: ground truth voor Curaçao).
+Niet: vacatures, energie, Keepa-historie, VS als voorloper (getoetst, geen winst); Google Trends zelf uitlezen, Reddit en OpenSky
+commercieel (juridisch grijs); Amazon-bestsellers, Pinterest, TikTok, eBay/Etsy (geblokkeerd).
+
+### Fase 3: DataForSEO alleen als maandelijks ijkpunt
+Eén partij per maand (± $2–5) om de gratis schattingen bij te stellen en het voorspellingsboek na te kijken.
+
+### Voorspellingen Curaçao (16 nov, nakijken februari 2027; bron: thema curacao, opgeslagen 10 nov, okt 2025–sep 2026)
+1. Geen WK-halo voor reizen: VS-reistermen januari 2027 ± 11,3 mln (± 10%), niet hoger (juni 2026 was 31,7 mln door het WK).
+2. Nederland krimpt: januari 2027 ± 3,8 mln (jan 2026 4,6 mln, mediaan −18%); januari blijft boekpiek (vluchten 3× december).
+3. Canada groeit: hotelzoekopdrachten februari 2027 ± 14% boven februari 2026.
+4. Duitsland: december 2026 ± 1,0 mln (dec 2025 0,93 mln).
+5. Colombia piekt juni-juli (hotels juli), niet in de winter; Brazilië −19%.
+
+### Alleen Henkjan
+Teamsleutel vervangen (taak 4) · ANTHROPIC_API_KEY in Vercel voor de radarteksten · akkoord op de vraagmeter-campagne ·
+gratis sleutel Companies House · Ticketmaster-account · CZDS-aanvraag (.com-zonebestand) als we domeinregistraties willen.
