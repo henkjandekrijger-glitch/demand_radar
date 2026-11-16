@@ -267,7 +267,9 @@ Scripts in `tools/` (toetsen van bronnen en het model).
 
 - **DataForSEO** (7 nov, Henkjan: "zorg dat mn saldo daar niet zo snel opgaat"): alles samen hooguit `DFS_TOTAL_MAX` = $1,50 per
   UTC-dag (hele account, volgens de eigen teller van DataForSEO); daarbinnen de nachtelijke opbouw hooguit `DFS_BUILD_MAX` = $0,75
-  en al het andere hooguit `DFS_DAILY_MAX` = $1 (was $4 + $3). Twijfel over de teller = niet betalen. Zuinig: Google Trends-dagdata
+  en al het andere hooguit `DFS_DAILY_MAX` = $1 (was $4 + $3). Twijfel over de teller = niet betalen. Sinds 16 nov 2026 blijft het
+  budget van de opbouw (`DFS_BUILD_MAX`) gereserveerd tot de opbouw van die dag betaald heeft of tot 08:00 UTC, zodat losse aankopen
+  (zoekvraag-thema's, checks) vóór 04:00 UTC de nachtelijke opbouw niet meer kunnen verdringen (gebeurde 15 en 16 nov). Zuinig: Google Trends-dagdata
   in de opbouw alleen voor de bovenste 4 groepen per land (`NOW_GOOGLE_CHUNKS`, rest goedkopere DataForSEO Trends), wachtlijst van
   de vroege signalen pas na 3 dagen of bij 900+ termen, verse maanddata in stukken van $0,45 per dag. Kasboek per proces:
   `dfs/ledger/<dag>/<proces>.json`.
