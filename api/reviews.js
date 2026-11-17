@@ -76,6 +76,31 @@ export default async function handler(req, res) {
     const items = (r0.items || []).filter(it => it.title && !(it.work_time && it.work_time.work_hours && /closed_forever|temporarily_closed/i.test(String(it.work_time.work_hours.current_status || '')))).map(it => ({ naam: it.title, cat: it.category || null, adres: it.address || null, plaats: it.address_info && it.address_info.city || null, pc: it.address_info && it.address_info.zip || null, tel: it.phone || null, site: it.url || null, cid: it.cid || null, lat: it.latitude, lng: it.longitude, score: it.rating && it.rating.value || null, aantal: it.rating && it.rating.votes_count || 0, uren: tt(it.work_time), claimed: it.is_claimed ?? null }));
     const uit = { t: Date.now(), plaats: pl, cat, total: r0.total_count ?? items.length, items, spent: b.spent }; await putJSON(store, pad, uit); return res.status(200).json(uit);
   }
+  if (op === 'zaakserp') { // Reviewscores en vermeldingen van één zaak buiten Google Maps (Trustpilot, Zorgkaart, Werkspot, Klantenvertellen, Treatwell, Facebook; Reddit, fora, nieuws) uit één Google-zoekopdracht "<naam> <plaats> reviews" (DataForSEO SERP, ca. $0,002). Voor de gebalanceerde score van de dienstengidsen op keuzehulp.best. 30 dagen bewaard; max ZAAKSERP_DAG_MAX (200) nieuwe per dag, binnen de DFS-dagrem.
+    const naam = q, plaats = String(req.query.plaats || 'Rotterdam').slice(0, 40), eigen = String(req.query.site || '').toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, '');
+    if (naam.length < 2 || !MKT[m]) return res.status(400).json({ error: 'q en m nodig' });
+    const store = getStore(); if (!store) return res.status(503).json({ error: 'geen opslag' });
+    const pad = `zaakserp/${keyOf('zs', naam + '|' + plaats, m)}.json`; const oud = await getJSON(store, pad).catch(() => null);
+    if (oud && Date.now() - oud.t < 30 * 864e5) return res.status(200).json(oud);
+    if (!dfsReady()) return res.status(oud ? 200 : 503).json(oud || { error: 'DataForSEO not configured' });
+    const dp = `zaakserp/dag-${today()}.json`; const dag = (await getJSON(store, dp).catch(() => null)) || { n: 0 }; if (dag.n >= +(process.env.ZAAKSERP_DAG_MAX || 200) || !(await underCap(0.05))) return res.status(200).json(oud || { later: true });
+    const { call } = await import('../lib/dfs.js'); const b = budget(0.03);
+    const r = await call('serp/google/organic/live/regular', { keyword: `"${naam.replace(/"/g, '')}" ${plaats} reviews`, location_code: MKT[m].loc, language_code: MKT[m].lang, depth: 10 }, b); dag.n++; await putJSON(store, dp, dag).catch(() => {});
+    const items = ((r && r[0] && r[0].items) || []).filter(i => i.type === 'organic'); if (!r) return res.status(200).json(oud || { fout: b.errors.slice(0, 3) });
+    const BRON = [[/trustpilot\./, 'Trustpilot'], [/zorgkaartnederland\.nl/, 'Zorgkaart Nederland'], [/werkspot\.nl/, 'Werkspot'], [/klantenvertellen\.nl/, 'Klantenvertellen'], [/kiyoh\./, 'Kiyoh'], [/treatwell\./, 'Treatwell'], [/salonized\./, 'Salonized'], [/facebook\.com/, 'Facebook'], [/yelp\./, 'Yelp'], [/independer\.nl/, 'Independer'], [/homedeal\.nl/, 'Homedeal'], [/tripadvisor\./, 'Tripadvisor']];
+    const FORUM = /reddit\.com|forum|viva\.nl|zorgkaartnederland\.nl\/.*\/waardering|tweakers\.net|startpagina/; const NIEUWS = /(^|\.)(ad\.nl|rijnmond\.nl|nos\.nl|nu\.nl|telegraaf\.nl|parool\.nl|volkskrant\.nl|nrc\.nl|rtl\.nl|rtlnieuws\.nl|dewereldmorgen\.be|indebuurt\.nl|vers-beton\.nl|opengemeente|consumentenbond\.nl|radar\.avrotros\.nl)$/;
+    const NEG = /oplicht|slecht|klacht|nooit meer|afgezet|waarschuw|boos|drama|ellende|scam|rip.?off|frustrat|teleurgesteld|onbeschoft/i, POS = /aanrader|aan te raden|top|tevreden|fantastisch|super|uitstekend|vriendelijk|geweldig|perfect|blij mee|recommend/i;
+    const bronnen = [], vermeld = [], gezien = new Set();
+    for (const it of items) {
+      const dom = String(it.domain || '').toLowerCase().replace(/^www\./, ''); if (!dom || (eigen && dom.endsWith(eigen))) continue;
+      const rt = it.rating; const bn = (BRON.find(([re]) => re.test(dom)) || [])[1];
+      if (rt && rt.value != null && (rt.votes_count || 0) > 0 && !gezien.has(bn || dom)) { gezien.add(bn || dom); bronnen.push({ bron: bn || dom, score: +rt.value, max: +(rt.rating_max || 5), aantal: rt.votes_count, url: it.url }); continue; }
+      const soort = FORUM.test(dom) ? 'forum' : NIEUWS.test(dom) ? 'artikel' : null; if (!soort) continue;
+      const tekst = (it.title || '') + ' ' + (it.description || ''); if (!tekst.toLowerCase().includes(naam.toLowerCase().split(/\s+/)[0])) continue;
+      vermeld.push({ soort, bron: dom, titel: String(it.title || '').slice(0, 140), url: it.url, toon: NEG.test(tekst) ? 'neg' : POS.test(tekst) ? 'pos' : 'neutraal' });
+    }
+    const uit = { t: Date.now(), q: naam, plaats, bronnen, vermeld: vermeld.slice(0, 6), spent: b.spent }; await putJSON(store, pad, uit); return res.status(200).json(uit);
+  }
   if (op === 'catagg') { // Aantal bedrijven per soort in een vaste plaats (Google Business Listings categories_aggregation, ca. $0,01-0,05 per plaats), voor vergelijken welke soorten bedrijven ergens ontbreken. Bewaard in blob; opnieuw ophalen hooguit eens per 30 dagen, max 6 verzoeken per dag.
     const PL = { cw: '12.185,-68.98,38', rotterdam: '51.9225,4.47917,10', amsterdam: '52.3676,4.9041,10', aruba: '12.52,-69.97,25' };
     const pl = String(req.query.plaats || ''); if (!PL[pl]) return res.status(400).json({ error: 'onbekende plaats', plaatsen: Object.keys(PL) });
