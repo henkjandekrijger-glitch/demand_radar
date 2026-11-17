@@ -96,7 +96,8 @@ export default async function handler(req, res) {
     const norm = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
     const ALG = new Set(['tandarts', 'tandartsen', 'tandartspraktijk', 'praktijk', 'mondzorg', 'kapper', 'kapsalon', 'barber', 'barbershop', 'fysio', 'fysiotherapie', 'fysiotherapeut', 'loodgieter', 'elektricien', 'schilder', 'schildersbedrijf', 'verhuizer', 'verhuizingen', 'verhuisbedrijf', 'schoonmaak', 'schoonmaakbedrijf', 'garage', 'autobedrijf', 'slotenmaker', 'slotenservice', 'installatie', 'service', 'services', 'bv', 'b v', 'vof', 'en', 'de', 'het', 'van', 'the', 'and', plaats.toLowerCase(), 'zuid', 'noord', 'west', 'oost', 'centrum', 'nl']);
     const nv = norm(naam), kw2 = nv.split(' ').filter(w => w.length > 2 && !ALG.has(w));
-    const hoort = t => { const x = norm(t); if (nv && x.includes(nv)) return true; return kw2.length >= 2 ? kw2.filter(w => x.includes(w)).length >= 2 : false; };
+    const nv2 = norm(nv.replace(new RegExp('\\b' + norm(plaats) + '\\b', 'g'), ' '));
+    const hoort = t => { const x = norm(t); if (nv && x.includes(nv)) return true; if (nv2.length >= 6 && nv2.includes(' ') && x.includes(nv2)) return true; return kw2.length >= 2 ? kw2.filter(w => x.includes(w)).length >= 2 : false; };
     const bronnen = [], vermeld = [], gezien = new Set();
     for (const it of items) {
       const dom = String((/google\.com$/i.test(it.domain || '') && it.breadcrumb ? String(it.breadcrumb).replace(/^https?:\/\//, '').split(/\s|›/)[0] : it.domain) || '').toLowerCase().replace(/^www\./, ''); if (!dom || (eigen && dom.endsWith(eigen))) continue;
