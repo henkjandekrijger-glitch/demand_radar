@@ -80,13 +80,15 @@ export default async function handler(req, res) {
     const naam = q, plaats = String(req.query.plaats || 'Rotterdam').slice(0, 40), eigen = String(req.query.site || '').toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, '');
     if (naam.length < 2 || !MKT[m]) return res.status(400).json({ error: 'q en m nodig' });
     const store = getStore(); if (!store) return res.status(503).json({ error: 'geen opslag' });
-    const pad = `zaakserp/${keyOf('zs', naam + '|' + plaats, m)}.json`; const oud = await getJSON(store, pad).catch(() => null);
-    if (oud && Date.now() - oud.t < 30 * 864e5) return res.status(200).json(oud);
+    const pad = `zaakserp/${keyOf('zs2', naam + '|' + plaats, m)}.json`; const oud = await getJSON(store, pad).catch(() => null);
+    if (oud && Date.now() - oud.t < 30 * 864e5 && req.query.ruw !== '1') return res.status(200).json(oud);
     if (!dfsReady()) return res.status(oud ? 200 : 503).json(oud || { error: 'DataForSEO not configured' });
     const dp = `zaakserp/dag-${today()}.json`; const dag = (await getJSON(store, dp).catch(() => null)) || { n: 0 }; if (dag.n >= +(process.env.ZAAKSERP_DAG_MAX || 200) || !(await underCap(0.05))) return res.status(200).json(oud || { later: true });
     const { call } = await import('../lib/dfs.js'); const b = budget(0.03);
-    const r = await call('serp/google/organic/live/regular', { keyword: `"${naam.replace(/"/g, '')}" ${plaats} reviews`, location_code: MKT[m].loc, language_code: MKT[m].lang, depth: 10 }, b); dag.n++; await putJSON(store, dp, dag).catch(() => {});
+    const kw = (new RegExp(plaats, 'i').test(naam) ? naam : naam + ' ' + plaats).replace(/["|]/g, ' ') + ' reviews';
+    const r = await call('serp/google/organic/live/advanced', { keyword: kw, location_code: MKT[m].loc, language_code: MKT[m].lang, depth: 10 }, b); dag.n++; await putJSON(store, dp, dag).catch(() => {});
     const items = ((r && r[0] && r[0].items) || []).filter(i => i.type === 'organic'); if (!r) return res.status(200).json(oud || { fout: b.errors.slice(0, 3) });
+    if (req.query.ruw === '1') return res.status(200).json({ kw, n: items.length, items: items.map(i => ({ dom: i.domain, titel: String(i.title || '').slice(0, 80), rating: i.rating || null })), spent: b.spent });
     const BRON = [[/trustpilot\./, 'Trustpilot'], [/zorgkaartnederland\.nl/, 'Zorgkaart Nederland'], [/werkspot\.nl/, 'Werkspot'], [/klantenvertellen\.nl/, 'Klantenvertellen'], [/kiyoh\./, 'Kiyoh'], [/treatwell\./, 'Treatwell'], [/salonized\./, 'Salonized'], [/facebook\.com/, 'Facebook'], [/yelp\./, 'Yelp'], [/independer\.nl/, 'Independer'], [/homedeal\.nl/, 'Homedeal'], [/tripadvisor\./, 'Tripadvisor']];
     const FORUM = /reddit\.com|forum|viva\.nl|zorgkaartnederland\.nl\/.*\/waardering|tweakers\.net|startpagina/; const NIEUWS = /(^|\.)(ad\.nl|rijnmond\.nl|nos\.nl|nu\.nl|telegraaf\.nl|parool\.nl|volkskrant\.nl|nrc\.nl|rtl\.nl|rtlnieuws\.nl|dewereldmorgen\.be|indebuurt\.nl|vers-beton\.nl|opengemeente|consumentenbond\.nl|radar\.avrotros\.nl)$/;
     const NEG = /oplicht|slecht|klacht|nooit meer|afgezet|waarschuw|boos|drama|ellende|scam|rip.?off|frustrat|teleurgesteld|onbeschoft/i, POS = /aanrader|aan te raden|top|tevreden|fantastisch|super|uitstekend|vriendelijk|geweldig|perfect|blij mee|recommend/i;
