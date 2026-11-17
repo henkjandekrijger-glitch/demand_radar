@@ -80,7 +80,7 @@ export default async function handler(req, res) {
     const naam = q, plaats = String(req.query.plaats || 'Rotterdam').slice(0, 40), eigen = String(req.query.site || '').toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, '');
     if (naam.length < 2 || !MKT[m]) return res.status(400).json({ error: 'q en m nodig' });
     const store = getStore(); if (!store) return res.status(503).json({ error: 'geen opslag' });
-    const pad = `zaakserp/${keyOf('zs3', naam + '|' + plaats, m)}.json`; const oud = await getJSON(store, pad).catch(() => null);
+    const pad = `zaakserp/${keyOf('zs4', naam + '|' + plaats, m)}.json`; const oud = await getJSON(store, pad).catch(() => null);
     if (oud && Date.now() - oud.t < 30 * 864e5 && req.query.ruw !== '1') return res.status(200).json(oud);
     if (!dfsReady()) return res.status(oud ? 200 : 503).json(oud || { error: 'DataForSEO not configured' });
     const dp = `zaakserp/dag-${today()}.json`; const dag = (await getJSON(store, dp).catch(() => null)) || { n: 0 }; if (dag.n >= +(process.env.ZAAKSERP_DAG_MAX || 200) || !(await underCap(0.05))) return res.status(200).json(oud || { later: true });
@@ -92,13 +92,19 @@ export default async function handler(req, res) {
     const BRON = [[/trustpilot\./, 'Trustpilot'], [/zorgkaartnederland\.nl/, 'Zorgkaart Nederland'], [/werkspot\.nl/, 'Werkspot'], [/klantenvertellen\.nl/, 'Klantenvertellen'], [/kiyoh\./, 'Kiyoh'], [/treatwell\./, 'Treatwell'], [/salonized\./, 'Salonized'], [/facebook\.com/, 'Facebook'], [/yelp\./, 'Yelp'], [/independer\.nl/, 'Independer'], [/homedeal\.nl/, 'Homedeal'], [/tripadvisor\./, 'Tripadvisor']];
     const FORUM = /reddit\.com|forum|viva\.nl|zorgkaartnederland\.nl\/.*\/waardering|tweakers\.net|startpagina/; const NIEUWS = /(^|\.)(ad\.nl|rijnmond\.nl|nos\.nl|nu\.nl|telegraaf\.nl|parool\.nl|volkskrant\.nl|nrc\.nl|rtl\.nl|rtlnieuws\.nl|dewereldmorgen\.be|indebuurt\.nl|vers-beton\.nl|opengemeente|consumentenbond\.nl|radar\.avrotros\.nl)$/;
     const NEG = /oplicht|slecht|klacht|nooit meer|afgezet|waarschuw|boos|drama|ellende|scam|rip.?off|frustrat|teleurgesteld|onbeschoft/i, POS = /aanrader|aan te raden|top|tevreden|fantastisch|super|uitstekend|vriendelijk|geweldig|perfect|blij mee|recommend/i;
+    // hoort dit resultaat bij déze zaak? De hele naam, of minstens twee kenmerkende woorden (geen soortwoorden of de plaats): een straatnaam alleen is niet genoeg
+    const norm = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+    const ALG = new Set(['tandarts', 'tandartsen', 'tandartspraktijk', 'praktijk', 'mondzorg', 'kapper', 'kapsalon', 'barber', 'barbershop', 'fysio', 'fysiotherapie', 'fysiotherapeut', 'loodgieter', 'elektricien', 'schilder', 'schildersbedrijf', 'verhuizer', 'verhuizingen', 'verhuisbedrijf', 'schoonmaak', 'schoonmaakbedrijf', 'garage', 'autobedrijf', 'slotenmaker', 'slotenservice', 'installatie', 'service', 'services', 'bv', 'b v', 'vof', 'en', 'de', 'het', 'van', 'the', 'and', plaats.toLowerCase(), 'zuid', 'noord', 'west', 'oost', 'centrum', 'nl']);
+    const nv = norm(naam), kw2 = nv.split(' ').filter(w => w.length > 2 && !ALG.has(w));
+    const hoort = t => { const x = norm(t); if (nv && x.includes(nv)) return true; return kw2.length >= 2 ? kw2.filter(w => x.includes(w)).length >= 2 : false; };
     const bronnen = [], vermeld = [], gezien = new Set();
     for (const it of items) {
       const dom = String((/google\.com$/i.test(it.domain || '') && it.breadcrumb ? String(it.breadcrumb).replace(/^https?:\/\//, '').split(/\s|›/)[0] : it.domain) || '').toLowerCase().replace(/^www\./, ''); if (!dom || (eigen && dom.endsWith(eigen))) continue;
       const rt = it.rating; const bn = (BRON.find(([re]) => re.test(dom)) || [])[1];
-      if (rt && rt.value != null && (rt.votes_count || 0) > 0 && !gezien.has(bn || dom)) { gezien.add(bn || dom); bronnen.push({ bron: bn || dom, score: +rt.value, max: +(rt.rating_max || 5), aantal: rt.votes_count, url: it.url }); continue; }
+      const tekst0 = (it.title || '') + ' ' + (it.description || ''); if (!hoort(tekst0)) continue;
+      if (rt && rt.value != null && (rt.votes_count || 0) > 0 && !gezien.has(bn || dom)) { gezien.add(bn || dom); bronnen.push({ bron: bn || dom, score: +rt.value, max: +(rt.rating_max || 5), aantal: rt.votes_count, url: /google\.com\/goto/.test(it.url || '') ? null : it.url }); continue; }
       const soort = bn ? 'review' : FORUM.test(dom) ? 'forum' : NIEUWS.test(dom) ? 'artikel' : null; if (!soort || gezien.has('v:' + dom + (it.title || ''))) continue; gezien.add('v:' + dom + (it.title || ''));
-      const tekst = (it.title || '') + ' ' + (it.description || ''); if (!tekst.toLowerCase().includes(naam.toLowerCase().split(/\s+/)[0])) continue;
+      const tekst = tekst0;
       vermeld.push({ soort, bron: bn || dom, titel: String(it.title || '').slice(0, 140), url: /google\.com\/goto/.test(it.url || '') ? null : it.url, toon: NEG.test(tekst) ? 'neg' : POS.test(tekst) ? 'pos' : 'neutraal' });
     }
     const uit = { t: Date.now(), q: naam, plaats, bronnen, vermeld: vermeld.slice(0, 6), spent: b.spent }; await putJSON(store, pad, uit); return res.status(200).json(uit);
