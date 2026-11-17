@@ -61,6 +61,21 @@ export default async function handler(req, res) {
     await putJSON(store, stPath, st); await putJSON(store, 'cw/listings/lock.json', { t: 0 }).catch(() => {});
     return res.status(200).json({ state: st, opgehaald: items.length, spent: b.spent });
   }
+  if (op === 'plaatscat') { // Alle bedrijven van één Google-soort in een plaats (Business Listings, $0,01 per verzoek + $0,0003 per bedrijf), met score en aantal reviews. Voor de dienstengidsen op keuzehulp.best (Rotterdam, 17 nov 2026). Bewaard in blob 30 dagen; max 14 nieuwe verzoeken per dag, binnen de DFS-dagrem.
+    const PL = { rotterdam: '51.9225,4.47917,11' }; const pl = String(req.query.plaats || ''), cat = String(req.query.cat || '').replace(/[^a-z_]/g, '').slice(0, 60);
+    if (!PL[pl] || !cat) return res.status(400).json({ error: 'plaats en cat nodig', plaatsen: Object.keys(PL) });
+    const store = getStore(); if (!store) return res.status(503).json({ error: 'geen opslag' });
+    const pad = `plaats/${pl}/${cat}.json`; const oud = await getJSON(store, pad).catch(() => null);
+    if (oud && Date.now() - oud.t < 30 * 864e5) return res.status(200).json(oud);
+    if (!dfsReady()) return res.status(oud ? 200 : 503).json(oud || { error: 'DataForSEO not configured' });
+    const dp = `plaats/dag-${today()}.json`; const dag = (await getJSON(store, dp).catch(() => null)) || { n: 0 }; if (dag.n >= 14 || !(await underCap(0.35))) return res.status(200).json(oud || { later: true });
+    const { call } = await import('../lib/dfs.js'); const b = budget(0.4);
+    const r = await call('business_data/business_listings/search/live', { categories: [cat], location_coordinate: PL[pl], limit: 1000, order_by: ['rating.votes_count,desc'] }, b); const r0 = (r || [])[0]; dag.n++; await putJSON(store, dp, dag).catch(() => {});
+    if (!r0) return res.status(200).json(oud || { fout: b.errors.slice(0, 3), spent: b.spent });
+    const tt = w => { const t = w && w.work_hours && w.work_hours.timetable; return t ? Object.fromEntries(Object.entries(t).map(([d, a]) => [d.slice(0, 3), (a || []).map(x => [x.open, x.close].map(z => z ? String(z.hour).padStart(2, '0') + ':' + String(z.minute).padStart(2, '0') : '').join('-')).join(', ')])) : null; };
+    const items = (r0.items || []).filter(it => it.title && !(it.work_time && it.work_time.work_hours && /closed_forever|temporarily_closed/i.test(String(it.work_time.work_hours.current_status || '')))).map(it => ({ naam: it.title, cat: it.category || null, adres: it.address || null, plaats: it.address_info && it.address_info.city || null, pc: it.address_info && it.address_info.zip || null, tel: it.phone || null, site: it.url || null, cid: it.cid || null, lat: it.latitude, lng: it.longitude, score: it.rating && it.rating.value || null, aantal: it.rating && it.rating.votes_count || 0, uren: tt(it.work_time), claimed: it.is_claimed ?? null }));
+    const uit = { t: Date.now(), plaats: pl, cat, total: r0.total_count ?? items.length, items, spent: b.spent }; await putJSON(store, pad, uit); return res.status(200).json(uit);
+  }
   if (op === 'catagg') { // Aantal bedrijven per soort in een vaste plaats (Google Business Listings categories_aggregation, ca. $0,01-0,05 per plaats), voor vergelijken welke soorten bedrijven ergens ontbreken. Bewaard in blob; opnieuw ophalen hooguit eens per 30 dagen, max 6 verzoeken per dag.
     const PL = { cw: '12.185,-68.98,38', rotterdam: '51.9225,4.47917,10', amsterdam: '52.3676,4.9041,10', aruba: '12.52,-69.97,25' };
     const pl = String(req.query.plaats || ''); if (!PL[pl]) return res.status(400).json({ error: 'onbekende plaats', plaatsen: Object.keys(PL) });
