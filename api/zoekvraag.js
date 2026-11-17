@@ -111,9 +111,27 @@ const OW_STIL = [
   ['herstructurering', /doorstart|herstructur|whoa|akkoord|restruktur|turnaround|restructuring/],
   ['luxe bezit', /horloge|rolex|patek|kunst|schilderij|klassieker|oldtimer|jacht|boot|uhr|gemälde|yacht|watch|art|painting|classic car|boat/],
 ];
+// AI-keuzehulp op nexy.help (Henkjan 17 nov 2026: "Maak daar een zeer uitgebreide keuzehulp van over AI . En daarin alles Nexy usecases meenemen
+// maar alle vragen daarom trent gewoon beantwoorden je krijgt data for SEO budget bij deze" en "nexy help gaat op in de keuzehulpen").
+const OW_AI = [
+  ['assistenten', /chatgpt|chat gpt|claude|gemini|copilot|perplexity|grok|deepseek|mistral|le chat|meta ai|llama|pi ai/],
+  ['schrijven', /writ|essay|paraphras|rewrite|grammar|humaniz|detector|text|copy|schrijf|tekst/],
+  ['beeld en video', /image|picture|photo|art|video|logo|avatar|midjourney|dall|sora|veo|beeld|foto/],
+  ['stem en bellen', /voice|call|phone|receptionist|speech|audio|podcast|stem|bellen|telefoon/],
+  ['vergaderen en notities', /meeting|note|transcri|summar|record|notul|samenvat/],
+  ['plannen en reminders', /schedul|calendar|remind|plann|agenda|assistant for|personal assistant|herinner/],
+  ['mail en berichten', /email|e-mail|inbox|whatsapp|message|text message|reply|mail/],
+  ['studie en werk', /study|homework|student|school|resume|cv|job|interview|work|huiswerk|sollicit/],
+  ['code', /code|coding|program|developer|python|cursor|github/],
+  ['bedrijf', /business|small business|marketing|seo|sales|customer|bedrijf|klant/],
+  ['prijs en gratis', /free|price|pricing|cost|subscription|plus|pro|gratis|kosten|abonnement/],
+  ['vergelijken', / vs |versus|best|compare|alternative|beste|vergelijk|alternatief/],
+  ['veiligheid en privacy', /safe|privacy|private|secure|data|detect|veilig/],
+];
 export const THEMA = {
   // Zorgverzekering heel Nederland (Henkjan 17 nov 2026: "zorgverzekeringen helemaal compleet maakt voor Nederland ... alle hoeken en gaten gaan coveren via demand radar")
   zorgverzekering: { naam: 'Zorgverzekering Nederland', markten: ['NL'], max: 2.5, v: 2, regex: '(zorgverzekering|zorgpolis|zorgpremie|basisverzekering|aanvullende verzekering|aanvullend pakket|eigen risico|tandartsverzekering|tandarts verzekering|zorgtoeslag|naturapolis|restitutiepolis|budgetpolis|overstappen zorg|zilveren kruis|vgz|menzis|dsw zorg|ditzo|anderzorg|fbto|ohra zorg|interpolis zorg|univé zorg|unive zorg|zekur|stad holland|onvz|ikzorg|just zorg|promovendum|pnoozorg|zorg en zekerheid|salland zorg|hollandzorg|izz zorg|iza zorg|bewuzt|de friesland zorg|jaaah|cz zorg|cz verzekering|ziektekosten)', ow: [['basis en premie', /premie|basisverzekering|goedkoopste|vergelijk|2027|2026/], ['eigen risico', /eigen risico/], ['tandarts', /tandarts|gebit|orthodont|beugel/], ['fysio', /fysio|oefentherap|chiropract|osteopa/], ['bril en lenzen', /bril|lens/], ['zorgtoeslag', /zorgtoeslag|toeslag/], ['overstappen', /overstap|opzeggen|wisselen/], ['polisvorm', /natura|restitutie|budget|combinatie/], ['buitenland', /buitenland|reis|expat|werelddekking/], ['doelgroep', /student|zzp|kind|zwanger|65|pensioen|chronisch|werkgever|collectief/], ['verzekeraar', /zilveren|vgz|menzis|dsw|ditzo|anderzorg|fbto|ohra|interpolis|univ|zekur|stad holland|onvz|ikzorg|just|promovendum|pnoozorg|zorg en zekerheid|salland|hollandzorg|bewuzt|friesland|jaaah|\bcz\b/]] },
+  'ai-keuze': { naam: 'AI kiezen en gebruiken (nexy.help)', markten: ['US', 'GB', 'NL'], max: 2.5, ow: OW_AI, regex: '(chatgpt|chat gpt|claude ai|gemini|copilot|perplexity|grok|deepseek|le chat|meta ai|ai assistant|ai assistent|ai agent|chatbot|best ai|free ai|gratis ai|beste ai|ai app|ai tool|ai generator|ai for |ai to |ai that |ai voor |ai receptionist|ai note|ai meeting|ai email|ai writer|ai voice|ai phone|ai schedul|ai calendar|ai reminder|ai whatsapp|whatsapp ai|artificial intelligence|kunstmatige intelligentie)' },
   verzekeringen: { naam: 'Verzekeringen Nederland', markten: ['NL'], regex: '(verzekering|zorgpolis|zorgpremie|arbeidsongeschiktheid|overlijdensrisico|aov)', ow: [['zorg', /zorgverzekering|zorgpolis|zorgpremie|basisverzekering|tandarts|eigen risico/], ['auto en motor', /auto|motor|bromfiets|scooter|camper|caravan/], ['wonen', /woon|inboedel|opstal|huiseigenaar/], ['reizen', /reis|annulering/], ['aansprakelijkheid en rechtsbijstand', /aansprakelijk|rechtsbijstand/], ['huisdieren', /huisdier|dieren|hond|kat/], ['fiets', /fiets|ebike|e-bike|fatbike/], ['inkomen en nabestaanden', /arbeidsongeschiktheid|aov|overlijdensrisico|uitvaart/], ['zakelijk', /zakelijk|bedrijf|zzp|beroep|cyber/]] },
   'plastische-chirurgie': { naam: 'Plastische chirurgie (waar ga je heen)', markten: ['NL', 'US', 'GB', 'DE', 'CA', 'AU'], ow: OW_PLASTISCH, max: 0.9,
     // v3 (15 nov 2026): ogen, lenzen, tandheelkunde en andere keuze-ingrepen toegevoegd. Cache direct schoon gefilterd zonder aankoop.

@@ -251,6 +251,8 @@ Sinds 16 nov 2026 ook fear-boek (US, GB, DE; plafond $0,45): angst, fobieën, mo
 
 Sinds 16 nov 2026 ook taniakross (NL, BE, US; plafond $0,60): Tania Kross en spellingvarianten, haar podcast A Kross en de gasten, opera en zang (mezzosopraan, operazangeres, masterclass, Podium Klassiek, Katibu di Shon), tv en radio, dagvoorzitter en Curaçaose cultuur; serp van vier NL-hoofdtermen. Voor het SEO- en AI-plan van taniakross.media.
 Nichescan (15 nov 2026): `/api/zoekvraag?niche=NL` (ook US, DE). Koop- en vergelijkvragen met een situatiewoord (voor, zonder, met, onder; for, without; für, ohne) uit DataForSEO top_searches, eens per 7 dagen, met keyword difficulty. Per aanroep hooguit 40 nieuwe top-10-controles (± $0,002 per zoekterm): hoeveel echte vergelijkpagina's er staan. Kans = vaste maandvraag x zwakte (1 = geen vergelijkpagina). Opslag `zoekvraag/niche-<cc>.json`, hooguit NICHE_MAX ($0,35) per aanroep binnen de dagrem. Voor hjdk-api: welke productkeuzehulpen weinig concurrentie hebben.
+Sinds 17 nov 2026 ook **zorgverzekering** (NL, plafond $2,50) voor keuzehulp.best/zorgverzekering en **ai-keuze** (US, GB, NL, plafond $2,50) voor de AI-keuzehulp op nexy.help (Henkjan 17 nov: "je krijgt data for SEO budget bij deze"; EXTRA op 17 nov naar $13,50).
+
 ### connector — gebruik vanuit andere chats
 `/api/mcp` (`/mcp?key=<teamsleutel>`): tools `check_demand`, `opportunity_map`, `demand_radar`, `report_outcome`,
 `handover`, `handover_note`, `live_signals`.
