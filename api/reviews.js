@@ -68,8 +68,8 @@ export default async function handler(req, res) {
     const pad = `plaats/${pl}/${cat}.json`; const oud = await getJSON(store, pad).catch(() => null);
     if (oud && Date.now() - oud.t < 30 * 864e5) return res.status(200).json(oud);
     if (!dfsReady()) return res.status(oud ? 200 : 503).json(oud || { error: 'DataForSEO not configured' });
-    const dp = `plaats/dag-${today()}.json`; const dag = (await getJSON(store, dp).catch(() => null)) || { n: 0 }; if (dag.n >= 14 || !(await underCap(0.35))) return res.status(200).json(oud || { later: true });
-    const { call } = await import('../lib/dfs.js'); const b = budget(0.4);
+    const dp = `plaats/dag-${today()}.json`; const dag = (await getJSON(store, dp).catch(() => null)) || { n: 0 }; if (dag.n >= 14 || !(await underCap(0.1))) return res.status(200).json(oud || { later: true });
+    const { call } = await import('../lib/dfs.js'); const b = budget(0.15);
     const r = await call('business_data/business_listings/search/live', { categories: [cat], location_coordinate: PL[pl], limit: 1000, order_by: ['rating.votes_count,desc'] }, b); const r0 = (r || [])[0]; dag.n++; await putJSON(store, dp, dag).catch(() => {});
     if (!r0) return res.status(200).json(oud || { fout: b.errors.slice(0, 3), spent: b.spent });
     const tt = w => { const t = w && w.work_hours && w.work_hours.timetable; return t ? Object.fromEntries(Object.entries(t).map(([d, a]) => [d.slice(0, 3), (a || []).map(x => [x.open, x.close].map(z => z ? String(z.hour).padStart(2, '0') + ':' + String(z.minute).padStart(2, '0') : '').join('-')).join(', ')])) : null; };
