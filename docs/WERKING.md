@@ -381,3 +381,5 @@ gratis sleutel Companies House · Ticketmaster-account · CZDS-aanvraag (.com-zo
 
 ### Sealed Intent vraagonderzoek (16 november 2026)
 Op expliciet verzoek: twee 7-daagse gecachete thema's in api/zoekvraag.js. sealed-beslismomenten meet NL/DE/US/GB/CA/AU (max $0,95); sealed-talen FR/ES/IT (max $0,55). De eenmalige extra dagruimte stijgt vandaag met $2; morgen vervalt die automatisch. API geeft aankoopkosten, bronfouten en ontbrekende markten terug. Dit zijn overlappende zoektermramingen, geen unieke mensen of volledige marktvraag. Geen herhaalde refresh of betaalde advertenties.
+
+Sinds 18 nov 2026 ook batterij (NL, DE, US; plafond $0,60): stekker- en balkonbatterij, thuisbatterij en batteriespeicher, powerbank, powerstation en solargenerator, met merken (EcoFlow, Jackery, Bluetti, Anker, Zendure, Marstek) en groepen kosten en vragen. Voor de batterij-keuzehulpen op keuzehulp.best, whichtobuy.best en kaufberater.best (Henkjan: "Check de battery keuzehulpen met demandradar en doe een totale update").
