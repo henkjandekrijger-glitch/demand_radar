@@ -141,6 +141,9 @@ export function demandText(d, view = 'now', country = 'ALL', n = 15) {
     const B = d.forecast && d.forecast.backtest;
     if (B) L.push(`Forecast method (learning model) tested on ${B.series} searches: ${B.rise.right10}% of predicted rises rose >10%, ${B.rise.right25}% rose >25%${B.rise.right40 ? `, ${B.rise.right40}% rose ≥40%` : ''}. Each row shows its own chance.`);
     (d.rise || []).filter(on).slice(0, n).forEach((x, i) => { const f = x.forecast; L.push(`${i + 1}. [${x.cc}] ${x.name}${x.keyword && x.keyword !== x.name ? ` (search: "${x.keyword}")` : ''} (${x.cat}) — ${x.what || ''} Now ${n0(f.from.v)}/month (${MN[f.from.m - 1]});${f.chance != null && f.peak ? ` ${f.chance}% chance of ≥40% more searches by ${MN[f.peak.m - 1]};` : ''} forecast ${f.months.map(m => `${MN[m.m - 1]} ${n0(m.v)}`).join(', ')}; last year ${f.lastYear.map(m => `${MN[m.m - 1]} ${n0(m.v)}`).join(', ')}${x.cpc != null ? `; $${x.cpc}/click` : ''}. Idea: ${x.idea || '-'}`); });
+  } else if (view === 'gaps') {
+    const LV = { open: 'AI names nobody', generic: 'AI names only big general stores', unclear: 'AI names several, no clear first choice', taken: 'AI has a clear first choice' };
+    (d.gaps || []).filter(on).slice(0, n).forEach((g, i) => L.push(`${i + 1}. [${g.cc}] ${g.name} (search: "${g.keyword}") — ${LV[g.level] || g.level}; ${n0(g.last)} searches/month. Asked (${g.model}, ${g.askedDay}): "${g.q}" Named: ${g.names && g.names.length ? g.names.join(', ') : 'nobody'}${g.pick ? `; first choice: ${g.pick}` : ''}.`));
   } else if (view === 'missing') {
     d.missing.filter(on).slice(0, n).forEach((m, i) => L.push(`${i + 1}. [${m.cc}] ${m.need} — ${m.exists === 'no' ? "doesn't exist yet" : 'only partly exists'}; ${m.volume ? `${n0(m.volume)} searches/month` : 'searches not measured'}. Gap: ${m.gap || '-'} Idea: ${m.idea || '-'} People typed: ${m.searches.map(s => `"${s.q}"`).join('; ')}`));
   } else if (view === 'coming') {

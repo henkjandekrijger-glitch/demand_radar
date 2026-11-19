@@ -168,6 +168,23 @@ Henkjan 4 nov: "Vul content gewoon aan met jouw tokens. Niet Vercel gateway!!". 
 - Dagelijks invullen: een geplande Claude-taak (± 06:20 UTC, na de nachtelijke opbouw) wacht op Henkjans akkoord; tot dan doet een chat het (4 nov: 136 onderwerpen, 11 stijgers, 6 trending, 5 events).
 Nog niet via Claude (staan stil zolang de gateway uit is): prijsoordelen Yoors/Kadoly, lanceringen, beleid, check-analist.
 
+### gaps — AI gaps: waar een AI-assistent geen goed antwoord heeft (19 nov 2026)
+`lib/aigaps.js`, `/api/gaps`, tegel "AI gaps" op de radar (`public/radar.js`, `withGaps` in `api/demand.js`; tekst:
+`/api/demand?view=gaps&format=text`). Henkjan 19 nov: "data in demand radar krijgen door LLMs zelf te bevragen en dan de gaps te
+vinden". Zelfde route als `### fill`, dus geen AI-aanroep vanaf Vercel en geen gateway:
+- `GET /api/gaps` (openbaar, alleen radargegevens): per land (NL, DE, US) de 30 grootste onderwerpen met een nette titel, elk als
+  koopvraag in de taal van het land met de echte zoekterm (`QUESTION`). Wat de laatste 7 dagen al gevraagd is komt niet opnieuw.
+- Claude stelt elke vraag aan een verse sessie (eigen kennis, geen webzoeken, hooguit 120 woorden) en legt per vraag vast: het
+  antwoord, alle genoemde namen, welke daarvan grote algemene winkels zijn, de eerste keus (of geen) en of het antwoord vooral
+  "het hangt ervan af" was. Opslaan als `gaps/<dag>.json` op tak `fill`, of POST naar `/api/gaps?key=…`. Eigenaar `?repo=1` haalt
+  het bestand nu op; de uurronde (`/api/warm`) doet dat anders binnen het uur (één keer per versie, `gaps/applied-<dag>.json`).
+- Oordeel, vooraf vastgelegd (`judge`): `open` = de AI noemt niemand; `generic` = alleen grote algemene winkels; `unclear` = wel
+  namen, geen eerste keus; `taken` = duidelijke eerste keus. Rangorde = gewicht (1 / 0,7 / 0,35 / 0,1) × log10 van het zoekvolume.
+- Opslag: `gaps/latest.json` (alles van de laatste 14 dagen, volumes bijgewerkt met de radar van vandaag), `gaps/<dag>.json`
+  (de ruwe antwoorden). `GET /api/gaps?latest=1` geeft de uitkomst.
+Grens: dit is één model (Claude) zonder webzoeken, niet wat gebruikers van ChatGPT of Gemini echt zien. Meer modellen kan via
+`lib/aishelf.js` (vier modellen bij een idee-check) zodra daar eigen sleutels voor zijn; dat staat nu uit (geen gateway).
+
 ### mine — mijn bedrijf
 `lib/mine.js`, `/api/mine`, `public/mine.*`. Website of één zin → profiel → 4 vragen → volgen op `/mine/<id>`. Dagelijks
 gematcht met alle voorspellingen (`mine/<id>/<dag>.json`). Eigenaar: naam wijzigen `?op=rename&id=…&name=…&key=…`.

@@ -20,11 +20,13 @@ export default async function handler(req, res) {
     let events = null; try { const { getEvents } = await import('../lib/events.js'), { getStore } = await import('../lib/store.js'), { radarToken } = await import('../lib/ai.js'); const ev = await getEvents(getStore(), { token: radarToken(req) }); events = { day: ev.day, items: (ev.items || []).length, errors: ev.errors || [] }; } catch (e) { events = { error: String(e.message || e).slice(0, 120) }; }
     // Teksten die Claude invulde (tak `fill`, fill/<dag>.json) toepassen; zonder Vercel AI Gateway
     let fill = null; try { const { fillFromRepo } = await import('../lib/claudefill.js'), { getStore } = await import('../lib/store.js'), { demandDay } = await import('../lib/data.js'); fill = await fillFromRepo(getStore(), demandDay()); } catch (e) { fill = { error: String(e.message || e).slice(0, 100) }; }
+    // AI gaps (tak `fill`, gaps/<dag>.json): antwoorden van de AI-assistent toepassen (lib/aigaps.js)
+    let gaps = null; try { const { gapsFromRepo } = await import('../lib/aigaps.js'), { getStore } = await import('../lib/store.js'), { demandDay } = await import('../lib/data.js'); gaps = await gapsFromRepo(getStore(), demandDay()); } catch (e) { gaps = { error: String(e.message || e).slice(0, 100) }; }
     // klein stand-bestand en hartslag voor de overdracht
     try { const { getDemand } = await import('../lib/data.js'), { getStore, putJSON } = await import('../lib/store.js'), { heartbeat } = await import('../lib/components.js'), st = getStore(), cur = await getDemand(req);
       if (st && cur && cur.day) await putJSON(st, 'demand/meta.json', { day: cur.day, generatedAt: cur.generatedAt || null, items: (cur.items || []).length, rise: (cur.rise || []).length });
-      await heartbeat(st, 'warm', { radar: d.generatedAt, night, events, fill }); } catch {}
-    res.status(200).json({ ok: true, radar: d.generatedAt, night, events, fill });
+      await heartbeat(st, 'warm', { radar: d.generatedAt, night, events, fill, gaps }); } catch {}
+    res.status(200).json({ ok: true, radar: d.generatedAt, night, events, fill, gaps });
   } catch (e) {
     res.status(200).json({ ok: false, error: String(e.message || e) });
   }

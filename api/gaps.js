@@ -1,0 +1,22 @@
+// /api/gaps — "AI gaps": wat een AI-assistent antwoordt op de koopvraag achter de grootste onderwerpen (lib/aigaps.js).
+// GET: de vragen die vandaag nog gesteld moeten worden, met instructie en formaat (openbaar, alleen radargegevens).
+// GET ?latest=1: de laatste uitkomst. POST (eigenaar, ?key=…): antwoorden meteen toepassen.
+// Eigenaar ?repo=1: gaps/<dag>.json van tak `fill` nu ophalen.
+import { getStore } from '../lib/store.js';
+import { isPro } from '../lib/access.js';
+import { pendingGaps, applyGaps, gapsFromRepo, latestGaps, presentGaps } from '../lib/aigaps.js';
+
+export default async function handler(req, res) {
+  const store = getStore(); if (!store) return res.status(503).json({ error: 'no storage' });
+  try {
+    if (req.method === 'POST') {
+      if (!isPro(req)) return res.status(403).json({ error: 'forbidden' });
+      let f = req.body; if (typeof f === 'string') { try { f = JSON.parse(f); } catch { return res.status(400).json({ error: 'bad json' }); } }
+      return res.status(200).json(await applyGaps(store, f));
+    }
+    res.setHeader('Cache-Control', 'no-store');
+    if (req.query.repo && isPro(req)) { const { demandDay } = await import('../lib/data.js'); return res.status(200).json(await gapsFromRepo(store, String(req.query.day || demandDay()))); }
+    if (req.query.latest) { const L = await latestGaps(store); return res.status(200).json(L ? { day: L.day, at: L.at, model: L.model, counts: L.counts, items: presentGaps(L) } : { items: [] }); }
+    res.status(200).json(await pendingGaps(store, { per: Math.max(5, Math.min(40, +req.query.per || 30)) }));
+  } catch (e) { res.status(500).json({ error: String(e.message || e).slice(0, 200) }); }
+}

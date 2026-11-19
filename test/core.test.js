@@ -592,3 +592,36 @@ test('DataForSEO-dagrem: de nachtelijke opbouw gaat voor, toplijsten en de rest 
   await d.ledger(ADS, 0.1); assert.equal(await d.underCap(0.1, ADS), false); assert.equal(await d.underCap(0.3, LIST), true); d.buildMode(false);
   await boek({});
 });
+
+test('AI gaps: vragen per land, oordeel per antwoord, niet opnieuw vragen binnen 7 dagen', async () => {
+  const { getStore, putJSON, getJSON } = await import('../lib/store.js'), store = getStore();
+  const G = await import('../lib/aigaps.js');
+  const keep = await getJSON(store, 'maps/demand.json', null).catch(() => null);
+  await putJSON(store, 'gaps/latest.json', { items: [] });
+  await putJSON(store, 'maps/demand.json', { day: '2026-11-19', ready: true, items: [
+    { id: 'NL:thuisbatterij', cc: 'NL', name: 'thuisbatterij', title: 'Home batteries', topic: 'home batteries', cat: 'products', last: 190000, period: '2026-10' },
+    { id: 'NL:thuis batterij', cc: 'NL', name: 'thuis batterij', title: 'Home batteries', topic: 'home batteries', cat: 'products', last: 90000 },
+    { id: 'NL:zonder titel', cc: 'NL', name: 'zonder titel', last: 999999 },
+    { id: 'DE:kaffee', cc: 'DE', name: 'kaffee', title: 'Coffee', topic: 'coffee', cat: 'products', last: 670000 },
+    { id: 'US:plumber', cc: 'US', name: 'plumber near me', title: 'Plumbers nearby', topic: 'plumbers', cat: 'services', last: 1800000 },
+    { id: 'US:weg', cc: 'US', name: 'old thing', title: 'Old thing', topic: 'old', last: 500, now: { status: 'gone' } }] });
+  const p = await G.pendingGaps(store, { now: '2026-11-19T12:00:00Z' });
+  assert.deepEqual(p.questions.map(q => q.id), ['NL:thuisbatterij', 'DE:kaffee', 'US:plumber']); // één per onderwerp, alleen met titel, niet wat voorbij is
+  assert.match(p.questions[0].q, /Ik zoek: thuisbatterij\./); assert.match(p.questions[1].q, /Ich suche: kaffee\./);
+  assert.equal(G.judge({ names: [] }).level, 'open');
+  assert.equal(G.judge({ names: ['Amazon', 'bol'], giants: ['amazon', 'Bol'], pick: 'Amazon' }).level, 'generic');
+  assert.equal(G.judge({ names: ['Zonneplan', 'Amazon'], giants: ['Amazon'] }).level, 'unclear');
+  assert.equal(G.judge({ names: ['Zonneplan', 'Amazon'], giants: ['Amazon'], pick: 'Zonneplan' }).pick, 'Zonneplan');
+  const r = await G.applyGaps(store, { day: '2026-11-19', model: 'Claude, no web search', answers: {
+    'NL:thuisbatterij': { answer: 'Dat hangt af van je dak en verbruik.', names: [], hedged: true },
+    'DE:kaffee': { answer: 'Tchibo oder Amazon.', names: ['Tchibo', 'Amazon'], giants: ['Amazon'], pick: 'Tchibo' },
+    'US:plumber': { answer: 'Try Angi or Yelp.', names: ['Amazon'], giants: ['Amazon'] }, 'XX:onbekend': { names: [] } } }, { now: '2026-11-19T12:00:00Z' });
+  assert.deepEqual([r.asked, r.open, r.generic, r.taken, r.unknown], [3, 1, 1, 1, 1]);
+  const L = await G.latestGaps(store);
+  assert.deepEqual(L.items.map(x => x.level), ['open', 'generic', 'taken']); // open plekken met veel vraag bovenaan
+  assert.equal((await G.pendingGaps(store, { now: '2026-11-21T12:00:00Z' })).todo, 0); // binnen 7 dagen niet opnieuw
+  assert.equal((await G.pendingGaps(store, { now: '2026-11-27T12:00:00Z' })).todo, 3); // daarna wel
+  const { demandText } = await import('../api/mcp.js');
+  assert.match(demandText({ ready: true, day: '2026-11-19', period: '2026-10', gaps: G.presentGaps(L) }, 'gaps', 'NL', 5), /Home batteries .*AI names nobody; 190,000 searches/);
+  if (keep) await putJSON(store, 'maps/demand.json', keep); await putJSON(store, 'gaps/latest.json', { items: [] });
+});

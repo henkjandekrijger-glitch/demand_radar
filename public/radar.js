@@ -9,7 +9,7 @@
   var LBL = { new: ['New demand'], seasonal: ['Seasonal'], rising: ['Growing'], steady: ['Steady demand'] };
   var NOW = { rising: ['Rising today', 'p-early'], steady: ['Holding', 'p-steady'], fading: ['Fading', 'p-falling'], gone: ['Over', 'p-falling'], quiet: ['', ''] };
   // Rustig: vier hoofdtegels (vooruitkijken), de rest als één regel tekstlinks met korte namen.
-  var TAG = { rise: 'Forecast, with the odds', early: 'Before anyone sees it', wild: 'Bold calls, checked', coming: 'Moments ahead', events: 'World odds, what they change' };
+  var TAG = { rise: 'Forecast, with the odds', early: 'Before anyone sees it', wild: 'Bold calls, checked', gaps: 'Where AI has no answer', coming: 'Moments ahead', events: 'World odds, what they change' };
   var SHORT = { now: 'Rising now', unexpected: 'Unexpected', missing: 'Not made yet', products: 'Products', courses: 'Courses', services: 'Services', books: 'Books', apps: 'Apps & AI', trips: 'Trips', money: 'Money' };
   var KEEP = { rise: 1, early: 1, wild: 1, coming: 1, now: 1, events: 1 };
   var ITEM_VIEWS = { now: 1, products: 1, courses: 1, books: 1, services: 1, apps: 1, trips: 1, money: 1 };
@@ -259,6 +259,15 @@
         terms.length ? asked('', terms, cc) : null,
         h('p', { class: 'meta', text: 'Odds from ' + e.src + (e.volume ? ' · $' + num(e.volume) + ' traded' : '') })));
   }
+  // AI gaps: wat de AI-assistent antwoordde op de koopvraag (lib/aigaps.js)
+  var GAP = { open: ['AI names nobody', 'p-early'], generic: ['Only big stores named', 'p-rising'], unclear: ['No clear first choice', 'p-steady'], taken: ['AI has a favourite', 'p-falling'] };
+  function gapRow(g) {
+    var st = GAP[g.level] || GAP.unclear, named = (g.names || []).length ? g.names.join(', ') : 'nobody';
+    return h('div', { class: 'line' },
+      h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: g.cc }), h('a', { class: 'lname', href: checkUrl(g.keyword || g.name, g.cc), title: 'Searched as: ' + (g.keyword || g.name), onclick: function () { ev('open', 'gaps'); } }, g.name), h('span', { class: 'claimf', text: ': ' + num(g.last) + ' searches a month.' })), h('div', { class: 'badges' }, h('span', { class: 'badge ' + st[1], text: st[0] }))),
+      h('p', { class: 'lsub', text: 'AI named: ' + named + (g.pick ? '. First choice: ' + g.pick : '') }),
+      h('details', { class: 'wild-why' }, h('summary', { text: 'Question and answer' }), h('p', { class: 'meta', text: 'Asked: ' + g.q }), g.answer ? h('p', { text: g.answer }) : null, h('p', { class: 'meta', text: (g.model || 'AI assistant') + ', ' + g.askedDay })));
+  }
   function wildRow(x) {
     var st = WS[x.status] || WS.open;
     var meta = ['Made ' + day(x.made), x.sure ? 'How sure: ' + SURE[x.sure] + (x.odds ? ', ' + x.odds : '') : null, x.status === 'dropped' ? null : x.judged ? 'Checked ' + day(x.judged) : x.due ? 'Check ' + day(x.due) + (x.manual ? ' (by hand)' : '') : null].filter(Boolean).join(' · ');
@@ -342,6 +351,11 @@
       (W.tracks || []).forEach(function (t) { top.push(trackRow(t)); });
       var rest = (W.dropped || []).filter(function (x) { return S.mk === 'ALL' || x.ccs.indexOf(S.mk) >= 0; });
       box.replaceChildren.apply(box, top.concat(wl.map(wildRow), rest.length ? [h('div', { class: 'early-head' }, h('b', null, 'Tested and dropped'), h('span', { class: 'meta', text: ' · ideas the data did not support' }))].concat(rest.map(wildRow)) : []));
+    } else if (S.view === 'gaps') {
+      var gl = byCountry(d.gaps || []).slice().sort(function (a, b) { return b.score - a.score; });
+      var go2 = gl.filter(function (x) { return x.level === 'open' || x.level === 'generic'; });
+      if (gl.length) vd = go2.length + ' of ' + gl.length + ' big searches get no clear answer from AI.' + (go2.length ? ' Biggest: ' + go2[0].name + ' (' + num(go2[0].last) + ' searches a month).' : '');
+      if (!gl.length) empty(box, 'No AI answers read for this selection yet.'); else more(gl, box, gapRow);
     } else if (S.view === 'events') {
       if (!S.ev) { box.replaceChildren(h('p', { class: 'loading', text: "Reading the world's odds" })); if (!S.evLoading) { S.evLoading = 1; fetch('/api/events').then(function (r) { return r.json(); }).then(function (j) { S.ev = j || { items: [] }; draw(); }).catch(function () { S.ev = { items: [] }; draw(); }); } }
       else {
@@ -365,6 +379,7 @@
     if (id === 'rise') return byCountry(d.rise || []).length;
     if (id === 'early') return byCountry(d.early || []).length;
     if (id === 'wild') return wildFor().length;
+    if (id === 'gaps') return byCountry(d.gaps || []).length;
     if (id === 'coming') return byCountry(d.coming || []).length;
     return 0;
   }
