@@ -47,7 +47,7 @@ async function withWild(d) {
 async function withGaps(d, req) {
   const L = await latestGaps(getStore()); d.gaps = presentGaps(L);
   // of wij er zelf al een keuzehulp voor hebben is alleen voor het team (met sleutel), niet voor bezoekers
-  if (!(req && isPro(req))) d.gaps = d.gaps.map(({ guide, ...g }) => g);
+  if (!(req && isPro(req))) d.gaps = d.gaps.map(({ guide, ...g }) => (g.others ? { ...g, others: (({ cited, ...o }) => o)(g.others) } : g));
   if (!d.gaps.length) return;
   const open = d.gaps.filter(x => x.level === 'open' || x.level === 'generic').length;
   const v = { id: 'gaps', name: 'AI gaps', desc: `We ask an AI assistant the buying question behind the biggest searches and read the answer. A gap is a lot of demand with an answer that names nobody, or only the big general stores: whoever becomes the best answer there gets named. Asked to ${L.model || 'Claude'}, last on ${L.day}; ${open} of ${d.gaps.length} are open.`, n: d.gaps.length };

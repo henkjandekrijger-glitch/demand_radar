@@ -674,6 +674,13 @@ test('AI gaps: vragen per land, oordeel per antwoord, niet opnieuw vragen binnen
   assert.deepEqual([v2.cached, calls - voor, v2.history.length], [true, 6, 1]);
   const v3 = await G.askQuestion(store, 'Welke raamrobot raad je aan en waar koop ik die?', { site: 'keuzehulp.best', now: '2026-11-28T10:00:00Z' });
   assert.deepEqual([v3.cached, v3.history.length], [false, 2]);
+  // bronnen: Perplexity geeft naast de tekst de pagina's waar hij op leunt; haalt hij onze site aan, dan staat dat in cited
+  G.setGapsFetch(async (u, o) => { const B = JSON.parse(o.body), pp = B.model.startsWith('perplexity'); return { ok: true, json: async () => ({ ...(pp ? { citations: ['https://www.coolblue.nl/advies/raamrobot.html', 'https://keuzehulp.best/raamrobot', 'https://ai-gateway.vercel.sh/x'] } : {}), choices: [{ message: { content: B.model.startsWith('anthropic') ? '{"names":["Coolblue"],"giants":[],"pick":"","misread":false}' : 'Kijk bij Coolblue (https://www.coolblue.nl/raamrobots), het hangt af van je ramen.', ...(pp ? { annotations: [{ type: 'url_citation', url_citation: { url: 'https://tweakers.net/pricewatch/raamrobots' } }] } : {}) } }] }) }; });
+  const v4 = await G.askQuestion(store, 'Welke raamrobot is het beste voor grote ramen?', { site: 'https://keuzehulp.best/raamrobot', now: '2026-11-28T11:00:00Z' });
+  assert.deepEqual(v4.cited, ['perplexity/sonar']); // alleen Perplexity haalt onze pagina aan
+  assert.equal(v4.sources[0].host, 'coolblue.nl'); // meeste links: 2 bij Perplexity, 1 in de tekst van de andere twee
+  assert.ok(v4.sources.some(x => x.host === 'tweakers.net') && !v4.sources.some(x => /vercel/.test(x.host)));
+  assert.deepEqual(G.sourcesOf({ search_results: [{ url: 'https://a.nl/x', title: 'geen link' }], choices: [{ message: { content: 'https://b.nl/in-de-tekst' } }] }, 'zie https://c.nl/pagina.').map(x => x.h), ['a.nl', 'c.nl']);
   delete process.env.AI_GAPS_GATEWAY; delete process.env.AI_GATEWAY_API_KEY; delete process.env.AI_GAPS_MAX_DAY;
   G.setGapsFetch(null);
   if (keep) await putJSON(store, 'maps/demand.json', keep); await putJSON(store, 'gaps/latest.json', { items: [] });

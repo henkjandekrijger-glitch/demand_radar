@@ -197,6 +197,14 @@ vinden". Zelfde route als `### fill`, dus geen AI-aanroep vanaf Vercel en geen g
   liet het bijna altijd kiezen. De uurronde doet er 3 per keer; `GET /api/gaps?others=1&key=` doet er nu een paar (nooit in een lus).
   Met alleen `AI_GAPS_GATEWAY` blijven teksten en prijsoordelen zonder gateway. Per rij staat hoeveel andere AI's ook geen
   eerste keus hebben; labels in het gatewayoverzicht: `project:demand_radar,fn:aigaps`.
+- Bronnen van de AI's (19 nov, Henkjan: "hoe zorgen we dat we wel genoemd worden"): bij elk antwoord van de andere AI's bewaren we de
+  pagina's die de AI aanhaalt (`src`, hooguit 10 per model; `sourcesOf` leest elke link in het antwoordobject buiten de tekst, plus de
+  links in de tekst). Alleen een AI die live zoekt (Perplexity) geeft bronnen; GPT en Gemini antwoorden hier uit hun geheugen. Per gat
+  staat `others.sources` (sites, meeste links eerst) en, alleen met teamsleutel, `others.cited` (welke AI's onze site voor dat land
+  aanhalen). De tekstweergave van `view=gaps` begint met de sites die het vaakst worden aangehaald per land: dat is de werklijst
+  waar we genoemd moeten worden. Bij `?ask=` staan `cited`, `sources` en `cited` in `history`. Kost geen extra vragen. Proef waar de
+  gateway de bronnen teruggeeft: `GET /api/gaps?probe=chat&key=` of `probe=responses` (één vraag aan Perplexity, alleen de vorm terug);
+  `AI_GAPS_API=responses` laat de vragen via het Responses-eindpunt van de gateway lopen.
 - Losse koopvraag op verzoek (keuzehulp-protocol, 19 nov): `GET /api/gaps?ask=<vraag>&site=<host>&key=<teamsleutel>` legt één vraag voor
   aan dezelfde drie AI's en zegt wie ze noemen, of er een eerste keus is en of ze onze site noemen (`named`). Dezelfde vraag wordt
   hooguit eens per 7 dagen opnieuw gesteld (daarbinnen het bewaarde antwoord), telt mee in de dagrem en bewaart de laatste 12
