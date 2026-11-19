@@ -567,21 +567,28 @@ test('leren: voorspellingsboek nakijken tegen toeval, kansen bijstellen, gewicht
   assert.equal(W.judgeDaily({ k: 'walibi', vs: 'efteling', from: '2026-11-03', to: '2026-11-08', more: false }, data).state, 'waiting');
 });
 
-test('DataForSEO-dagrem: de nachtelijke opbouw gaat voor, met een harde grens', async () => {
+test('DataForSEO-dagrem: de nachtelijke opbouw gaat voor, toplijsten en de rest elk een eigen potje', async () => {
   const { getStore, putJSON } = await import('../lib/store.js'), store = getStore(), day = new Date().toISOString().slice(0, 10);
   const teller = v => setFetch(async () => new Response(JSON.stringify({ tasks: [{ result: [{ money: { balance: 30, statistics: { day: { total: v } } } }] }] }), { status: 200 }));
-  const vers = async n => import(`../lib/dfs.js?rem=${n}`); // verse module: de teller wordt 2 minuten onthouden
-  await putJSON(store, `dfs/build-${day}.json`, { spent: 0, builds: 0 });
+  const vers = async n => import(`../lib/dfs.js?rem=${n}`); // verse module: teller en kasboek worden 2 minuten onthouden
+  const LIST = 'dataforseo_labs/google/top_searches/live', ADS = 'keywords_data/google_ads/search_volume/live';
+  const boek = v => putJSON(store, `dfs/ledger/${day}/ander-proces.json`, v);
+  await putJSON(store, `dfs/build-${day}.json`, { spent: 0, builds: 0 }); await boek({});
   // de rest van het account heeft het dagtotaal bijna op: losse aankopen stoppen, de opbouw mag nog
   let d = await vers(1); teller(d.totalCap() - 0.1);
   assert.equal(await d.underCap(0.25), false);
-  d.buildMode(true); assert.equal(await d.underCap(0.25), true); d.buildMode(false);
-  // harde grens voor het hele account: dagtotaal plus het budget van de opbouw
-  d = await vers(2); teller(d.totalCap() + d.buildCap() - 0.1);
+  d.buildMode(true); assert.equal(await d.underCap(0.25), true); assert.equal(await d.underCap(0, LIST), true); d.buildMode(false);
+  // harde grens voor het hele account
+  d = await vers(2); teller(d.totalCap() + d.buildCap() + d.listsCap() - 0.1);
   d.buildMode(true); assert.equal(await d.underCap(0.25), false); d.buildMode(false);
-  // de opbouw geeft nooit meer uit dan zijn eigen budget
-  await putJSON(store, `dfs/build-${day}.json`, { spent: d.buildCap() - 0.15, builds: 1 });
-  d = await vers(3); teller(0.2);
-  d.buildMode(true); assert.equal(await d.underCap(0.25), false); assert.equal(await d.underCap(0.1), true); d.buildMode(false);
-  await putJSON(store, `dfs/build-${day}.json`, { spent: 0, builds: 0 });
+  // 19 nov: de toplijsten kostten $1,15; daarna moeten de zoekvolumes nog gekocht kunnen worden (anders is "Will rise" leeg)
+  await boek({ 'build: dataforseo_labs/google': 1.152, 'dataforseo_labs/google': 1.152 });
+  d = await vers(3); teller(2.58);
+  d.buildMode(true); assert.equal(await d.underCap(0.25), true); assert.equal(await d.underCap(0, ADS), true); assert.equal(await d.underCap(0.5, LIST), false); d.buildMode(false);
+  // de rest van de opbouw geeft nooit meer uit dan zijn eigen potje, ook niet over twee processen
+  await boek({ 'build: keywords_data/google_ads': 0.6 });
+  d = await vers(4); teller(0.8);
+  d.buildMode(true); assert.equal(await d.underCap(0.25, ADS), false); assert.equal(await d.underCap(0.1, ADS), true);
+  await d.ledger(ADS, 0.1); assert.equal(await d.underCap(0.1, ADS), false); assert.equal(await d.underCap(0.3, LIST), true); d.buildMode(false);
+  await boek({});
 });
