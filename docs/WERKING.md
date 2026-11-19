@@ -182,6 +182,13 @@ vinden". Zelfde route als `### fill`, dus geen AI-aanroep vanaf Vercel en geen g
   namen, geen eerste keus; `taken` = duidelijke eerste keus. Rangorde = gewicht (1 / 0,7 / 0,35 / 0,1) × log10 van het zoekvolume.
 - Begreep de AI de zoekterm niet (typfout, vage term) en vroeg ze terug, dan zet het antwoord `misread: true`: dat telt niet als
   gat, komt niet op de radar en wordt 7 dagen niet opnieuw gevraagd.
+- Eigen keuzehulpen (19 nov, Henkjan: "Wij moeten simpelweg de betere antwoorden leveren"): per gat kijkt de radar of er op
+  keuzehulp.best (NL), kaufberater.best (DE) of whichtobuy.best (US) al een pagina voor is (`GUIDE_SITES`, `findGuide`,
+  `refreshGuides` in `lib/aigaps.js`; sitemaps gratis, 12 uur bewaard in `gaps/guides.json`, elk uur bijgewerkt door `/api/warm`).
+  Streng vergeleken op de zoekterm (enkelvoud/meervoud, typfout in lange woorden); een pagina die de radar zo niet herkent zet
+  Claude in het antwoordbestand met `"guide": "https://..."` (of `false`), dat blijft dan staan. Alleen met teamsleutel
+  zichtbaar: badge op de radar, "Own guide" in de tekst, en de lijst voor de keuzehulp-sessie:
+  `/api/demand?view=gaps&guide=none&format=text&key=<teamsleutel>` (gaten zonder eigen keuzehulp).
 - Opslag: `gaps/latest.json` (alles van de laatste 14 dagen, volumes bijgewerkt met de radar van vandaag), `gaps/<dag>.json`
   (de ruwe antwoorden). `GET /api/gaps?latest=1` geeft de uitkomst.
 Grens: dit is één model (Claude) zonder webzoeken, niet wat gebruikers van ChatGPT of Gemini echt zien. Meer modellen kan via

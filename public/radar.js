@@ -264,7 +264,7 @@
   function gapRow(g) {
     var st = GAP[g.level] || GAP.unclear, named = (g.names || []).length ? g.names.join(', ') : 'nobody';
     return h('div', { class: 'line' },
-      h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: g.cc }), h('a', { class: 'lname', href: checkUrl(g.keyword || g.name, g.cc), title: 'Searched as: ' + (g.keyword || g.name), onclick: function () { ev('open', 'gaps'); } }, g.name), h('span', { class: 'claimf', text: ': ' + num(g.last) + ' searches a month.' })), h('div', { class: 'badges' }, h('span', { class: 'badge ' + st[1], text: st[0] }))),
+      h('div', { class: 'line-top' }, h('div', null, h('span', { class: 'mk', text: g.cc }), h('a', { class: 'lname', href: checkUrl(g.keyword || g.name, g.cc), title: 'Searched as: ' + (g.keyword || g.name), onclick: function () { ev('open', 'gaps'); } }, g.name), h('span', { class: 'claimf', text: ': ' + num(g.last) + ' searches a month.' })), h('div', { class: 'badges' }, h('span', { class: 'badge ' + st[1], text: st[0] }), g.guide ? h('a', { class: 'badge p-steady', href: g.guide, target: '_blank', rel: 'noopener' }, 'Our guide') : (g.guide === null && g.level !== 'taken' ? h('span', { class: 'badge p-early', text: 'No guide of ours yet' }) : null))),
       h('p', { class: 'lsub', text: 'AI named: ' + named + (g.pick ? '. First choice: ' + g.pick : '') }),
       h('details', { class: 'wild-why' }, h('summary', { text: 'Question and answer' }), h('p', { class: 'meta', text: 'Asked: ' + g.q }), g.answer ? h('p', { text: g.answer }) : null, h('p', { class: 'meta', text: (g.model || 'AI assistant') + ', ' + g.askedDay })));
   }

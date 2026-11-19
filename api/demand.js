@@ -44,8 +44,10 @@ async function withWild(d) {
 }
 
 // AI gaps (lib/aigaps.js): wat een AI-assistent antwoordt op de koopvraag achter de grootste onderwerpen; tegel na de wildcards.
-async function withGaps(d) {
+async function withGaps(d, req) {
   const L = await latestGaps(getStore()); d.gaps = presentGaps(L);
+  // of wij er zelf al een keuzehulp voor hebben is alleen voor het team (met sleutel), niet voor bezoekers
+  if (!(req && isPro(req))) d.gaps = d.gaps.map(({ guide, ...g }) => g);
   if (!d.gaps.length) return;
   const open = d.gaps.filter(x => x.level === 'open' || x.level === 'generic').length;
   const v = { id: 'gaps', name: 'AI gaps', desc: `We ask an AI assistant the buying question behind the biggest searches and read the answer. A gap is a lot of demand with an answer that names nobody, or only the big general stores: whoever becomes the best answer there gets named. Asked to ${L.model || 'Claude'}, last on ${L.day}; ${open} of ${d.gaps.length} are open.`, n: d.gaps.length };
@@ -59,11 +61,13 @@ export default async function handler(req, res) {
     // Eigenaar: ?rebuild=1&key=… bouwt vandaag opnieuw (na een update), anders één opbouw per dag.
     if (req.query.rebuild && isPro(req)) { const nd = await getDemand(req, { build: true }); return res.status(200).json({ rebuilt: !nd.stale, day: nd.day, spent: nd.spent, items: (nd.items || []).length, rise: (nd.rise || []).length, note: nd.buildNote || null }); }
     const d = presentDemand(await getDemand(req));
-    if (d && d.ready) { await withEarly(d).catch(() => {}); await withWild(d).catch(() => {}); await withGaps(d).catch(() => {}); }
+    if (d && d.ready) { await withEarly(d).catch(() => {}); await withWild(d).catch(() => {}); await withGaps(d, req).catch(() => {}); }
     const order = await learnedOrder().catch(() => null);
     res.setHeader('Cache-Control', 'private, no-store');
     // Voor tools en collega's: ?view=courses&cc=NL&limit=20 geeft een korte lijst; ?format=text geeft leesbare tekst.
     const { view, cc, limit, format } = req.query;
+    // ?view=gaps&guide=none: alleen de gaten (geen favoriet bij de AI) waar wij zelf nog geen keuzehulp voor hebben
+    if (String(req.query.guide || '') === 'none' && isPro(req) && d && d.gaps) d.gaps = d.gaps.filter(g => g.level !== 'taken' && !g.guide);
     if (view || cc || limit || format) {
       const v = String(view || 'rise'), c = ['NL', 'DE', 'US'].includes(String(cc || '').toUpperCase()) ? String(cc).toUpperCase() : 'ALL', n = Math.max(1, Math.min(100, +limit || 20));
       if (format === 'text') { res.setHeader('Content-Type', 'text/plain; charset=utf-8'); return res.status(200).send(demandText(d, v, c, n)); }

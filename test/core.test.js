@@ -596,6 +596,7 @@ test('DataForSEO-dagrem: de nachtelijke opbouw gaat voor, toplijsten en de rest 
 test('AI gaps: vragen per land, oordeel per antwoord, niet opnieuw vragen binnen 7 dagen', async () => {
   const { getStore, putJSON, getJSON } = await import('../lib/store.js'), store = getStore();
   const G = await import('../lib/aigaps.js');
+  G.setGapsFetch(async u => ({ ok: true, text: async () => String(u).includes('keuzehulp.best') ? '<urlset><url><loc>https://keuzehulp.best/</loc></url><url><loc>https://keuzehulp.best/thuisbatterij</loc></url><url><loc>https://keuzehulp.best/categorie/wonen</loc></url></urlset>' : '<urlset></urlset>' }));
   const keep = await getJSON(store, 'maps/demand.json', null).catch(() => null);
   await putJSON(store, 'gaps/latest.json', { items: [] });
   await putJSON(store, 'maps/demand.json', { day: '2026-11-19', ready: true, items: [
@@ -632,5 +633,23 @@ test('AI gaps: vragen per land, oordeel per antwoord, niet opnieuw vragen binnen
   assert.equal(L2.items.length, 3); assert.equal(G.presentGaps(L2).length, 2);
   assert.ok(!G.presentGaps(L2).some(x => x.id === first.id));
   assert.equal((await G.pendingGaps(store, { now: '2026-11-21T12:00:00Z' })).todo, 0);
+  // eigen keuzehulpen: streng vergelijken, liever missen dan verzinnen
+  assert.equal(G.guideMatch('winter jassen', '/winterjas'), 3);
+  assert.equal(G.guideMatch('adventskalder', '/adventskalender-fuer-maenner'), 2);
+  assert.equal(G.guideMatch('black friday en', '/black-friday-keukenapparaten'), 1);
+  assert.equal(G.guideMatch('massage near me', '/best-massage-guns-for-christmas-gifts-under-150-2026'), 0);
+  assert.equal(G.guideMatch('massage', '/massagegun'), 0);
+  assert.equal(G.guideMatch('iphone 18', '/best-iphones-to-buy-black-friday-2026-iphone-17-vs-pro-vs-ai'), 0);
+  assert.equal(G.guideMatch('wonen', '/categorie/wonen'), 0);
+  const LG = await G.latestGaps(store);
+  assert.equal(LG.items.find(x => x.keyword === 'thuisbatterij').guide, 'https://keuzehulp.best/thuisbatterij');
+  assert.equal(LG.items.find(x => x.cc === 'US').guide, null);
+  assert.equal(G.presentGaps(LG).find(x => x.cc === 'US').guide, null);
+  // een keuzehulp die Claude zelf aanwijst blijft staan
+  const us = LG.items.find(x => x.cc === 'US');
+  await G.applyGaps(store, { day: '2026-11-19', answers: { [us.id]: { answer: 'x', names: ['A', 'B'], guide: 'https://whichtobuy.best/plumbers' } } }, { now: '2026-11-19T14:00:00Z' });
+  assert.equal((await G.refreshGuides(store, { now: '2026-11-20T14:00:00Z' })).changed, 0);
+  assert.equal((await G.latestGaps(store)).items.find(x => x.cc === 'US').guide, 'https://whichtobuy.best/plumbers');
+  G.setGapsFetch(null);
   if (keep) await putJSON(store, 'maps/demand.json', keep); await putJSON(store, 'gaps/latest.json', { items: [] });
 });
