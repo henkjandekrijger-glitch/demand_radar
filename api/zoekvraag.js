@@ -7,7 +7,7 @@
 import { getStore, getJSON, putJSON } from '../lib/store.js';
 import { topSearches, budget, serp } from '../lib/dfs.js';
 
-const M = { US: [2840, 'en'], NL: [2528, 'nl'], DE: [2276, 'de'], CA: [2124, 'en'], CO: [2170, 'es'], BR: [2076, 'pt'], GB: [2826, 'en'], BE: [2056, 'nl'], AU: [2036, 'en'], FR: [2250, 'fr'], ES: [2724, 'es'], IT: [2380, 'it'], DO: [2214, 'es'], PA: [2591, 'es'], SR: [2740, 'nl'] };
+const M = { US: [2840, 'en'], NL: [2528, 'nl'], DE: [2276, 'de'], CA: [2124, 'en'], CO: [2170, 'es'], BR: [2076, 'pt'], GB: [2826, 'en'], BE: [2056, 'nl'], AU: [2036, 'en'], FR: [2250, 'fr'], ES: [2724, 'es'], IT: [2380, 'it'], DO: [2214, 'es'], PA: [2591, 'es'], SR: [2740, 'nl'], AT: [2040, 'de'] };
 // Plastische chirurgie (14 nov 2026, Henkjan: keuzehulp "waar je moet zijn" voor NL, US en wereldwijd): de landen waar patiënten
 // vandaan komen; ingrepen in NL, EN en DE, en wie naar het buitenland gaat (Turkije, Mexico, Colombia, Dominicaanse Republiek …).
 const OW_PLASTISCH = [
