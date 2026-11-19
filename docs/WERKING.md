@@ -275,6 +275,7 @@ Nichescan (15 nov 2026): `/api/zoekvraag?niche=NL` (ook US, DE). Koop- en vergel
 Sinds 17 nov 2026 ook **zorgverzekering** (NL, plafond $2,50) voor keuzehulp.best/zorgverzekering en **ai-keuze** (US, GB, NL, plafond $2,50) voor de AI-keuzehulp op nexy.help (Henkjan 17 nov: "je krijgt data for SEO budget bij deze"; EXTRA op 17 nov naar $13,50).
 Sinds 19 nov 2026 ook **huiskopen** (NL, plafond $0,60): makelaars (ook per plaats), huis kopen, bieden, taxatie en bouwkundige keuring, kosten koper en overdrachtsbelasting, starters, hypotheek en NHG; voor de keuzehulp huis kopen en de makelaars per plaats op keuzehulp.best. De `regex` van een thema mag sindsdien ook een lijst zijn: elk deel een eigen vraag van hooguit 700 termen, zodat een groot onderwerp (hypotheek) een kleiner (makelaar per plaats) niet wegdrukt.
 Sinds 19 nov 2026 ook **energie** (NL, plafond $0,40): energieleverancier en energiecontract vergelijken, stroom en gas, vast, variabel en dynamisch contract, terugleverkosten en de leveranciers zelf (twee vragen: begrippen en merknamen); voor keuzehulp.best/energieleverancier-vergelijken.
+Sinds 19 nov 2026 ook **stemcoach** (US, GB, NL, ES, MX; plafond $0,60): zangles, stemtraining, spreken en presenteren in het Engels, Spaans en Nederlands; om de vraag naar een online stem- en spreekcoach met Tania Kross te meten.
 
 ### connector — gebruik vanuit andere chats
 `/api/mcp` (`/mcp?key=<teamsleutel>`): tools `check_demand`, `opportunity_map`, `demand_radar`, `report_outcome`,

@@ -7,7 +7,7 @@
 import { getStore, getJSON, putJSON } from '../lib/store.js';
 import { topSearches, budget, serp } from '../lib/dfs.js';
 
-const M = { US: [2840, 'en'], NL: [2528, 'nl'], DE: [2276, 'de'], CA: [2124, 'en'], CO: [2170, 'es'], BR: [2076, 'pt'], GB: [2826, 'en'], BE: [2056, 'nl'], AU: [2036, 'en'], FR: [2250, 'fr'], ES: [2724, 'es'], IT: [2380, 'it'], DO: [2214, 'es'], PA: [2591, 'es'], SR: [2740, 'nl'], AT: [2040, 'de'] };
+const M = { US: [2840, 'en'], NL: [2528, 'nl'], DE: [2276, 'de'], CA: [2124, 'en'], CO: [2170, 'es'], BR: [2076, 'pt'], GB: [2826, 'en'], BE: [2056, 'nl'], AU: [2036, 'en'], FR: [2250, 'fr'], ES: [2724, 'es'], IT: [2380, 'it'], DO: [2214, 'es'], PA: [2591, 'es'], SR: [2740, 'nl'], AT: [2040, 'de'], MX: [2484, 'es'] };
 // Plastische chirurgie (14 nov 2026, Henkjan: keuzehulp "waar je moet zijn" voor NL, US en wereldwijd): de landen waar patiënten
 // vandaan komen; ingrepen in NL, EN en DE, en wie naar het buitenland gaat (Turkije, Mexico, Colombia, Dominicaanse Republiek …).
 const OW_PLASTISCH = [
@@ -190,6 +190,11 @@ export const THEMA = {
     ow: [['vergunning aanvragen', /licen[cs]e|lizenz|vergunning|apply|beantragen|aanvragen|cost|kosten|kosten|price|requirements/], ['toezichthouder', /\bcga\b|gaming authority|gaming control|gcb|antillephone|cyberluck|curacao egaming|gaming curacao|toezicht|regulator|aufsicht/], ['legaal en veilig', /legal|legaal|legit|safe|veilig|seri[oö]s|trusted|betrouwbaar|scam|oplichting|erlaubt/], ['klacht en terugvorderen', /complaint|klacht|beschwerde|refund|terug|zurück|verlust|withdraw|uitbetal|auszahl|lawsuit|claim/], ['nieuwe wet', /\blok\b|new law|nieuwe wet|neues gesetz|2024|2025|2026|reform/]],
     serp: { NL: ['curacao gokvergunning', 'curacao licentie casino'], DE: ['curacao lizenz'], GB: ['curacao gaming licence'], US: ['curacao gaming license'] },
     regex: '(cura[cç]ao|curazao|antillephone|cyberluck).*(licen|lizenz|vergunning|gaming|casino|gambl|glücksspiel|gluecksspiel|gok|kansspel|wett|bet)|(licen|lizenz|vergunning|gaming|casino|gambl|glücksspiel|gok|kansspel).*(cura[cç]ao|curazao)' },
+  // Stem- en spreekcoach (19 nov 2026, Henkjan bij het plan voor een online stem- en spreekcoach met Tania Kross: "Is hier zoveel behoefte
+  // aan ? Laat zien via demand radar"): zangles, stemtraining, spreken en presenteren, in het Engels, Spaans en Nederlands.
+  stemcoach: { naam: 'Stem- en spreekcoach (zang, stem, presenteren)', markten: ['US', 'GB', 'NL', 'ES', 'MX'], max: 0.6,
+    ow: [['spreken en presenteren', /public speaking|speaking|presentation|speech|spreek|presenteren|presentatie|openbaar|oratoria|hablar en p/], ['zangles en zangcoach', /sing|vocal|zang|zingen|canto|cantar/], ['stem verbeteren', /voice|stem|voz|deeper/], ['online, app en cursus', /online|\bapp\b|course|cursus|curso|clases/], ['prijs', /price|cost|kosten|prijs|precio|free|gratis/]],
+    regex: '(voice coach|vocal coach|voice training|voice lessons|vocal lessons|singing lessons|singing coach|singing teacher|learn to sing|how to sing|singing app|public speaking|speaking coach|presentation skills|presentation coach|speech coach|improve my voice|improve your voice|deeper voice|voice exercises|vocal exercises|stemcoach|spreekcoach|stemtraining|zangles|zangcoach|zangdocent|leren zingen|presentatietraining|presenteren|spreken in het openbaar|clases de canto|aprender a cantar|profesor de canto|coach vocal|coach de voz|entrenador de voz|oratoria|hablar en publico|tecnica vocal|ejercicios de voz)' },
   curacao: { naam: 'Curaçao', regex: '(cura[cç]ao|curazao|kòrsou|korsou|willemstad)', markten: ['US', 'NL', 'DE', 'CA', 'CO', 'BR'] },
   'kadoly-wonen': { naam: 'Kadoly wonen', markten: KADOLY_MARKT, ow: OW_KADOLY,
     regex: '(vaas|vazen|bloempot|plantenpot|sierpot|plantenbak|plantenstandaard|plantenrek|plantentafel|kunstplant|kunstbloem|orchidee|muurcirkel|wandcirkel|wanddecoratie|muurdecoratie|wandkleed|tuinposter|muursticker|tafellamp|hanglamp|leeslamp|oplaadbare lamp|lantaarn|windlicht|kandelaar|geurkaars|windgong|windspinner|bijzettafel|dienblad|plaid|sierkussen|wasmand|opbergmand|rieten mand|diffuser|geurstokjes|tuindecoratie|tuinbeeld)' },
