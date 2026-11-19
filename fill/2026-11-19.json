@@ -1465,9 +1465,643 @@
   },
   "NL:a boeken stoffen & fournituren winkel": {
    "keep": false
+  },
+  "US:iphone": {
+   "keep": true,
+   "title": "iPhones",
+   "cat": "products",
+   "topic": "iphone",
+   "what": "A new iPhone, often the latest model",
+   "idea": "Compare trade-in and carrier deals during Black Friday week",
+   "unexpected": false
+  },
+  "US:hotel near me": {
+   "keep": true,
+   "title": "Hotels nearby",
+   "cat": "trips",
+   "topic": "hotels nearby",
+   "what": "A hotel room close by, often tonight",
+   "idea": "Advertise same-night rates with free cancellation to nearby searchers",
+   "unexpected": false
+  },
+  "DE:iphone 18": {
+   "keep": true,
+   "title": "iPhone 18",
+   "cat": "products",
+   "topic": "iphone 18",
+   "what": "Apple's iPhone 18 and its Pro models",
+   "idea": "Compare contract and trade-in offers for the iPhone 18 before Christmas",
+   "unexpected": false
+  },
+  "NL:iphone 18": {
+   "keep": true,
+   "title": "iPhone 18",
+   "cat": "products",
+   "topic": "iphone 18",
+   "what": "Apple's iPhone 18 and its Pro models",
+   "idea": "Compare SIM-only and contract bundles for the iPhone 18 around Black Friday",
+   "unexpected": false
+  },
+  "US:deals": {
+   "keep": true,
+   "title": "Deals and discounts",
+   "cat": "products",
+   "topic": "black friday deals",
+   "what": "The best deals available right now",
+   "idea": "Publish a daily deals page with email alerts through Black Friday week",
+   "unexpected": false
+  },
+  "US:coffee shop near me": {
+   "keep": true,
+   "title": "Coffee shops nearby",
+   "cat": "services",
+   "topic": "coffee shops",
+   "what": "A good coffee shop close by",
+   "idea": "Promote seasonal drinks and gift cards to people searching nearby",
+   "unexpected": false
+  },
+  "DE:ps5": {
+   "keep": true,
+   "title": "PlayStation 5 consoles",
+   "cat": "products",
+   "topic": "playstation 5",
+   "what": "A PS5 or PS5 Pro console",
+   "idea": "Bundle the PS5 with GTA VI for Black Friday and Christmas",
+   "unexpected": false
+  },
+  "US:massage near me": {
+   "keep": true,
+   "title": "Massage nearby",
+   "cat": "services",
+   "topic": "massage",
+   "what": "A massage appointment close by",
+   "idea": "Sell massage gift cards for the holidays with online booking",
+   "unexpected": false
+  },
+  "US:cheapest gas near me": {
+   "keep": true,
+   "title": "Cheapest gas nearby",
+   "cat": "money",
+   "topic": "fuel prices",
+   "what": "The cheapest gas station nearby",
+   "idea": "Promote a gas price app before Thanksgiving road trips",
+   "unexpected": false
+  },
+  "US:meta glasses": {
+   "keep": true,
+   "title": "Meta smart glasses",
+   "cat": "products",
+   "topic": "smart glasses",
+   "what": "Smart glasses with camera and AI assistant",
+   "idea": "Compare smart glasses models in a holiday gift guide",
+   "unexpected": false
+  },
+  "DE:heizöl 24": {
+   "keep": true,
+   "title": "Heating oil",
+   "cat": "money",
+   "topic": "heating oil",
+   "what": "Heating oil at today's best price",
+   "idea": "Advertise price alerts and group orders before the coldest months",
+   "unexpected": false
+  },
+  "US:dentists": {
+   "keep": true,
+   "title": "Dentists nearby",
+   "cat": "services",
+   "topic": "dentists",
+   "what": "A dentist with appointments available",
+   "idea": "Advertise year-end appointments to patients using up insurance benefits",
+   "unexpected": false
+  },
+  "DE:winterjacke damen": {
+   "keep": true,
+   "title": "Women's winter jackets",
+   "cat": "products",
+   "topic": "winter jackets",
+   "what": "A warm winter jacket for women",
+   "idea": "Feature wool coats and down jackets in Black Friday campaigns",
+   "unexpected": false
+  },
+  "US:car insurance affordable": {
+   "keep": true,
+   "title": "Car insurance quotes",
+   "cat": "money",
+   "topic": "car insurance quotes",
+   "what": "Car insurance at an affordable price",
+   "idea": "Target drivers hit by premium rises with a savings calculator",
+   "unexpected": false
+  },
+  "US:auto insurance vehicle": {
+   "keep": true,
+   "title": "Car insurance quotes",
+   "cat": "money",
+   "topic": "car insurance quotes",
+   "what": "Quotes to insure a car",
+   "idea": "Show instant multi-insurer quotes on a simple comparison page",
+   "unexpected": false
+  },
+  "US:gaming notebooks": {
+   "keep": true,
+   "title": "Gaming laptops",
+   "cat": "products",
+   "topic": "gaming laptops",
+   "what": "A laptop powerful enough for gaming",
+   "idea": "Publish a Black Friday gaming laptop guide by budget",
+   "unexpected": false
+  },
+  "US:chromebook": {
+   "keep": true,
+   "title": "Chromebooks",
+   "cat": "products",
+   "topic": "chromebooks",
+   "what": "A simple, affordable Chromebook laptop",
+   "idea": "Feature budget Chromebooks for students in Black Friday deals",
+   "unexpected": false
+  },
+  "NL:chromebook": {
+   "keep": true,
+   "title": "Chromebooks",
+   "cat": "products",
+   "topic": "chromebooks",
+   "what": "A simple, affordable Chromebook laptop",
+   "idea": "Feature Chromebooks for school in Black Friday and Sinterklaas deals",
+   "unexpected": false
+  },
+  "US:online course": {
+   "keep": true,
+   "title": "Online courses",
+   "cat": "courses",
+   "topic": "online courses",
+   "what": "Courses to follow online at home",
+   "idea": "Offer Black Friday discounts on annual course subscriptions",
+   "unexpected": false
+  },
+  "US:video software editor": {
+   "keep": true,
+   "title": "Video editing software",
+   "cat": "apps",
+   "topic": "video editing software",
+   "what": "Software to edit videos",
+   "idea": "Offer a Black Friday discount on annual plans for creators",
+   "unexpected": false
+  },
+  "NL:winterjassen heren": {
+   "keep": true,
+   "title": "Winter jackets",
+   "cat": "products",
+   "topic": "winter jackets",
+   "what": "A warm winter jacket for men",
+   "idea": "Promote men's parkas and puffer jackets with Black Friday discounts",
+   "unexpected": false
+  },
+  "DE:günstiger tanken": {
+   "keep": true,
+   "title": "Cheaper fuel",
+   "cat": "money",
+   "topic": "fuel prices",
+   "what": "Where fuel is cheapest right now",
+   "idea": "Promote fuel price apps and fuel cards to commuters",
+   "unexpected": false
+  },
+  "US:fon generator": {
+   "keep": true,
+   "title": "Font generators",
+   "cat": "apps",
+   "topic": "font generators",
+   "what": "Fancy text styles for social media posts",
+   "idea": "Offer a free generator with premium font packs for creators",
+   "unexpected": false
+  },
+  "DE:schriftartengenerator": {
+   "keep": true,
+   "title": "Font generators",
+   "cat": "apps",
+   "topic": "font generators",
+   "what": "Fancy text styles for social media posts",
+   "idea": "Offer a free generator with premium font packs for creators",
+   "unexpected": false
+  },
+  "US:vocal lessons for singers": {
+   "keep": true,
+   "title": "Singing lessons",
+   "cat": "courses",
+   "topic": "singing lessons",
+   "what": "Lessons to learn to sing better",
+   "idea": "Sell singing lesson vouchers as Christmas gifts, starting in January",
+   "unexpected": false
+  },
+  "US:apple notebook pro": {
+   "keep": true,
+   "title": "MacBook Pro laptops",
+   "cat": "products",
+   "topic": "macbook pro",
+   "what": "A MacBook Pro laptop",
+   "idea": "Feature MacBook Pro deals in Black Friday guides for professionals",
+   "unexpected": false
+  },
+  "DE:autoversicherung": {
+   "keep": true,
+   "title": "Car insurance comparison",
+   "cat": "money",
+   "topic": "car insurance quotes",
+   "what": "Cheaper car insurance for next year",
+   "idea": "Push comparisons now; most policies must be cancelled by November 30",
+   "unexpected": false
+  },
+  "NL:berekenen hypotheek": {
+   "keep": true,
+   "title": "Mortgage calculators",
+   "cat": "money",
+   "topic": "mortgages",
+   "what": "Working out how much mortgage is possible",
+   "idea": "Offer a calculator with a free first consultation booking",
+   "unexpected": false
+  },
+  "US:bootcamp coding": {
+   "keep": true,
+   "title": "Coding bootcamps",
+   "cat": "courses",
+   "topic": "coding bootcamps",
+   "what": "Intensive courses to learn programming",
+   "idea": "Promote January-start bootcamps with AI skills and job support",
+   "unexpected": false
+  },
+  "DE:wellness im hotel": {
+   "keep": true,
+   "title": "Wellness hotels",
+   "cat": "trips",
+   "topic": "wellness hotels",
+   "what": "A hotel stay with spa and sauna",
+   "idea": "Promote winter spa breaks and gift vouchers for Christmas",
+   "unexpected": false
+  },
+  "DE:wellnesshotel": {
+   "keep": true,
+   "title": "Wellness hotels",
+   "cat": "trips",
+   "topic": "wellness hotels",
+   "what": "A hotel stay with spa and sauna",
+   "idea": "Promote winter spa breaks and gift vouchers for Christmas",
+   "unexpected": false
+  },
+  "NL:energiecontract": {
+   "keep": true,
+   "title": "Energy contracts",
+   "cat": "money",
+   "topic": "energy contracts",
+   "what": "A cheaper fixed or dynamic energy contract",
+   "idea": "Compare fixed and dynamic contracts before new tariffs start in January",
+   "unexpected": false
+  },
+  "NL:energieleveranciers": {
+   "keep": true,
+   "title": "Energy contracts",
+   "cat": "money",
+   "topic": "energy contracts",
+   "what": "The cheapest energy supplier",
+   "idea": "Advertise switching bonuses with a simple yearly cost comparison",
+   "unexpected": false
+  },
+  "US:great adventure theme park": {
+   "keep": true,
+   "title": "Six Flags Great Adventure",
+   "cat": "trips",
+   "topic": "six flags great adventure",
+   "what": "Tickets for Six Flags Great Adventure",
+   "idea": "Promote 2027 season passes during Black Friday week",
+   "unexpected": false
+  },
+  "DE:tagesgeld konto": {
+   "keep": true,
+   "title": "Savings account comparison",
+   "cat": "money",
+   "topic": "savings accounts",
+   "what": "The best interest rate on savings",
+   "idea": "Advertise new-customer rates to savers moving money before year-end",
+   "unexpected": false
+  },
+  "DE:versicherung": {
+   "keep": true,
+   "title": "Insurance comparison",
+   "cat": "money",
+   "topic": "insurance comparison",
+   "what": "Comparing insurance and switching",
+   "idea": "Compare car and legal cover before the November 30 switching date",
+   "unexpected": false
+  },
+  "DE:musicalausbildung stuttgart": {
+   "keep": true,
+   "title": "Musical theatre training",
+   "cat": "courses",
+   "topic": "musical theatre training",
+   "what": "A school to train as a musical performer",
+   "idea": "Promote open days and audition workshops this winter",
+   "unexpected": false
+  },
+  "NL:examen 2026": {
+   "keep": true,
+   "title": "Exam practice",
+   "cat": "courses",
+   "topic": "exam practice",
+   "what": "Practising for theory and civic integration exams",
+   "idea": "Sell online practice exams with instant results",
+   "unexpected": false
+  },
+  "NL:abonnement videoland": {
+   "keep": true,
+   "title": "Videoland subscriptions",
+   "cat": "apps",
+   "topic": "videoland subscription",
+   "what": "A Videoland streaming subscription",
+   "idea": "Compare streaming subscriptions and promote Black Friday trial offers",
+   "unexpected": false
+  },
+  "DE:hundeführerschein": {
+   "keep": true,
+   "title": "Dog owner licence courses",
+   "cat": "courses",
+   "topic": "dog owner licence",
+   "what": "The licence test for dog owners",
+   "idea": "Sell online prep courses and practice tests to new dog owners",
+   "unexpected": false
+  },
+  "NL:julianatoren pretpark": {
+   "keep": true,
+   "title": "Julianatoren amusement park",
+   "cat": "trips",
+   "topic": "julianatoren",
+   "what": "A family day at Julianatoren",
+   "idea": "Promote 2027 season passes as a family gift",
+   "unexpected": false
+  },
+  "NL:pullman hotel eindhoven": {
+   "keep": true,
+   "title": "Pullman Eindhoven stays",
+   "cat": "trips",
+   "topic": "pullman eindhoven",
+   "what": "A hotel night in Eindhoven city centre",
+   "idea": "Promote weekend city break packages with dinner",
+   "unexpected": false
+  },
+  "DE:autoführerschein theorieprüfung": {
+   "keep": true,
+   "title": "Driving theory practice",
+   "cat": "courses",
+   "topic": "driving theory test",
+   "what": "Passing the car theory test",
+   "idea": "Advertise practice apps with the official question set",
+   "unexpected": false
+  },
+  "NL:bezorg bloemen": {
+   "keep": true,
+   "title": "Flower delivery",
+   "cat": "services",
+   "topic": "flower delivery",
+   "what": "Having flowers delivered to someone",
+   "idea": "Promote same-day bouquets and Christmas arrangements with a card",
+   "unexpected": false
+  },
+  "NL:nederland weekendje weg": {
+   "keep": true,
+   "title": "Weekend breaks Netherlands",
+   "cat": "trips",
+   "topic": "weekend breaks",
+   "what": "A weekend away in the Netherlands",
+   "idea": "Promote January and February weekend deals from late December",
+   "unexpected": false
+  },
+  "DE:hörbuch kosten": {
+   "keep": true,
+   "title": "Audiobooks",
+   "cat": "books",
+   "topic": "audiobooks",
+   "what": "What audiobooks and subscriptions cost",
+   "idea": "Promote audiobook gift subscriptions for Christmas",
+   "unexpected": false
+  },
+  "US:hilton hawaii resort waikiki": {
+   "keep": true,
+   "title": "Hilton Hawaiian Village stays",
+   "cat": "trips",
+   "topic": "hilton hawaiian village",
+   "what": "A resort stay on Waikiki Beach",
+   "idea": "Promote winter escape packages to Waikiki",
+   "unexpected": false
+  },
+  "NL:abonnement pathe": {
+   "keep": true,
+   "title": "Pathé cinema passes",
+   "cat": "trips",
+   "topic": "cinema passes",
+   "what": "An unlimited cinema pass",
+   "idea": "Sell cinema passes as Sinterklaas and Christmas gifts",
+   "unexpected": false
+  },
+  "NL:pretpark europapark": {
+   "keep": true,
+   "title": "Europa-Park trips",
+   "cat": "trips",
+   "topic": "europa-park",
+   "what": "A trip to Europa-Park in Germany",
+   "idea": "Promote winter season tickets with hotel packages",
+   "unexpected": false
+  },
+  "DE:freida mcfadden bücher": {
+   "keep": true,
+   "title": "Freida McFadden thrillers",
+   "cat": "books",
+   "topic": "freida mcfadden thrillers",
+   "what": "Thrillers by Freida McFadden",
+   "idea": "Feature her thrillers and box sets as Christmas gifts",
+   "unexpected": false
+  },
+  "NL:spaarrekening": {
+   "keep": true,
+   "title": "Savings accounts",
+   "cat": "money",
+   "topic": "savings accounts",
+   "what": "The best savings interest rate",
+   "idea": "Compare savings rates for money moved before year-end",
+   "unexpected": false
+  },
+  "NL:spotify abonnement": {
+   "keep": true,
+   "title": "Spotify subscriptions",
+   "cat": "apps",
+   "topic": "spotify subscription",
+   "what": "A Spotify Premium subscription",
+   "idea": "Sell Spotify gift cards as Sinterklaas and Christmas presents",
+   "unexpected": false
+  },
+  "DE:backlink tool checker": {
+   "keep": true,
+   "title": "Backlink checkers",
+   "cat": "apps",
+   "topic": "backlink checkers",
+   "what": "A tool to check a site's backlinks",
+   "idea": "Offer a free check with a paid monthly monitoring plan",
+   "unexpected": false
+  },
+  "US:weekend getaway for couples near me": {
+   "keep": true,
+   "title": "Couples weekend getaways",
+   "cat": "trips",
+   "topic": "couples weekend getaways",
+   "what": "Short romantic trips close to home",
+   "idea": "Promote cabin and spa weekends for two ahead of Valentine's Day",
+   "unexpected": false
+  },
+  "US:theme park kings dominion": {
+   "keep": true,
+   "title": "Kings Dominion",
+   "cat": "trips",
+   "topic": "kings dominion",
+   "what": "Tickets for the Kings Dominion theme park",
+   "idea": "Promote WinterFest tickets and 2027 season passes",
+   "unexpected": false
+  },
+  "NL:theorie-examens cbr": {
+   "keep": true,
+   "title": "Driving theory practice",
+   "cat": "courses",
+   "topic": "driving theory courses",
+   "what": "Passing the CBR car theory exam",
+   "idea": "Advertise day courses with the exam on the same day",
+   "unexpected": false
+  },
+  "NL:oefenen examens": {
+   "keep": true,
+   "title": "Driving theory practice",
+   "cat": "courses",
+   "topic": "driving theory courses",
+   "what": "Practising car theory exams online",
+   "idea": "Sell online practice exams with a pass guarantee",
+   "unexpected": false
+  },
+  "NL:online cursussen gratis": {
+   "keep": true,
+   "title": "Free online courses",
+   "cat": "courses",
+   "topic": "online courses",
+   "what": "Free courses to follow online",
+   "idea": "Offer a free starter course that leads into a paid certificate",
+   "unexpected": false
+  },
+  "DE:dark romance bücher": {
+   "keep": true,
+   "title": "Dark romance novels",
+   "cat": "books",
+   "topic": "dark romance novels",
+   "what": "Dark romance books to read next",
+   "idea": "Curate a dark romance list with special editions for Christmas",
+   "unexpected": false
+  },
+  "NL:app voor benzineprijzen": {
+   "keep": true,
+   "title": "Fuel price apps",
+   "cat": "apps",
+   "topic": "fuel price apps",
+   "what": "An app showing the cheapest petrol nearby",
+   "idea": "Promote a free app with price alerts for nearby stations",
+   "unexpected": false
+  },
+  "NL:app voor moedervlekken": {
+   "keep": true,
+   "title": "Mole check apps",
+   "cat": "apps",
+   "topic": "mole check apps",
+   "what": "An app to check moles on the skin",
+   "idea": "Offer a skin check app with paid review by a dermatologist",
+   "unexpected": false
+  },
+  "NL:app voor zonnepanelen": {
+   "keep": true,
+   "title": "Solar panel apps",
+   "cat": "apps",
+   "topic": "solar panel apps",
+   "what": "An app to monitor solar panel output",
+   "idea": "Bundle a monitoring app with solar panel and battery installs",
+   "unexpected": false
+  },
+  "US:floc camera": {
+   "keep": false
+  },
+  "US:note book llm": {
+   "keep": false
+  },
+  "DE:notebooklm": {
+   "keep": false
+  },
+  "NL:notebook lm": {
+   "keep": false
+  },
+  "DE:medimops bücher": {
+   "keep": false
+  },
+  "DE:deutsche rentenversicherung": {
+   "keep": false
+  },
+  "DE:areas where ai is used": {
+   "keep": false
+  },
+  "DE:health app huawei": {
+   "keep": false
+  },
+  "NL:frm schoonmaak": {
+   "keep": false
+  },
+  "NL:a boeken fabric and notions shop": {
+   "keep": false
+  },
+  "NL:cursus en vergadercentrum domstad": {
+   "keep": false
+  },
+  "NL:tijdslot boeken schiphol": {
+   "keep": false
+  },
+  "NL:opleiding tot psychiater": {
+   "keep": false
   }
  },
- "rise": {},
+ "rise": {
+  "NL:f:gerwen darts": {
+   "keep": true,
+   "oneoff": false,
+   "title": "Darts and dartboards",
+   "cat": "products",
+   "topic": "darts",
+   "what": "Dart sets, boards and Van Gerwen darts",
+   "idea": "Sell dart sets and boards as gifts from early December"
+  },
+  "NL:verzekering": {
+   "keep": true,
+   "oneoff": false,
+   "title": "Insurance comparison",
+   "cat": "money",
+   "topic": "insurance comparison",
+   "what": "Comparing insurance and switching",
+   "idea": "Start year-end comparison ads now; searches peak in December"
+  },
+  "NL:nederland weekendje weg": {
+   "keep": true,
+   "oneoff": false,
+   "title": "Weekend breaks Netherlands",
+   "cat": "trips",
+   "topic": "weekend breaks",
+   "what": "A weekend away in the Netherlands",
+   "idea": "Promote winter weekend deals from late December; searches peak in January"
+  },
+  "NL:airco": {
+   "keep": true,
+   "oneoff": false,
+   "title": "Air conditioners",
+   "cat": "products",
+   "topic": "air conditioners",
+   "what": "An air conditioner for the home",
+   "idea": "Advertise installation quotes from January, before the spring rush"
+  }
+ },
  "today": [
   {
    "cc": "NL",
@@ -1516,6 +2150,22 @@
    "angle": "Families look up how the care level assessment visit works",
    "cat": "services",
    "idea": "Offer checklists and paid help with the care level application"
+  },
+  {
+   "cc": "NL",
+   "name": "salderingsregeling zonnepanelen",
+   "title": "Home batteries",
+   "angle": "With net metering ending, home battery payback is in the news",
+   "cat": "products",
+   "idea": "Offer a savings calculator and installation quote to solar panel owners"
+  },
+  {
+   "cc": "US",
+   "name": "lego black friday",
+   "title": "LEGO Black Friday deals",
+   "angle": "Early LEGO deals cut up to 44% off popular sets",
+   "cat": "products",
+   "idea": "Publish a LEGO deal tracker with price alerts through Black Friday"
   }
  ],
  "events": [
