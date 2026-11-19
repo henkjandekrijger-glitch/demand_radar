@@ -3,7 +3,7 @@
 // Voor elk project dat zijn site op echte vraag wil afstemmen (Henkjan 9 nov 2026: "Doe goed onderzoek met demand radar waar mensen naar zoeken
 // en optimaliseer de site daarop"). Openbaar te lezen. Kost geld bij DataForSEO, daarom: per thema hooguit één keer per 7 dagen gekocht
 // (hooguit ZV_MAX dollar, standaard $0,60, binnen de dagrem van lib/dfs.js), daarna altijd uit de opslag (zoekvraag/<thema>.json).
-// Nieuw thema: één regel in THEMA hieronder (regex op de zoekterm + markten met taal).
+// Nieuw thema: één regel in THEMA hieronder (regex op de zoekterm + markten met taal). regex mag ook een lijst zijn: elk deel een eigen vraag.
 import { getStore, getJSON, putJSON } from '../lib/store.js';
 import { topSearches, budget, serp } from '../lib/dfs.js';
 
@@ -173,6 +173,12 @@ export const THEMA = {
   batterij: { naam: 'Batterijen: stekkerbatterij, thuisbatterij, powerbank, powerstation', markten: ['NL', 'DE', 'US'], max: 0.6,
     ow: [['stekker en balkon', /stekker|plug.?in|balkon|steckerspeicher|stecker speicher|balkonkraftwerk/], ['thuisbatterij', /thuisbat|thuisaccu|thuis batterij|home batter|whole home|powerwall|heimspeicher|batteriespeicher|stromspeicher|solarspeicher|battery storage|battery backup|energieopslag|zonnepanelen|solar batter/], ['powerstation', /power ?station|zonnegenerator|solar ?generator|solargenerator|draagbare accu|portable batter/], ['powerbank', /power ?bank|portable charger|powerbank/], ['merken', /ecoflow|jackery|bluetti|anker|zendure|marstek|growatt|sessy|homewizard|alpha ?ess|tesla|enphase|franklin|generac|sonnen|byd|huawei|goal zero/], ['kosten en terugverdienen', /kost|prijs|price|cost|preis|subsid|förder|terugverdien|lohnt|worth it|rendement|saldering|tax credit/], ['vragen', /^(hoe|wat|wanneer|waarom|is |heeft|how|what|when|why|is |does|do |can|was |wie |wann|lohnt|ist )/]],
     regex: '(thuisbatterij|thuisaccu|thuis batterij|stekkerbatterij|stekker batterij|plug-in batterij|plugin batterij|balkonbatterij|batterij zonnepanelen|batterij voor zonnepanelen|zonnepanelen met batterij|energieopslag|powerbank|power bank|powerstation|power station|zonnegenerator|draagbare accu|portable charger|portable battery|home battery|battery backup|battery storage|solar battery|solar generator|whole home battery|powerwall|batteriespeicher|stromspeicher|solarspeicher|heimspeicher|steckerspeicher|stecker speicher|balkonkraftwerk speicher|balkonkraftwerk mit speicher|speicher balkonkraftwerk|solargenerator|ecoflow|jackery|bluetti|anker solix|zendure|marstek|homewizard batterij|homewizard plug-in|sessy batterij)' },
+  // Huis kopen en makelaar (19 nov 2026, Henkjan na de chatvraag "Ik wil een huis kopen in Gouda" op keuzehulp.best: "JA huis kopen is wel
+  // waardevol . Kijk goed naar demand radar . Zodat content erbij goed werkt . We kunnen makelaars vergelijken"). Drie losse vragen (regex als
+  // lijst), zodat de grote hypotheekvraag de makelaars per plaats niet uit de 700 plekken drukt.
+  huiskopen: { naam: 'Huis kopen en makelaar', markten: ['NL'], max: 0.6,
+    ow: [['makelaar', /makelaar|makelaardij|courtage|\bnvm\b|\bvbo\b|vastgoedpro/], ['hypotheek', /hypothe|\bnhg\b|leencapaciteit|starterslening/], ['bieden en keuring', /bied|\bbod\b|taxat|keuring|bouwkundig|voorbehoud|ontbindend/], ['kosten koper', /kosten koper|overdrachtsbelasting|notaris|waarborg|bankgarantie|kosten/], ['starters', /starter|eerste huis|eerste woning/], ['huis kopen', /kopen|koopwoning|koopakte|leveringsakte|transportakte/], ['vragen', /^(hoe|wat|wanneer|waarom|welke|is |kan |mag |hoeveel)/]],
+    regex: ['(makelaar|makelaars|aankoopmakelaar|verkoopmakelaar|makelaardij|nvm makelaar|courtage)', '(huis kopen|huizen kopen|woning kopen|appartement kopen|eerste huis|eerste woning|koopwoning|kosten koper|overdrachtsbelasting|startersvrijstelling|overbieden|bieden op een huis|bieden op huis|bod uitbrengen|bod op huis|ontbindende voorwaarde|voorbehoud financiering|bouwkundige keuring|bouwkundig rapport|taxatie huis|taxatie woning|taxateur|taxatierapport|koopakte|leveringsakte|waarborgsom|bankgarantie)', '(hypotheek|hypotheken|nhg|nationale hypotheek garantie|leencapaciteit|starterslening)'] },
   curacao: { naam: 'Curaçao', regex: '(cura[cç]ao|curazao|kòrsou|korsou|willemstad)', markten: ['US', 'NL', 'DE', 'CA', 'CO', 'BR'] },
   'kadoly-wonen': { naam: 'Kadoly wonen', markten: KADOLY_MARKT, ow: OW_KADOLY,
     regex: '(vaas|vazen|bloempot|plantenpot|sierpot|plantenbak|plantenstandaard|plantenrek|plantentafel|kunstplant|kunstbloem|orchidee|muurcirkel|wandcirkel|wanddecoratie|muurdecoratie|wandkleed|tuinposter|muursticker|tafellamp|hanglamp|leeslamp|oplaadbare lamp|lantaarn|windlicht|kandelaar|geurkaars|windgong|windspinner|bijzettafel|dienblad|plaid|sierkussen|wasmand|opbergmand|rieten mand|diffuser|geurstokjes|tuindecoratie|tuinbeeld)' },
@@ -291,7 +297,7 @@ export default async function handler(req, res) {
     for (const cc of T.markten) {
       const [loc, lang] = M[cc];
       const seen = new Set(), items = [];
-      for (const re of splitRegex(T.regex)) for (const x of await topSearches({ loc, lang }, b, { by: 'volume', anyGrowth: true, minVolume: 20, limit: 700, regex: re, intent: null }).catch(() => [])) if (!seen.has(x.k)) { seen.add(x.k); items.push(x); }
+      for (const re of [].concat(T.regex).flatMap(r => splitRegex(r))) for (const x of await topSearches({ loc, lang }, b, { by: 'volume', anyGrowth: true, minVolume: 20, limit: 700, regex: re, intent: null }).catch(() => [])) if (!seen.has(x.k)) { seen.add(x.k); items.push(x); }
       items.sort((a, c) => (c.volume || 0) - (a.volume || 0));
       markten[cc] = { taal: lang, termen: items.map(x => ({ k: x.k, v: x.volume, y: x.trend && x.trend.y, i: x.intent, c: x.cpc, cp: x.competition, o: onderwerp(x.k, T.ow), m: (x.monthly || []).slice(0, 12).map(z => z.v) })) };
     }
