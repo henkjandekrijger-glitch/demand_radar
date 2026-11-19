@@ -184,7 +184,7 @@ vinden". Zelfde route als `### fill`, dus geen AI-aanroep vanaf Vercel en geen g
   gat, komt niet op de radar en wordt 7 dagen niet opnieuw gevraagd.
 - Eigen keuzehulpen (19 nov, Henkjan: "Wij moeten simpelweg de betere antwoorden leveren"): per gat kijkt de radar of er op
   keuzehulp.best (NL), kaufberater.best (DE) of whichtobuy.best (US) al een pagina voor is (`GUIDE_SITES`, `findGuide`,
-  `refreshGuides` in `lib/aigaps.js`; sitemaps gratis, 12 uur bewaard in `gaps/guides.json`, elk uur bijgewerkt door `/api/warm`).
+  `refreshGuides` in `lib/aigaps.js`; /sitemap.xml plus alle sitemaps uit robots.txt, gratis, 12 uur bewaard in `gaps/guides-v2.json`, elk uur bijgewerkt door `/api/warm`).
   Streng vergeleken op de zoekterm (enkelvoud/meervoud, typfout in lange woorden); een pagina die de radar zo niet herkent zet
   Claude in het antwoordbestand met `"guide": "https://..."` (of `false`), dat blijft dan staan. Alleen met teamsleutel
   zichtbaar: badge op de radar, "Own guide" in de tekst, en de lijst voor de keuzehulp-sessie:

@@ -641,6 +641,7 @@ test('AI gaps: vragen per land, oordeel per antwoord, niet opnieuw vragen binnen
   assert.equal(G.guideMatch('massage', '/massagegun'), 0);
   assert.equal(G.guideMatch('iphone 18', '/best-iphones-to-buy-black-friday-2026-iphone-17-vs-pro-vs-ai'), 0);
   assert.equal(G.guideMatch('wonen', '/categorie/wonen'), 0);
+  assert.equal(G.guideMatch('schoonmaakbedrijven', '/rotterdam/schoonmaakbedrijf'), 3);
   const LG = await G.latestGaps(store);
   assert.equal(LG.items.find(x => x.keyword === 'thuisbatterij').guide, 'https://keuzehulp.best/thuisbatterij');
   assert.equal(LG.items.find(x => x.cc === 'US').guide, null);
