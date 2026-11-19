@@ -1,0 +1,148 @@
+{
+ "day": "2026-11-18",
+ "eventsDay": "2026-11-19",
+ "items": {
+  "US:3d prints": {
+   "keep": true,
+   "title": "3D printers",
+   "cat": "products",
+   "topic": "3d printers",
+   "what": "Home 3D printers and things to print",
+   "idea": "Sell starter 3D printers with filament bundles as Christmas gifts",
+   "unexpected": false
+  },
+  "US:cheap car insurance": {
+   "keep": true,
+   "title": "Cheap car insurance",
+   "cat": "money",
+   "topic": "car insurance quotes",
+   "what": "Car insurance at a lower price",
+   "idea": "Run a quote comparison page for drivers facing a renewal price rise",
+   "unexpected": false
+  },
+  "US:quote insurance auto": {
+   "keep": true,
+   "title": "Car insurance quotes",
+   "cat": "money",
+   "topic": "car insurance quotes",
+   "what": "Compare car insurance quotes online",
+   "idea": "Advertise instant quotes from several insurers before year-end renewals",
+   "unexpected": false
+  },
+  "US:coders bootcamp": {
+   "keep": true,
+   "title": "Coding bootcamps",
+   "cat": "courses",
+   "topic": "coding bootcamps",
+   "what": "Intensive courses to learn programming",
+   "idea": "Promote January-start bootcamps with AI skills and job support",
+   "unexpected": false
+  },
+  "US:things to do today": {
+   "keep": true,
+   "title": "Things to do today",
+   "cat": "trips",
+   "topic": "things to do nearby",
+   "what": "Ideas for an outing nearby, today",
+   "idea": "Promote local experiences and tickets that can be booked the same day",
+   "unexpected": false
+  },
+  "US:things to do this weekend near me": {
+   "keep": true,
+   "title": "Weekend activities nearby",
+   "cat": "trips",
+   "topic": "things to do nearby",
+   "what": "Something fun to do this weekend",
+   "idea": "Send a Thursday mail with local events and bookable weekend activities",
+   "unexpected": false
+  },
+  "NL:goedkoopste zorgverzekering 2027": {
+   "keep": true,
+   "title": "Cheapest health insurance 2027",
+   "cat": "money",
+   "topic": "health insurance comparison",
+   "what": "The cheapest Dutch health insurance for 2027",
+   "idea": "Publish a 2027 premium comparison now; switching closes December 31",
+   "unexpected": false
+  },
+  "US:app for nyc subway": {
+   "keep": true,
+   "title": "NYC subway apps",
+   "cat": "apps",
+   "topic": "nyc subway app",
+   "what": "An app for New York subway routes",
+   "idea": "Advertise a subway route app to holiday visitors heading to New York",
+   "unexpected": false
+  },
+  "US:weekend getaways for couples near me": {
+   "keep": true,
+   "title": "Couples weekend getaways",
+   "cat": "trips",
+   "topic": "couples weekend getaways",
+   "what": "Short romantic trips close to home",
+   "idea": "Promote cabin and spa weekends for two ahead of Valentine's Day",
+   "unexpected": false
+  }
+ },
+ "rise": {
+  "US:weekend getaways for couples near me": {
+   "keep": true,
+   "oneoff": false,
+   "title": "Couples weekend getaways",
+   "cat": "trips",
+   "topic": "couples weekend getaways",
+   "what": "Short romantic trips close to home",
+   "idea": "Sell cabin and spa weekends for two; start advertising in December"
+  }
+ },
+ "today": [
+  {
+   "cc": "NL",
+   "name": "benzine",
+   "title": "Cheaper petrol",
+   "angle": "Petrol drops below two euros a litre again",
+   "cat": "money",
+   "idea": "Promote fuel price apps and fuel discount cards to commuters"
+  },
+  {
+   "cc": "NL",
+   "name": "box 3",
+   "title": "Box 3 tax advice",
+   "angle": "The new box 3 savings tax clears a key hurdle",
+   "cat": "money",
+   "idea": "Offer a year-end check of savings and investments under the new rules"
+  },
+  {
+   "cc": "NL",
+   "name": "gta 6 ps4",
+   "title": "PS5 consoles for GTA 6",
+   "angle": "PS4 owners check whether GTA 6 will run on their console",
+   "cat": "products",
+   "idea": "Bundle PS5 consoles with a GTA 6 pre-order for PS4 owners"
+  },
+  {
+   "cc": "NL",
+   "name": "sunrise on the reaping",
+   "title": "Hunger Games books",
+   "angle": "The Sunrise on the Reaping film is in cinemas",
+   "cat": "books",
+   "idea": "Feature the Hunger Games books and box sets as December gifts"
+  },
+  {
+   "cc": "DE",
+   "name": "glam pen",
+   "title": "Nail polish pens",
+   "angle": "A nail polish pen from a TV invention show sells at Lidl",
+   "cat": "products",
+   "idea": "Stock nail polish pens and nail art sets as small Christmas gifts"
+  },
+  {
+   "cc": "US",
+   "name": "malware",
+   "title": "Antivirus software",
+   "angle": "A large malware attack hits Zoom and other brands",
+   "cat": "apps",
+   "idea": "Advertise antivirus and password manager bundles to worried users"
+  }
+ ]
+}
