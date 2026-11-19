@@ -197,6 +197,10 @@ vinden". Zelfde route als `### fill`, dus geen AI-aanroep vanaf Vercel en geen g
   liet het bijna altijd kiezen. De uurronde doet er 3 per keer; `GET /api/gaps?others=1&key=` doet er nu een paar (nooit in een lus).
   Met alleen `AI_GAPS_GATEWAY` blijven teksten en prijsoordelen zonder gateway. Per rij staat hoeveel andere AI's ook geen
   eerste keus hebben; labels in het gatewayoverzicht: `project:demand_radar,fn:aigaps`.
+- Losse koopvraag op verzoek (keuzehulp-protocol, 19 nov): `GET /api/gaps?ask=<vraag>&site=<host>&key=<teamsleutel>` legt één vraag voor
+  aan dezelfde drie AI's en zegt wie ze noemen, of er een eerste keus is en of ze onze site noemen (`named`). Dezelfde vraag wordt
+  hooguit eens per 7 dagen opnieuw gesteld (daarbinnen het bewaarde antwoord), telt mee in de dagrem en bewaart de laatste 12
+  metingen in `gaps/vraag/<hash>.json` (`history`): vóór de bouw van een keuzehulp, en daarna elke week voor het verloop per pagina.
 - Opslag: `gaps/latest.json` (alles van de laatste 14 dagen, volumes bijgewerkt met de radar van vandaag), `gaps/<dag>.json`
   (de ruwe antwoorden). `GET /api/gaps?latest=1` geeft de uitkomst.
 Grens: dit is één model (Claude) zonder webzoeken, niet wat gebruikers van ChatGPT of Gemini echt zien. Meer modellen kan via

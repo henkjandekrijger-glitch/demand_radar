@@ -665,6 +665,15 @@ test('AI gaps: vragen per land, oordeel per antwoord, niet opnieuw vragen binnen
   const o2 = await G.askOthers(store, { now: '2026-11-19T16:00:00Z', max: 5 });
   assert.ok(o2.cap || o2.done || o2.asked <= 1); // dagrem of klaar
   const o3 = await G.askOthers(store, { now: '2026-11-19T17:00:00Z', max: 5 }); assert.ok(o3.cap || o3.done);
+  // losse koopvraag: noemt AI ons, en binnen 7 dagen komt het bewaarde antwoord terug zonder nieuwe aanroep
+  process.env.AI_GAPS_MAX_DAY = '50'; const voor = calls;
+  G.setGapsFetch(async (u, o) => { calls++; const B = JSON.parse(o.body), p = B.messages[0].content; return { ok: true, json: async () => ({ choices: [{ message: { content: B.model.startsWith('anthropic') ? '{"names":["Keuzehulp.best","Coolblue"],"giants":[],"pick":"","misread":false}' : 'Kijk op keuzehulp.best of bij Coolblue, het hangt af van je ramen.' } }] }) }; });
+  const v1 = await G.askQuestion(store, 'Welke raamrobot raad je aan en waar koop ik die?', { site: 'https://keuzehulp.best/raamrobot', now: '2026-11-20T10:00:00Z' });
+  assert.deepEqual([v1.cached, v1.asked, v1.noPick, v1.named.length, calls - voor], [false, 3, 3, 3, 6]);
+  const v2 = await G.askQuestion(store, 'Welke raamrobot raad je aan en waar koop ik die?', { site: 'keuzehulp.best', now: '2026-11-23T10:00:00Z' });
+  assert.deepEqual([v2.cached, calls - voor, v2.history.length], [true, 6, 1]);
+  const v3 = await G.askQuestion(store, 'Welke raamrobot raad je aan en waar koop ik die?', { site: 'keuzehulp.best', now: '2026-11-28T10:00:00Z' });
+  assert.deepEqual([v3.cached, v3.history.length], [false, 2]);
   delete process.env.AI_GAPS_GATEWAY; delete process.env.AI_GATEWAY_API_KEY; delete process.env.AI_GAPS_MAX_DAY;
   G.setGapsFetch(null);
   if (keep) await putJSON(store, 'maps/demand.json', keep); await putJSON(store, 'gaps/latest.json', { items: [] });
