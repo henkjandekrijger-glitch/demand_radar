@@ -276,8 +276,11 @@ Scripts in `tools/` (toetsen van bronnen en het model).
   budget van de opbouw (`DFS_BUILD_MAX`) gereserveerd tot de opbouw van die dag betaald heeft of tot 08:00 UTC, zodat losse aankopen
   (zoekvraag-thema's, checks) vóór 04:00 UTC de nachtelijke opbouw niet meer kunnen verdringen (gebeurde 15 en 16 nov). Sinds
   18 nov 2026 gaat de opbouw voor (hij mislukte ook op 18 nov: de reserve remt alleen de radar zelf, niet MyLevel en hjdk-api op
-  hetzelfde account): de opbouw mag zijn eigen `DFS_BUILD_MAX` altijd uitgeven, ook als de rest het dagtotaal al op heeft; het
-  hele account komt op zo'n dag hooguit op `DFS_TOTAL_MAX` + `DFS_BUILD_MAX`. Voor al het andere blijven de grenzen gelijk. Zuinig: Google Trends-dagdata
+  hetzelfde account): de opbouw mag zijn eigen `DFS_BUILD_MAX` altijd uitgeven, ook als de rest het dagtotaal al op heeft.
+  Sinds 19 nov twee potjes voor de opbouw: de Labs-toplijsten (`DFS_BUILD_LISTS_MAX` = $1,50, alleen op de nacht dat hun geheugen
+  verloopt; ze kosten dan ± $1,15) en de rest (`DFS_BUILD_MAX` = $0,75 per dag: zoekvolumes en dagdata). Onder één grens bleef er
+  op zo'n nacht niets over voor de zoekvolumes en stond "Will rise" leeg (19 nov). Harde grens voor het hele account:
+  `DFS_TOTAL_MAX` + `DFS_BUILD_MAX` + `DFS_BUILD_LISTS_MAX`. Voor al het andere blijven de grenzen gelijk. Zuinig: Google Trends-dagdata
   in de opbouw alleen voor de bovenste 4 groepen per land (`NOW_GOOGLE_CHUNKS`, rest goedkopere DataForSEO Trends), wachtlijst van
   de vroege signalen pas na 3 dagen of bij 900+ termen, verse maanddata in stukken van $0,45 per dag. Kasboek per proces:
   `dfs/ledger/<dag>/<proces>.json`.
