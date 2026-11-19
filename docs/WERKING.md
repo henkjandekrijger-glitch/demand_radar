@@ -180,6 +180,8 @@ vinden". Zelfde route als `### fill`, dus geen AI-aanroep vanaf Vercel en geen g
   het bestand nu op; de uurronde (`/api/warm`) doet dat anders binnen het uur (één keer per versie, `gaps/applied-<dag>.json`).
 - Oordeel, vooraf vastgelegd (`judge`): `open` = de AI noemt niemand; `generic` = alleen grote algemene winkels; `unclear` = wel
   namen, geen eerste keus; `taken` = duidelijke eerste keus. Rangorde = gewicht (1 / 0,7 / 0,35 / 0,1) × log10 van het zoekvolume.
+- Begreep de AI de zoekterm niet (typfout, vage term) en vroeg ze terug, dan zet het antwoord `misread: true`: dat telt niet als
+  gat, komt niet op de radar en wordt 7 dagen niet opnieuw gevraagd.
 - Opslag: `gaps/latest.json` (alles van de laatste 14 dagen, volumes bijgewerkt met de radar van vandaag), `gaps/<dag>.json`
   (de ruwe antwoorden). `GET /api/gaps?latest=1` geeft de uitkomst.
 Grens: dit is één model (Claude) zonder webzoeken, niet wat gebruikers van ChatGPT of Gemini echt zien. Meer modellen kan via

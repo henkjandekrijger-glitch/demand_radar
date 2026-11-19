@@ -623,5 +623,14 @@ test('AI gaps: vragen per land, oordeel per antwoord, niet opnieuw vragen binnen
   assert.equal((await G.pendingGaps(store, { now: '2026-11-27T12:00:00Z' })).todo, 3); // daarna wel
   const { demandText } = await import('../api/mcp.js');
   assert.match(demandText({ ready: true, day: '2026-11-19', period: '2026-10', gaps: G.presentGaps(L) }, 'gaps', 'NL', 5), /Home batteries .*AI names nobody; 190,000 searches/);
+  // niet-begrepen zoekterm: geen gat, niet op de radar, wel 7 dagen niet opnieuw vragen
+  assert.equal(G.judge({ names: [], misread: true }).level, 'misread');
+  const L0 = await G.latestGaps(store), first = L0.items[0];
+  const r2 = await G.applyGaps(store, { day: '2026-11-19', answers: { [first.id]: { answer: 'Wat bedoel je precies?', names: [], misread: true } } }, { now: '2026-11-19T13:00:00Z' });
+  assert.equal(r2.misread, 1);
+  const L2 = await G.latestGaps(store);
+  assert.equal(L2.items.length, 3); assert.equal(G.presentGaps(L2).length, 2);
+  assert.ok(!G.presentGaps(L2).some(x => x.id === first.id));
+  assert.equal((await G.pendingGaps(store, { now: '2026-11-21T12:00:00Z' })).todo, 0);
   if (keep) await putJSON(store, 'maps/demand.json', keep); await putJSON(store, 'gaps/latest.json', { items: [] });
 });
