@@ -1,0 +1,1464 @@
+{
+ "day": "2026-11-19",
+ "model": "Claude (Sonnet), no web search",
+ "answers": {
+  "NL:winter jassen": {
+   "answer": "Kies op gebruik: voor dagelijks Nederlands weer (regen, wind, 0-10 graden) is een waterdichte parka of donsjas met capuchon prima. Let op warmte, waterdichtheid en vulling: synthetisch is beter tegen regen, dons is lichter en warmer. Bekende merken: Tenson, Wellensteyn, Jack Wolfskin, Columbia, The North Face, Patagonia. Kopen bij Bever, Zalando, Wehkamp of de Bijenkorf; vergelijk op Beslist.nl en let op Black Friday of de uitverkoop in januari. Wat is je budget en hoe gebruik je de jas?",
+   "names": [
+    "Tenson",
+    "Wellensteyn",
+    "Jack Wolfskin",
+    "Columbia",
+    "The North Face",
+    "Patagonia",
+    "Bever",
+    "Zalando",
+    "Wehkamp",
+    "de Bijenkorf",
+    "Beslist.nl"
+   ],
+   "giants": [
+    "Zalando",
+    "Wehkamp"
+   ],
+   "pick": "",
+   "hedged": false
+  },
+  "NL:iphone 18": {
+   "answer": "Check eerst welke modellen er nu precies zijn, want specificaties en prijzen kan ik niet zeker weten. Het basismodel is voor de meesten genoeg; Pro alleen voor betere camera en scherm. Kopen kan bij Apple (apple.com/nl), Coolblue, MediaMarkt, bol of Belsimpel. Met abonnement: Odido, KPN, Vodafone. Los toestel plus sim-only is vaak goedkoper dan een bundel. Vergelijk prijzen op Tweakers Pricewatch. Welk model en hoeveel opslag zoek je?",
+   "names": [
+    "Apple",
+    "Coolblue",
+    "MediaMarkt",
+    "bol",
+    "Belsimpel",
+    "Odido",
+    "KPN",
+    "Vodafone",
+    "Tweakers Pricewatch"
+   ],
+   "giants": [
+    "Coolblue",
+    "MediaMarkt",
+    "bol"
+   ],
+   "pick": "",
+   "hedged": false
+  },
+  "NL:thuis batterij": {
+   "answer": "Een thuisbatterij wordt interessanter nu de salderingsregeling eindigt, maar de terugverdientijd is vaak 8 tot 12 jaar. Het meest rendabel met zonnepanelen en een dynamisch contract. Zonneplan Nexus is voor veel huishoudens de makkelijkste keuze, vooral met een Zonneplan-contract. Alternatieven: Zendure, Marstek, Tesla Powerwall of een systeem van je installateur (Huawei, SolarEdge). Vraag minstens twee offertes en kijk naar capaciteit, garantie en of hij met Frank Energie of Zonneplan kan sturen. Heb je zonnepanelen?",
+   "names": [
+    "Zonneplan Nexus",
+    "Zonneplan",
+    "Zendure",
+    "Marstek",
+    "Tesla Powerwall",
+    "Huawei",
+    "SolarEdge",
+    "Frank Energie"
+   ],
+   "giants": [],
+   "pick": "Zonneplan Nexus",
+   "hedged": false
+  },
+  "NL:uggs": {
+   "answer": "Originele UGG-laarzen (Classic Mini, Classic Short, Tasman-slippers) kosten grofweg 150 tot 250 euro. Koop bij erkende verkopers om namaak te vermijden: de UGG-webshop, Zalando, de Bijenkorf of Schuurman Schoenen. Zalando heeft de grootste keus en makkelijk retourneren. Goedkoper alternatief: Emu Australia of Bearpaw. Let op: gewone suede UGGs zijn niet waterdicht, dus kies een Weather-variant of behandel ze met een beschermspray.",
+   "names": [
+    "UGG",
+    "Zalando",
+    "de Bijenkorf",
+    "Schuurman Schoenen",
+    "Emu Australia",
+    "Bearpaw"
+   ],
+   "giants": [
+    "Zalando"
+   ],
+   "pick": "Zalando",
+   "hedged": false
+  },
+  "NL:berekenen hypotheek": {
+   "answer": "Begin met een indicatieve berekening in de rekentool van Independer, De Hypotheker of Nibud (die laatste rekent met woonlasten). Je maximale hypotheek hangt af van inkomen, vaste lasten, studieschuld, rente en rentevaste periode. Voor een echte aanvraag spreek je een onafhankelijk adviseur, bijvoorbeeld bij De Hypotheker of Hypotheekshop, of direct bij ING, Rabobank of ABN AMRO. Vergelijk ook de totale maandlast en NHG-voorwaarden, niet alleen de rente. Wat is je bruto inkomen en wil je alleen of samen kopen?",
+   "names": [
+    "Independer",
+    "De Hypotheker",
+    "Nibud",
+    "Hypotheekshop",
+    "ING",
+    "Rabobank",
+    "ABN AMRO"
+   ],
+   "giants": [],
+   "pick": "Independer",
+   "hedged": false
+  },
+  "NL:benzine": {
+   "answer": "Benzine (Euro 95) is meestal het goedkoopst bij onbemande pompen zoals Tango en Tinq; merkstations als Shell, BP en Esso zijn vaak enkele cent per liter duurder. Duurdere varianten zoals V-Power zijn voor een gewone auto niet nodig. Pompprijzen verschillen per regio en dag, dus kijk vooraf in een prijzen-app of de ANWB Onderweg-app. Tank bij voorkeur niet langs de snelweg, want daar betaal je het meest.",
+   "names": [
+    "Tango",
+    "Tinq",
+    "Shell",
+    "BP",
+    "Esso",
+    "V-Power",
+    "ANWB Onderweg"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": false
+  },
+  "NL:elektriciteit auto": {
+   "answer": "Bedoel je stroom om een elektrische auto te laden, of een elektrische auto kopen of leasen? Voor laden: thuis is het goedkoopst, met een laadpaal van Easee, Wallbox of Alfen en een dynamisch contract bij Frank Energie of Zonneplan. Onderweg laad je bij Fastned, Shell Recharge, Allego of Tesla Supercharger; een laadpas als ANWB Easycharge of Plugsurfing werkt bij veel netwerken. Vertel of je thuis kunt laden en hoeveel je rijdt, dan kan ik gerichter adviseren.",
+   "names": [
+    "Easee",
+    "Wallbox",
+    "Alfen",
+    "Frank Energie",
+    "Zonneplan",
+    "Fastned",
+    "Shell Recharge",
+    "Allego",
+    "Tesla Supercharger",
+    "ANWB Easycharge",
+    "Plugsurfing"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": true
+  },
+  "NL:preston palace hotel almelo": {
+   "answer": "Preston Palace in Almelo is een bekend, opvallend gebouw met hotelkamers. Ik weet niet zeker wat de actuele openingstijden en prijzen zijn, dus check dat. Boek bij voorkeur direct via de eigen website van het hotel: dat geeft vaak de beste voorwaarden, en soms een betere prijs. Vergelijk daarna met Booking.com en lees recente reviews op Tripadvisor. Wil je weten wat er in Almelo verder te doen is of welk kamertype past?",
+   "names": [
+    "Preston Palace",
+    "Booking.com",
+    "Tripadvisor"
+   ],
+   "giants": [
+    "Booking.com"
+   ],
+   "pick": "Preston Palace",
+   "hedged": false
+  },
+  "NL:black friday en": {
+   "answer": "Je vraag lijkt halverwege afgebroken: waar zoek je deals voor? Algemeen: Black Friday is dit jaar op vrijdag 27 november. Vergelijk prijzen op Tweakers Pricewatch en Beslist.nl en check de prijshistorie, want niet elke actie is echt een korting. Veel aanbod bij Coolblue, bol, MediaMarkt, Amazon.nl en Wehkamp. Bepaal vooraf wat je wilt kopen en je maximumprijs, dan voorkom je impulsaankopen.",
+   "names": [
+    "Tweakers Pricewatch",
+    "Beslist.nl",
+    "Coolblue",
+    "bol",
+    "MediaMarkt",
+    "Amazon.nl",
+    "Wehkamp"
+   ],
+   "giants": [
+    "Coolblue",
+    "bol",
+    "MediaMarkt",
+    "Amazon.nl",
+    "Wehkamp"
+   ],
+   "pick": "",
+   "hedged": true
+  },
+  "NL:autoverzekeringen": {
+   "answer": "Vergelijk eerst via Independer of Overstappen.nl, en kijk ook naar Centraal Beheer, OHRA, a.s.r., Univé, Allianz Direct en ANWB. Kies WA voor oude auto's (ouder dan ongeveer 8 jaar), WA beperkt casco voor middelmatige auto's en allrisk voor nieuwe of dure auto's. Let op eigen risico, schadevrije jaren, dekking voor accessoires en of er een schadevrije-jarenbescherming is. Goedkoopst is niet altijd het beste: lees ook de ervaringen met schade-afhandeling. Wat voor auto heb je?",
+   "names": [
+    "Independer",
+    "Overstappen.nl",
+    "Centraal Beheer",
+    "OHRA",
+    "a.s.r.",
+    "Univé",
+    "Allianz Direct",
+    "ANWB"
+   ],
+   "giants": [],
+   "pick": "Independer",
+   "hedged": false
+  },
+  "NL:noodpakket": {
+   "answer": "Een noodpakket kun je goed zelf samenstellen aan de hand van het advies van de overheid (Denk Vooruit): water, houdbaar eten voor 3 dagen, zaklamp, powerbank, radio op batterijen, EHBO-spullen, medicijnen en kopieën van documenten. Wil je een kant-en-klare set, dan is de webshop van het Rode Kruis een goede eerste keuze. Daarnaast vind je losse pakketten en onderdelen bij bol en Kruidvat, en outdoorspullen bij Decathlon.",
+   "names": [
+    "Rode Kruis",
+    "bol",
+    "Kruidvat",
+    "Decathlon",
+    "Denk Vooruit"
+   ],
+   "giants": [
+    "bol"
+   ],
+   "pick": "Rode Kruis",
+   "hedged": false
+  },
+  "NL:energiecontract": {
+   "answer": "Dat hangt af van je verbruik en wat je wilt: vast of variabel, en groen of goedkoop. Vergelijk eerst via een vergelijkingssite zoals Independer, Pricewise of Gaslicht.com, en kijk naar de totale jaarkosten, niet alleen het tarief. Bekende aanbieders zijn Vattenfall, Eneco, Essent, Greenchoice en Budget Energie. Let op de opzegvoorwaarden, de terugleverkosten bij zonnepanelen en de beoordelingen van de klantenservice. Geef je verbruik door, dan kan ik gerichter meedenken.",
+   "names": [
+    "Independer",
+    "Pricewise",
+    "Gaslicht.com",
+    "Vattenfall",
+    "Eneco",
+    "Essent",
+    "Greenchoice",
+    "Budget Energie"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": true
+  },
+  "NL:zonnepanelen": {
+   "answer": "Dat hangt af van je dak, verbruik en budget. Vraag minimaal drie offertes aan, en let op merkpanelen (bijvoorbeeld AUO, JA Solar of SunPower), garantie op omvormer en panelen, en of de installateur Zonnepanelen Keurmerk of Techniek Nederland erkend is. Bekende partijen zijn Coolblue, Zonneplan, Solarnova en Greenchoice. Vergelijkingssites als Zonnepanelen.net kunnen helpen. Houd rekening met het einde van de salderingsregeling in 2027, dus een thuisbatterij kan interessant zijn.",
+   "names": [
+    "AUO",
+    "JA Solar",
+    "SunPower",
+    "Techniek Nederland",
+    "Coolblue",
+    "Zonneplan",
+    "Solarnova",
+    "Greenchoice",
+    "Zonnepanelen.net"
+   ],
+   "giants": [
+    "Coolblue"
+   ],
+   "pick": "",
+   "hedged": true
+  },
+  "NL:breukelen hotel van der valk": {
+   "answer": "Je bedoelt waarschijnlijk Van der Valk Hotel Breukelen aan de A2, tussen Utrecht en Amsterdam. Boek het liefst direct op de website van Van der Valk: daar vind je vaak de beste prijs, flexibele voorwaarden en soms arrangementen met diner of ontbijt. Vergelijk gerust even met Booking.com of Hotels.com, maar boeken bij het hotel zelf is meestal net zo goedkoop of goedkoper.",
+   "names": [
+    "Van der Valk Hotel Breukelen",
+    "Van der Valk",
+    "Booking.com",
+    "Hotels.com"
+   ],
+   "giants": [],
+   "pick": "Van der Valk",
+   "hedged": false
+  },
+  "NL:bezorg bloemen": {
+   "answer": "Voor een bos op een specifieke dag raad ik Fleurop aan: zij werken met lokale bloemisten, dus de bos is vers en kan vaak dezelfde dag worden bezorgd. Voor brievenbusbloemen of een abonnement is Bloomon een goede keuze. Voor een scherpe prijs zijn Euroflorist en Bloemenbureau Holland ook populair. Ook bol heeft een ruim aanbod. Let op bezorgtijd, verzendkosten en of een kaartje is inbegrepen.",
+   "names": [
+    "Fleurop",
+    "Bloomon",
+    "Euroflorist",
+    "Bloemenbureau Holland",
+    "bol"
+   ],
+   "giants": [
+    "bol"
+   ],
+   "pick": "Fleurop",
+   "hedged": false
+  },
+  "NL:verzekering": {
+   "answer": "Welke verzekering zoek je: zorg, auto, inboedel, aansprakelijkheid, reis of iets anders? Dat bepaalt de keuze. Vergelijk altijd via Independer, Zorgwijzer of Pricewise en lees de Consumentenbond-testen. Bekende verzekeraars zijn Centraal Beheer, Univé, a.s.r., Nationale-Nederlanden, Interpolis en OHRA. Kijk niet alleen naar de premie, maar ook naar dekking, eigen risico en schadeafhandeling. Vertel me wat je nodig hebt, dan kan ik gerichter advies geven.",
+   "names": [
+    "Independer",
+    "Zorgwijzer",
+    "Pricewise",
+    "Consumentenbond",
+    "Centraal Beheer",
+    "Univé",
+    "a.s.r.",
+    "Nationale-Nederlanden",
+    "Interpolis",
+    "OHRA"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": true
+  },
+  "NL:chromebook": {
+   "answer": "Voor school en internetten volstaat een Chromebook van rond 300 tot 400 euro, bijvoorbeeld de Acer Chromebook Spin 514 of de Lenovo IdeaPad Flex 5i Chromebook. Wil je iets goedkopers of compacts, kijk dan naar de Lenovo Chromebook Duet. Let op minimaal 8 GB werkgeheugen, een IPS-scherm en het einddatum van updates. Kopen kan het best bij Coolblue (goede service en retour), maar ook MediaMarkt, bol en Amazon.nl hebben een groot aanbod.",
+   "names": [
+    "Acer Chromebook Spin 514",
+    "Lenovo IdeaPad Flex 5i Chromebook",
+    "Lenovo Chromebook Duet",
+    "Coolblue",
+    "MediaMarkt",
+    "bol",
+    "Amazon.nl"
+   ],
+   "giants": [
+    "Coolblue",
+    "MediaMarkt",
+    "bol",
+    "Amazon.nl"
+   ],
+   "pick": "Coolblue",
+   "hedged": false
+  },
+  "NL:julianatoren pretpark": {
+   "answer": "De Julianatoren in Apeldoorn is een attractiepark voor kinderen tot ongeveer 12 jaar, met een leuke combinatie van speeltuin, attracties en dieren. Koop je kaartjes het liefst online via de officiële website van Julianatoren: daar zijn vaak online-korting en dagtickets beschikbaar, en je slaat de wachtrij bij de kassa over. Check de openingstijden en eventuele aanbiedingen vooraf. Voor een grotere dagtrip in de buurt zijn Apenheul en Toverland alternatieven.",
+   "names": [
+    "Julianatoren",
+    "Apenheul",
+    "Toverland"
+   ],
+   "giants": [],
+   "pick": "Julianatoren",
+   "hedged": false
+  },
+  "NL:abonnement videoland": {
+   "answer": "Het makkelijkst sluit je een Videoland-abonnement direct af via videoland.com, vanaf ongeveer 6 tot 12 euro per maand afhankelijk van de variant (met of zonder reclame). Je kunt het ook via je tv- of internetaanbieder nemen, zoals KPN, Ziggo of Odido, soms met korting in een bundel. Kijk ook naar Videoland-combinaties met RTL. Zorg dat je maandelijks opzegbaar kiest zodat je flexibel blijft.",
+   "names": [
+    "Videoland",
+    "KPN",
+    "Ziggo",
+    "Odido",
+    "RTL"
+   ],
+   "giants": [],
+   "pick": "Videoland",
+   "hedged": false
+  },
+  "NL:examen 2026": {
+   "answer": "Wat bedoel je precies: eindexamen (vmbo, havo, vwo), rijexamen, of een ander examen? Voor het eindexamen vind je op Examenblad.nl de officiële syllabi en oude examens, en op de website van DUO en het CvTE de data. Oefenen kan met uitgeverijen als Examenbundel, Wiskunde Academie of StudyGo. Voor het theorie-examen auto boek je via CBR. Laat weten welk examen het is, dan geef ik gerichtere tips.",
+   "names": [
+    "Examenblad.nl",
+    "DUO",
+    "CvTE",
+    "Examenbundel",
+    "Wiskunde Academie",
+    "StudyGo",
+    "CBR"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": true
+  },
+  "NL:zorgverzekering vergelijk": {
+   "answer": "Vergelijk eerst onafhankelijk: Zorgwijzer, Independer of de Zorgverzekeringswijzer van de Consumentenbond. Grote verzekeraars zijn Zilveren Kruis, CZ, VGZ, Menzis, ONVZ en DSW. Let op: je eigen risico, of je zorgverleners (ziekenhuis, fysio) gecontracteerd zijn, en of je een aanvullende verzekering echt nodig hebt (tandarts, fysio, bril). Stap over vóór 1 januari; opzeggen kan tot 31 december, overstappen met nieuw contract kan tot 1 februari met terugwerkende kracht. Ik zou beginnen bij Zorgwijzer en daar je eigen gebruik invullen.",
+   "names": [
+    "Zorgwijzer",
+    "Independer",
+    "Consumentenbond",
+    "Zilveren Kruis",
+    "CZ",
+    "VGZ",
+    "Menzis",
+    "ONVZ",
+    "DSW"
+   ],
+   "giants": [],
+   "pick": "Zorgwijzer",
+   "hedged": false
+  },
+  "NL:pullman hotel eindhoven": {
+   "answer": "Voor zover ik weet zit er een Pullman in Eindhoven (Pullman Eindhoven Cocagne, bij het centrum/station). Het beste boek je direct via de site van Accor (all.accor.com): vaak de beste flexibele tarieven, ALL-voordelen en punten. Vergelijk daarna even met Booking.com of Expedia voor een actietarief, maar kijk of annuleren kosteloos kan. Check de actuele prijs en beschikbaarheid, want mijn kennis kan verouderd zijn, en let op evenementen (Dutch Design Week, beurzen) waardoor prijzen flink stijgen.",
+   "names": [
+    "Pullman Eindhoven Cocagne",
+    "Accor",
+    "all.accor.com",
+    "Booking.com",
+    "Expedia"
+   ],
+   "giants": [],
+   "pick": "all.accor.com",
+   "hedged": false
+  },
+  "NL:kortingsvoucher thuisbezorgd": {
+   "answer": "Kijk eerst in de Thuisbezorgd-app en op de site zelf: daar staan vaak acties en kortingscodes per restaurant, en je krijgt soms codes via de nieuwsbrief of na een bestelling. Daarnaast vind je codes op Pepper.nl en VoucherCodes.nl, al werken die lang niet altijd. Cadeaubonnen koop je ook via Thuisbezorgd zelf. Pas op voor sites die 'gratis tegoed' beloven; dat is vaak nep. Mijn tip: start met de app en bestel bij restaurants met een eigen actie.",
+   "names": [
+    "Thuisbezorgd",
+    "Pepper.nl",
+    "VoucherCodes.nl"
+   ],
+   "giants": [],
+   "pick": "Thuisbezorgd",
+   "hedged": false
+  },
+  "NL:sweetlake wellness": {
+   "answer": "Sweetlake Wellness is een wellnesscentrum met sauna's en spa-faciliteiten. Reserveer of koop kaartjes het liefst direct op de eigen website, daar zie je de actuele prijzen, openingstijden en tijdsloten en vermijd je extra kosten. Soms zijn er ook dagkaart-aanbiedingen via aanbieders als Social Deal of Wellnessdeal, maar check dan de voorwaarden. Ga op doordeweekse dagen als je het rustig wilt hebben, en kijk of een weekendkaart of kortingskaart voor meerdere bezoeken voordeliger is.",
+   "names": [
+    "Sweetlake Wellness",
+    "Social Deal",
+    "Wellnessdeal"
+   ],
+   "giants": [],
+   "pick": "Sweetlake Wellness",
+   "hedged": false
+  },
+  "NL:spotify abonnement": {
+   "answer": "Het eenvoudigst: afsluiten direct bij Spotify (spotify.com/nl). Premium Individual kost rond de 12 tot 13 euro per maand; er zijn ook Duo, Family en een studentenabonnement met korting. Vaak is er een gratis proefperiode voor nieuwe gebruikers. Het is meestal niet goedkoper via derden, dus ik zou niet via de app store afsluiten (kan duurder zijn). Wil je alternatieven? Apple Music, YouTube Music en Tidal kosten ongeveer hetzelfde; kies op basis van geluidskwaliteit en je telefoon.",
+   "names": [
+    "Spotify",
+    "Apple Music",
+    "YouTube Music",
+    "Tidal"
+   ],
+   "giants": [],
+   "pick": "Spotify",
+   "hedged": false
+  },
+  "NL:pretpark billybird": {
+   "answer": "Billy Bird Park Hemelrijk ligt in Essen, net over de grens in Belgie, handig voor Brabant en Zeeland. Koop je tickets vooraf online op de officiele website: dat is meestal goedkoper dan aan de kassa en je slaat de rij over. Soms zijn er ook kortingen via ANWB of acties met kortingsbonnen; vergelijk dat even. Check de openingsdagen (niet alle dagen open buiten het seizoen) en neem jonge kinderen mee: het park is vooral gericht op peuters en kleuters tot ongeveer 12 jaar.",
+   "names": [
+    "Billy Bird Park Hemelrijk",
+    "ANWB"
+   ],
+   "giants": [],
+   "pick": "Billy Bird Park Hemelrijk",
+   "hedged": false
+  },
+  "NL:schoonmaakbedrijven": {
+   "answer": "Dat hangt af van of het voor thuis of voor een bedrijf is. Thuis: Helpling en Book a Tiger zijn bekende platforms; Werkspot en Trustoo laten je offertes en reviews vergelijken. Bedrijven: grote partijen zijn ISS, Asito, Hago en Gom, maar ook lokale schoonmaakbedrijven zijn vaak persoonlijker en goedkoper. Let op: reviews, vaste vs. wisselende schoonmakers, CAO-conform loon, verzekering en of er een opzegtermijn zit in het contract. Vraag minstens drie offertes. Vertel gerust wat je zoekt, dan kan ik gerichter adviseren.",
+   "names": [
+    "Helpling",
+    "Book a Tiger",
+    "Werkspot",
+    "Trustoo",
+    "ISS",
+    "Asito",
+    "Hago",
+    "Gom"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": true
+  },
+  "NL:nederland weekendje weg": {
+   "answer": "Dat hangt af van je wensen: stad, natuur, strand of wellness? Populair zijn Texel en de Waddeneilanden, de Veluwe, Zeeland, Maastricht en Utrecht of Amsterdam voor een stedentrip. Boeken kan via de aanbieders zelf (Fletcher, Van der Valk, Landal, Center Parcs, Roompot) of via Booking.com en Weekendjeweg.nl om te vergelijken. Boek vroeg voor weekenden in de zomer, en let op annuleringsvoorwaarden. Laat weten met wie je gaat, het budget en het seizoen, dan geef ik gerichtere tips.",
+   "names": [
+    "Fletcher",
+    "Van der Valk",
+    "Landal",
+    "Center Parcs",
+    "Roompot",
+    "Booking.com",
+    "Weekendjeweg.nl"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": true
+  },
+  "NL:kookboek": {
+   "answer": "Dat hangt af van wat je wilt koken. Voor beginners en doordeweeks: Jamie Oliver (5 ingredienten) of Rutger van den Broek. Voor smaak en groenten: Ottolenghi Simple of Nadia Zerouali. Voor klassiek Nederlands: het Culinaire Bijbel-achtige Kook mee met Jeroen Meus. Kopen kan bij Bol, Bruna, Libris of de lokale boekhandel; vergelijk prijzen, want kookboeken zijn vaak afgeprijsd bij Boekenbalie of tweedehands via Marktplaats. Vertel gerust of je vegetarisch, snel of juist uitgebreid wilt koken.",
+   "names": [
+    "Jamie Oliver",
+    "Rutger van den Broek",
+    "Ottolenghi Simple",
+    "Nadia Zerouali",
+    "Jeroen Meus",
+    "Bol",
+    "Bruna",
+    "Libris",
+    "Boekenbalie",
+    "Marktplaats"
+   ],
+   "giants": [
+    "Bol",
+    "Marktplaats"
+   ],
+   "pick": "",
+   "hedged": true
+  },
+  "NL:dela uitvaartverzekering": {
+   "answer": "Dela is een van de grote, betrouwbare uitvaartverzekeraars in Nederland, en je sluit af via dela.nl of bij een lokaal Dela-kantoor. Vergelijk wel met Monuta, Yarden en Ardanta, bijvoorbeeld via Independer. Let op: natura (uitvaart wordt verzorgd) versus kapitaal (geldbedrag), de hoogte van de premie, of die levenslang gelijk blijft, en wat er gebeurt als je stopt met betalen. Kies natura als je wilt dat alles geregeld is, kapitaal voor meer vrijheid. Begin bij Dela als je daar al interesse in hebt, en vraag een offerte.",
+   "names": [
+    "Dela",
+    "Monuta",
+    "Yarden",
+    "Ardanta",
+    "Independer"
+   ],
+   "giants": [],
+   "pick": "Dela",
+   "hedged": false
+  },
+  "DE:iphone 18": {
+   "answer": "Ein iPhone 18 kann ich dir nicht sicher empfehlen, weil ich zu genauen Modellen und Preisen keine verlässlichen Infos habe. Neue iPhones bekommst du am sichersten im Apple Store (apple.com/de), oft mit Inzahlungnahme deines alten Geräts. Alternativen: MediaMarkt, Saturn oder Telekom und Vodafone mit Vertrag. Vergleiche Preise auf idealo. Wer sparen will, nimmt das Vorjahresmodell oder ein generalüberholtes Gerät von Back Market. Pro nur, wenn du die Kamera wirklich brauchst.",
+   "names": [
+    "Apple Store",
+    "MediaMarkt",
+    "Saturn",
+    "Telekom",
+    "Vodafone",
+    "idealo",
+    "Back Market"
+   ],
+   "giants": [
+    "MediaMarkt",
+    "Saturn"
+   ],
+   "pick": "Apple Store",
+   "hedged": false
+  },
+  "DE:heizöl 24": {
+   "answer": "Heizöl bestellst du am besten über einen Preisvergleich. Bekannt sind Heizoel24.de, Check24, Verivox und esyoil. Gib deine Postleitzahl und Menge ein und vergleiche den Endpreis inklusive Lieferung. Tipp: Preise schwanken stark, kaufe nicht mitten im Winter, wenn es dringend ist. Sammelbestellungen mit Nachbarn senken den Preis, und eine Mindestmenge von etwa 2.000 Litern lohnt sich meist. Achte auf seriöse Händler mit Bewertungen und gutem Lieferservice.",
+   "names": [
+    "Heizoel24.de",
+    "Check24",
+    "Verivox",
+    "esyoil"
+   ],
+   "giants": [],
+   "pick": "Heizoel24.de",
+   "hedged": false
+  },
+  "DE:ps5": {
+   "answer": "Die PS5 Slim gibt es mit Laufwerk oder als Digital Edition. Wer physische Spiele und gebrauchte Titel mag, nimmt die Disc-Version. Die PS5 Pro lohnt sich nur für 4K-Fans mit passendem Fernseher. Kaufen kannst du bei MediaMarkt, Saturn, Amazon, Otto oder direkt bei PlayStation Direct. Vergleiche vorher auf idealo und achte auf Bundles mit Spiel, die oft günstiger sind. Black Friday ist die beste Zeit für Rabatte.",
+   "names": [
+    "PS5 Slim",
+    "PS5 Pro",
+    "MediaMarkt",
+    "Saturn",
+    "Amazon",
+    "Otto",
+    "PlayStation Direct",
+    "idealo"
+   ],
+   "giants": [
+    "MediaMarkt",
+    "Saturn",
+    "Amazon",
+    "Otto"
+   ],
+   "pick": "MediaMarkt",
+   "hedged": false
+  },
+  "DE:adventskalder": {
+   "answer": "Du meinst wohl Adventskalender. Für Schokolade: Lindt, Milka oder Ferrero. Für Kinder: Lego City oder Playmobil. Für Erwachsene: Beauty-Kalender von Douglas, Rossmann oder dm, Tee von Teekanne, Bier- oder Gin-Kalender. Kaufen kannst du sie bei dm, Rossmann, Müller, Douglas oder Amazon. Bestelle früh, denn beliebte Kalender sind Anfang Dezember oft ausverkauft. Sag mir, für wen er ist, dann kann ich gezielter helfen.",
+   "names": [
+    "Lindt",
+    "Milka",
+    "Ferrero",
+    "Lego City",
+    "Playmobil",
+    "Douglas",
+    "Rossmann",
+    "dm",
+    "Teekanne",
+    "Müller",
+    "Amazon"
+   ],
+   "giants": [
+    "Amazon"
+   ],
+   "pick": "",
+   "hedged": false
+  },
+  "DE:kalender 2027": {
+   "answer": "Das hängt davon ab, ob du einen Wand-, Tisch- oder Terminkalender brauchst. Wandkalender mit schönen Motiven kommen von Weingarten, Heye oder Korsch. Für Termine sind Leuchtturm1917, Moleskine, Brunnen oder Filofax beliebt. Kaufen kannst du sie bei Thalia, Hugendubel, Müller, Amazon oder im Schreibwarenladen. Wer es digital mag, nutzt Google Kalender oder Apple Kalender. Jetzt kaufen lohnt sich, solange die Auswahl noch groß ist.",
+   "names": [
+    "Weingarten",
+    "Heye",
+    "Korsch",
+    "Leuchtturm1917",
+    "Moleskine",
+    "Brunnen",
+    "Filofax",
+    "Thalia",
+    "Hugendubel",
+    "Müller",
+    "Amazon",
+    "Google Kalender",
+    "Apple Kalender"
+   ],
+   "giants": [
+    "Amazon"
+   ],
+   "pick": "Thalia",
+   "hedged": false
+  },
+  "DE:kaffee": {
+   "answer": "Das kommt auf deine Zubereitung an. Für Vollautomaten und Espresso eignen sich Lavazza oder Illy, für Filterkaffee Dallmayr oder Tchibo. Frisch geröstete Bohnen bekommst du online bei Coffee Circle oder Roastmarket, die auch fair gehandelte Sorten haben. Im Supermarkt findest du Marken bei Rewe oder Edeka. Ganze Bohnen schmecken besser als gemahlener Kaffee. Magst du ihn eher mild oder kräftig?",
+   "names": [
+    "Lavazza",
+    "Illy",
+    "Dallmayr",
+    "Tchibo",
+    "Coffee Circle",
+    "Roastmarket",
+    "Rewe",
+    "Edeka"
+   ],
+   "giants": [
+    "Rewe",
+    "Edeka"
+   ],
+   "pick": "Coffee Circle",
+   "hedged": false
+  },
+  "DE:elektroauto": {
+   "answer": "Ohne dein Budget und deine Reichweite zu kennen: Gute Allrounder sind der Skoda Elroq, VW ID.3, Renault 5, Kia EV3 und Tesla Model 3. Günstig sind BYD Dolphin oder Dacia Spring. Mein Favorit fürs Geld ist der Skoda Elroq. Kaufen kannst du beim Autohaus vor Ort, bei Tesla direkt, auf mobile.de oder AutoScout24 (auch gebraucht). Leasing gibt es bei Händlern oder über Sixt. Prüfe aktuelle Förderungen und ob du zu Hause laden kannst.",
+   "names": [
+    "Skoda Elroq",
+    "VW ID.3",
+    "Renault 5",
+    "Kia EV3",
+    "Tesla Model 3",
+    "BYD Dolphin",
+    "Dacia Spring",
+    "mobile.de",
+    "AutoScout24",
+    "Sixt"
+   ],
+   "giants": [],
+   "pick": "Skoda Elroq",
+   "hedged": false
+  },
+  "DE:winterjacke damen": {
+   "answer": "Für Alltag und Stadt sind Parkas von Wellensteyn, Jack Wolfskin oder The North Face beliebt. Für extreme Kälte eignet sich Canada Goose, für Nachhaltigkeit Patagonia oder Fjällräven. Achte auf Daunen oder gute Kunstfaser, Wasserdichtigkeit und eine Kapuze. Kaufen kannst du bei Globetrotter, Bergfreunde, Zalando, Engelhorn oder Otto. Probiere sie mit dickem Pullover an. Im Winterschlussverkauf bekommst du sie deutlich günstiger.",
+   "names": [
+    "Wellensteyn",
+    "Jack Wolfskin",
+    "The North Face",
+    "Canada Goose",
+    "Patagonia",
+    "Fjällräven",
+    "Globetrotter",
+    "Bergfreunde",
+    "Zalando",
+    "Engelhorn",
+    "Otto"
+   ],
+   "giants": [
+    "Zalando",
+    "Otto"
+   ],
+   "pick": "Globetrotter",
+   "hedged": false
+  },
+  "DE:escooter": {
+   "answer": "In Deutschland brauchst du einen E-Scooter mit Straßenzulassung (eKFV, ABE), Versicherungskennzeichen und Beleuchtung. Gute Modelle sind der Segway-Ninebot Max G2, Xiaomi Electric Scooter 4 Pro und Soflow. Mein Tipp: Segway-Ninebot Max G2 wegen Reichweite und Federung. Kaufen kannst du bei MediaMarkt, Saturn, Amazon oder Decathlon. Die Versicherung schließt du bei ADAC, HUK-Coburg oder Allianz ab, meist ab März.",
+   "names": [
+    "Segway-Ninebot Max G2",
+    "Xiaomi Electric Scooter 4 Pro",
+    "Soflow",
+    "MediaMarkt",
+    "Saturn",
+    "Amazon",
+    "Decathlon",
+    "ADAC",
+    "HUK-Coburg",
+    "Allianz"
+   ],
+   "giants": [
+    "MediaMarkt",
+    "Saturn",
+    "Amazon",
+    "Decathlon"
+   ],
+   "pick": "Segway-Ninebot Max G2",
+   "hedged": false
+  },
+  "DE:führerschein": {
+   "answer": "Den Führerschein machst du bei einer Fahrschule in deiner Nähe. Vergleiche Preise und Bewertungen bei mehreren Schulen, denn die Kosten liegen oft bei 3.000 bis 4.000 Euro. Für die Theorie gibt es Apps wie Fahren Lernen oder Führerschein Plus, teils online. Die Prüfung nimmt TÜV oder DEKRA ab. Willst du Klasse B oder ein Motorrad? Davon hängt die Fahrschule ab. Zuerst brauchst du Erste-Hilfe-Kurs, Sehtest und Passbild.",
+   "names": [
+    "Fahren Lernen",
+    "Führerschein Plus",
+    "TÜV",
+    "DEKRA"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": true
+  },
+  "DE:bambulabs": {
+   "answer": "Bambu Lab baut 3D-Drucker. Für Einsteiger empfehle ich den A1 mini (günstig, kompakt) oder den A1; für mehr Tempo und geschlossenes Gehäuse den P1S; als Topmodell den X1 Carbon. Am besten kaufst du im offiziellen Bambu Lab Store, dort gibt es Combo-Sets mit AMS und Filament sowie EU-Garantie. Auch Amazon ist möglich, aber Preise schwanken. Achte auf Aktionen wie Black Friday.",
+   "names": [
+    "Bambu Lab",
+    "Bambu Lab Store",
+    "A1 mini",
+    "A1",
+    "P1S",
+    "X1 Carbon",
+    "Amazon"
+   ],
+   "giants": [
+    "Amazon"
+   ],
+   "pick": "Bambu Lab Store",
+   "hedged": false
+  },
+  "DE:tagesgeld konto": {
+   "answer": "Zinsen ändern sich ständig, daher vergleiche kurz vor Abschluss auf Check24 oder Verivox. Häufig vorne dabei: Trade Republic, C24, Bunq, Santander, ING, DKB und Consorsbank. Achte auf: Zinsgarantie (Neukunden-Zins oft nur befristet), deutsche Einlagensicherung bis 100.000 Euro, kostenloses Konto und keine Mindestanlage. Wenn du ein Girokonto bei der Bank hast, ist ein Tagesgeld dort oft am bequemsten.",
+   "names": [
+    "Check24",
+    "Verivox",
+    "Trade Republic",
+    "C24",
+    "Bunq",
+    "Santander",
+    "ING",
+    "DKB",
+    "Consorsbank"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": false
+  },
+  "DE:günstiger tanken": {
+   "answer": "Nutze eine Spritpreis-App wie clever-tanken, ADAC Spritpreise oder Mehr-Tanken, um die günstigste Tankstelle in deiner Nähe zu finden. Tipps: abends zwischen 18 und 22 Uhr ist es meist am günstigsten, morgens am teuersten. Freie und Discounter-Tankstellen (z. B. Hoyer, Supermarkt-Tankstellen) sind oft billiger als Aral oder Shell. Nicht auf Autobahnen tanken. Tankkarten und Apps wie Shell- oder Aral-Rabatte lohnen nur bei Vielfahrern.",
+   "names": [
+    "clever-tanken",
+    "ADAC Spritpreise",
+    "Mehr-Tanken",
+    "Hoyer",
+    "Aral",
+    "Shell"
+   ],
+   "giants": [],
+   "pick": "clever-tanken",
+   "hedged": false
+  },
+  "DE:movie park freizeitpark": {
+   "answer": "Der Movie Park Germany liegt in Bottrop-Kirchhellen (NRW), bekannt für Achterbahnen wie Van Helsing's Factory, Star Trek: Operation Enterprise und das Halloween Horror Festival im Herbst. Tickets kaufst du am besten online direkt auf movieparkgermany.de, das ist meist günstiger als an der Tageskasse. Gehe unter der Woche, um Wartezeiten zu sparen. Alternativen in der Nähe: Phantasialand oder Walibi/Toverland je nach Geschmack.",
+   "names": [
+    "Movie Park Germany",
+    "movieparkgermany.de",
+    "Phantasialand",
+    "Toverland"
+   ],
+   "giants": [],
+   "pick": "movieparkgermany.de",
+   "hedged": false
+  },
+  "DE:check24 stromanbieter": {
+   "answer": "Check24 ist ein guter Startpunkt, vergleiche aber zusätzlich auf Verivox. Achte auf: Preisgarantie, Laufzeit (maximal 12 Monate), keine Vorkasse oder Kaution, Neukundenbonus nur als Zugabe. Bekannte Anbieter: E.ON, Vattenfall, EnBW, Octopus Energy, Rabot oder Tibber (dynamischer Tarif). Oft ist der örtliche Grundversorger preislich konkurrenzfähig. Prüfe Bewertungen und die Kündigungsfristen.",
+   "names": [
+    "Check24",
+    "Verivox",
+    "E.ON",
+    "Vattenfall",
+    "EnBW",
+    "Octopus Energy",
+    "Rabot",
+    "Tibber"
+   ],
+   "giants": [],
+   "pick": "Check24",
+   "hedged": false
+  },
+  "DE:wellness im hotel": {
+   "answer": "Das hängt von Budget, Region und Dauer ab. Wichtig sind: Größe des Spa-Bereichs, Saunavielfalt, Anwendungen inklusive oder extra, Altersregeln (Adults only?). Beliebte Wellness-Regionen: Schwarzwald, Bayerischer Wald, Allgäu, Ostsee, Mosel. Ketten wie Dorint oder Lindner bieten solide Spa-Bereiche. Vergleiche Bewertungen auf HolidayCheck, Booking.com und Tripadvisor und buche meist direkt beim Hotel, oft mit Bestpreis. Sag mir Region und Budget, dann werde ich konkreter.",
+   "names": [
+    "Dorint",
+    "Lindner",
+    "HolidayCheck",
+    "Booking.com",
+    "Tripadvisor"
+   ],
+   "giants": [
+    "Booking.com"
+   ],
+   "pick": "",
+   "hedged": true
+  },
+  "DE:thermomix rezeptbücher": {
+   "answer": "Am besten ist Cookidoo, die offizielle Rezeptplattform von Vorwerk: Abo mit tausenden Rezepten, die direkt aufs Gerät geführt werden. Gedruckte Thermomix-Kochbücher gibt es bei vorwerk.de und im Buchhandel, etwa bei Thalia und Hugendubel, außerdem bei Amazon. Beliebt sind die Original-Reihen von Vorwerk und Bücher von Autoren wie Rezeptwelt-Bloggern. Wenn du viel kochst, lohnt sich Cookidoo mehr als einzelne Bücher.",
+   "names": [
+    "Cookidoo",
+    "Vorwerk",
+    "Thalia",
+    "Hugendubel",
+    "Amazon",
+    "Rezeptwelt"
+   ],
+   "giants": [
+    "Amazon"
+   ],
+   "pick": "Cookidoo",
+   "hedged": false
+  },
+  "DE:wellnessbad sinsheim": {
+   "answer": "In Sinsheim ist die Therme Sinsheim mit der Badewelt Sinsheim die bekannte Adresse: Thermalbecken, Rutschen und eine große Saunawelt. Tickets und Öffnungszeiten findest du auf der offiziellen Website badewelt-sinsheim.de, dort kannst du oft online buchen. Für die Sauna lohnt sich ein Besuch unter der Woche, am Wochenende ist es voll. Preise und Textilregeln vorab prüfen.",
+   "names": [
+    "Therme Sinsheim",
+    "Badewelt Sinsheim",
+    "badewelt-sinsheim.de"
+   ],
+   "giants": [],
+   "pick": "Badewelt Sinsheim",
+   "hedged": false
+  },
+  "DE:freizeitpark wunderland": {
+   "answer": "Meinst du das Wunderland Kalkar (Freizeitpark am Niederrhein, auf dem Gelände eines früheren Atomkraftwerks, mit Hotel) oder das Miniatur Wunderland in Hamburg, das eher eine Ausstellung als ein Freizeitpark ist? Für Kalkar kaufst du Tickets auf der offiziellen Website. Für das Miniatur Wunderland unbedingt vorab Zeitfenster-Tickets auf miniatur-wunderland.de buchen, da oft ausverkauft.",
+   "names": [
+    "Wunderland Kalkar",
+    "Miniatur Wunderland",
+    "miniatur-wunderland.de"
+   ],
+   "giants": [],
+   "pick": "Wunderland Kalkar",
+   "hedged": false
+  },
+  "DE:autoversicherung": {
+   "answer": "Vergleiche auf Check24 oder Verivox und prüfe auch Direktversicherer. Oft günstig: HUK-Coburg bzw. HUK24, DEVK, Cosmos Direkt, Verti und Allianz. Wichtig: Deckung (Teil- oder Vollkasko), Selbstbeteiligung, Schadenfreiheitsklasse, Jahresfahrleistung und Werkstattbindung. Wechsel ist meist zum 30. November möglich, da Kündigungsfrist. Nicht nur nach dem Preis gehen, sondern auch Leistungen wie Rabattschutz und Neuwertentschädigung.",
+   "names": [
+    "Check24",
+    "Verivox",
+    "HUK-Coburg",
+    "HUK24",
+    "DEVK",
+    "Cosmos Direkt",
+    "Verti",
+    "Allianz"
+   ],
+   "giants": [],
+   "pick": "Check24",
+   "hedged": false
+  },
+  "DE:world of warcraft abonnement": {
+   "answer": "Für World of Warcraft brauchst du ein Battle.net-Konto von Blizzard und einen Spielzeit-Abo. Am einfachsten und sichersten buchst du direkt im Battle.net-Shop (Monatsabo ca. 13 Euro, bei 3 oder 6 Monaten pro Monat etwas günstiger, Zahlung per PayPal, Kreditkarte oder SEPA). Alternativ gibt es Spielzeit-Karten bei Amazon, MediaMarkt oder Saturn. Beachte: Für aktuelle Erweiterungen musst du diese separat kaufen. Du kannst auch den WoW-Marken im Spiel mit Gold kaufen.",
+   "names": [
+    "World of Warcraft",
+    "Blizzard",
+    "Battle.net",
+    "PayPal",
+    "Amazon",
+    "MediaMarkt",
+    "Saturn"
+   ],
+   "giants": [
+    "Amazon",
+    "MediaMarkt",
+    "Saturn"
+   ],
+   "pick": "Battle.net",
+   "hedged": false
+  },
+  "DE:krankenversicherung": {
+   "answer": "Als Angestellter bist du meist gesetzlich versichert. Der Leistungsumfang ist weitgehend gleich, unterschiedlich sind Zusatzbeitrag und Extras. Beliebt und gut bewertet sind die Techniker Krankenkasse (TK), Barmer, DAK-Gesundheit und AOK; die TK ist für viele die erste Wahl wegen Service und App. Vergleichen kannst du bei Check24 oder Verivox, abschließen direkt online auf der Seite der Kasse. Selbstständige, Beamte oder Gutverdiener können die private Krankenversicherung prüfen, hier lohnt sich unabhängige Beratung.",
+   "names": [
+    "Techniker Krankenkasse",
+    "Barmer",
+    "DAK-Gesundheit",
+    "AOK",
+    "Check24",
+    "Verivox"
+   ],
+   "giants": [],
+   "pick": "Techniker Krankenkasse",
+   "hedged": false
+  },
+  "DE:balkonkraftwerk mit speicher": {
+   "answer": "Beliebte Komplettsets mit Speicher sind die Anker SOLIX Solarbank 2 (E1600), EcoFlow STREAM, Zendure SolarFlow und Marstek Venus. Mein Tipp als erste Wahl: Anker SOLIX Solarbank 2 mit 2 bis 4 Modulen, gute Software und viele Erfahrungsberichte. Kaufen kannst du direkt beim Hersteller, bei Amazon oder bei Spezialisten wie Priwatt, Yuma oder Kleinkraftwerk. Denk an die Anmeldung im Marktstammdatenregister und beim Netzbetreiber. Rechne mit etwa 1.000 bis 1.800 Euro.",
+   "names": [
+    "Anker SOLIX Solarbank 2",
+    "EcoFlow STREAM",
+    "Zendure SolarFlow",
+    "Marstek Venus",
+    "Amazon",
+    "Priwatt",
+    "Yuma",
+    "Kleinkraftwerk",
+    "Marktstammdatenregister"
+   ],
+   "giants": [
+    "Amazon"
+   ],
+   "pick": "Anker SOLIX Solarbank 2",
+   "hedged": false
+  },
+  "DE:versicherung": {
+   "answer": "Das hängt davon ab, was du absichern willst. Wichtig für fast jeden: private Haftpflicht. Dazu je nach Situation Berufsunfähigkeit, Hausrat, Kfz, Rechtsschutz oder Risikoleben. Vergleichen kannst du bei Check24 oder Verivox, unabhängige Beratung bekommst du bei der Verbraucherzentrale oder einem Honorarberater. Sag mir gern, um welche Versicherung es geht und wie deine Lebenssituation aussieht, dann kann ich gezielter helfen.",
+   "names": [
+    "Check24",
+    "Verivox",
+    "Verbraucherzentrale"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": true
+  },
+  "DE:anwalt": {
+   "answer": "Das hängt vom Rechtsgebiet ab (Arbeitsrecht, Mietrecht, Familienrecht, Verkehrsrecht ...). Wähle einen Fachanwalt für dein Thema. Findest du über die Anwaltssuche des Deutschen Anwaltvereins (anwaltauskunft.de) oder die Rechtsanwaltskammer deiner Stadt. Die Erstberatung kostet für Verbraucher höchstens 190 Euro netto, frag vorher nach den Kosten. Online gibt es auch Plattformen wie Advocado oder janolaw. Mit Rechtsschutzversicherung klären, ob die Kosten übernommen werden. Worum geht es genau?",
+   "names": [
+    "Deutscher Anwaltverein",
+    "anwaltauskunft.de",
+    "Rechtsanwaltskammer",
+    "Advocado",
+    "janolaw"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": true
+  },
+  "DE:führerscheinkontrolle app": {
+   "answer": "Für Unternehmen und Fuhrparks ist LapID mein erster Tipp: Der Fahrer lässt den Führerschein per App oder an Terminals prüfen, der Halter bekommt die Dokumentation für die gesetzliche Pflicht. Alternativen sind Fuhrparkmanagement-Lösungen mit Führerscheinkontrolle wie Vimcar. Abschließen kannst du direkt auf der Website des Anbieters, meist per Jahresabo pro Fahrer. Falls du privat suchst: Eine Pflicht-App gibt es für Privatpersonen nicht.",
+   "names": [
+    "LapID",
+    "Vimcar"
+   ],
+   "giants": [],
+   "pick": "LapID",
+   "hedged": false
+  },
+  "DE:musicalausbildung stuttgart": {
+   "answer": "In Stuttgart selbst gibt es mehrere Anlaufstellen: die Hochschule für Musik und Darstellende Kunst Stuttgart (HMDK) und in der Nähe die Akademie für Darstellende Kunst Baden-Württemberg in Ludwigsburg, die eine Musicalausbildung anbietet (mein erster Tipp). Private Alternativen in Deutschland sind die Stage School in Hamburg oder die Joop van den Ende Academy. Alle haben Aufnahmeprüfungen mit Gesang, Tanz und Schauspiel. Informiere dich auf den Webseiten über Bewerbungsfristen und Kosten.",
+   "names": [
+    "Hochschule für Musik und Darstellende Kunst Stuttgart",
+    "Akademie für Darstellende Kunst Baden-Württemberg",
+    "Stage School Hamburg",
+    "Joop van den Ende Academy"
+   ],
+   "giants": [],
+   "pick": "Akademie für Darstellende Kunst Baden-Württemberg",
+   "hedged": false
+  },
+  "DE:reinigungen": {
+   "answer": "Meinst du chemische Reinigung für Kleidung, Teppiche oder Gebäudereinigung? Für Kleidung suchst du am besten über Google Maps nach einer Textilreinigung in deiner Nähe und achtest auf Bewertungen, Meisterbetrieb und Preise pro Stück. Auch die Gelben Seiten helfen. Bei Hemden, Anzügen oder Brautkleidern lohnt ein Fachbetrieb mit Meisterqualifikation. Sag mir Ort und Art der Reinigung, dann kann ich gezielter helfen.",
+   "names": [
+    "Google Maps",
+    "Gelbe Seiten"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": true
+  },
+  "DE:schrittgenerator": {
+   "answer": "Ich bin nicht sicher, was du meinst. Möchtest du einen Schrittzähler simulieren, einen Metronom- oder Taktgeber zum Gehen, einen Tanzschritt-Generator oder ist ein medizinischer Schrittmacher gemeint? Für den Schrittmacher gibt es das nicht zum freien Kauf, das ist Sache von Kardiologen. Sag mir bitte, wofür du es brauchst, dann nenne ich dir passende Optionen.",
+   "names": [],
+   "giants": [],
+   "pick": "",
+   "hedged": true
+  },
+  "DE:ikea bücherregal": {
+   "answer": "Der Klassiker ist das BILLY von IKEA: günstig (ab ca. 40 Euro), viele Größen, Aufsatzregale und Glastüren. Mein erster Tipp, wenn du viele Bücher hast. Stabiler und mit Tiefe: HEMNES oder IVAR (Massivholz); für Würfel-Optik KALLAX. Kaufen kannst du direkt bei IKEA im Haus oder auf ikea.de, mit Lieferung oder Abholung. Gebraucht findest du Regale oft günstig bei Kleinanzeigen. Wichtig: Maße prüfen und das Regal an der Wand sichern.",
+   "names": [
+    "IKEA",
+    "BILLY",
+    "HEMNES",
+    "IVAR",
+    "KALLAX",
+    "Kleinanzeigen"
+   ],
+   "giants": [
+    "Kleinanzeigen"
+   ],
+   "pick": "BILLY",
+   "hedged": false
+  },
+  "US:hotel near me": {
+   "answer": "I can't see your location, so tell me the city, dates, budget and trip type (business, family, romantic) and I can narrow it down. To find and compare options, start with Google Hotels or Booking.com, then check the same room on the hotel's own site, since chains like Marriott (Bonvoy) and Hilton (Honors) often match prices and add perks like free Wi-Fi or upgrades. Expedia and Hotels.com are good if you bundle flights or want reward nights. Read recent reviews on Tripadvisor and cancellation terms before booking.",
+   "names": [
+    "Google Hotels",
+    "Booking.com",
+    "Marriott Bonvoy",
+    "Hilton Honors",
+    "Expedia",
+    "Hotels.com",
+    "Tripadvisor"
+   ],
+   "giants": [
+    "Expedia"
+   ],
+   "pick": "",
+   "hedged": true
+  },
+  "US:coffee shop near me": {
+   "answer": "It depends on where you are, so I can't name a specific shop without your city. Open Google Maps or Yelp, search 'coffee shop', and filter for 4.5+ stars with recent reviews. If you want reliable and everywhere, Starbucks and Dunkin' are the usual picks. For better quality, look for local roasters or small chains like Blue Bottle, Peet's, La Colombe or Philz in the cities they serve. Tell me your city and whether you want to work, meet someone or just grab a quick cup, and I can suggest what to look for.",
+   "names": [
+    "Google Maps",
+    "Yelp",
+    "Starbucks",
+    "Dunkin'",
+    "Blue Bottle",
+    "Peet's",
+    "La Colombe",
+    "Philz"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": true
+  },
+  "US:ai detector": {
+   "answer": "Be careful: no AI detector is fully reliable, and they can falsely flag human writing, especially from non-native English writers. If you still want one, GPTZero is the most popular for individuals and has a free tier. Originality.ai is popular with publishers and SEO teams, Copyleaks and Winston AI are solid alternatives, and Turnitin is what many schools use, though you usually can't buy it directly. Sign up on the tool's own site. Treat results as a hint, not proof.",
+   "names": [
+    "GPTZero",
+    "Originality.ai",
+    "Copyleaks",
+    "Winston AI",
+    "Turnitin"
+   ],
+   "giants": [],
+   "pick": "GPTZero",
+   "hedged": false
+  },
+  "US:massage near me": {
+   "answer": "I don't know your location, but your main options are chains and independents. Massage Envy, Hand & Stone and Elements Massage are widespread, offer memberships and online booking, and are consistent. For a licensed independent therapist, search Google Maps or Yelp and read recent reviews. For at-home or on-demand massage, try Soothe. Groupon sometimes has first-visit deals. Check that the therapist is licensed in your state, and tell me your city and whether you want relaxation or deep tissue or injury work.",
+   "names": [
+    "Massage Envy",
+    "Hand & Stone",
+    "Elements Massage",
+    "Google Maps",
+    "Yelp",
+    "Soothe",
+    "Groupon"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": false
+  },
+  "US:halloween-costume": {
+   "answer": "For the widest selection, Spirit Halloween is the go-to, with hundreds of pop-up stores and a big website. Amazon has fast shipping and cheap options, Walmart and Target have decent kids' and budget costumes, and Costco sometimes has good family bundles. For something unique or handmade, check Etsy. For a budget DIY look, try thrift stores like Goodwill. Shop early, since popular costumes and sizes sell out by mid-October, and check return policies.",
+   "names": [
+    "Spirit Halloween",
+    "Amazon",
+    "Walmart",
+    "Target",
+    "Costco",
+    "Etsy",
+    "Goodwill"
+   ],
+   "giants": [
+    "Amazon",
+    "Walmart",
+    "Target",
+    "Costco"
+   ],
+   "pick": "Spirit Halloween",
+   "hedged": false
+  },
+  "US:iphone": {
+   "answer": "For most people the standard iPhone 17 is the best balance of price, camera and battery. Choose an iPhone 17 Pro if you want the best cameras and zoom, or a cheaper older model or Apple Certified Refurbished to save money. Buy from Apple (apple.com) for trade-in, financing and easy returns. Verizon, AT&T and T-Mobile often run big promotions if you sign up for a plan or add a line. Best Buy and Amazon are good for unlocked phones and sales.",
+   "names": [
+    "iPhone 17",
+    "iPhone 17 Pro",
+    "Apple",
+    "Apple Certified Refurbished",
+    "Verizon",
+    "AT&T",
+    "T-Mobile",
+    "Best Buy",
+    "Amazon"
+   ],
+   "giants": [
+    "Best Buy",
+    "Amazon"
+   ],
+   "pick": "Apple",
+   "hedged": false
+  },
+  "US:dentists": {
+   "answer": "I can't recommend a specific dentist without knowing your city and insurance. Start with your insurer's in-network directory (Delta Dental, Cigna, MetLife and others have lookup tools), then check Google Maps reviews. Zocdoc lets you book appointments online. The ADA's Find-a-Dentist tool lists members. Without insurance, look at dental school clinics, community health centers, or a discount plan, and chains like Aspen Dental offer financing. Tell me your area and whether you need a checkup, emergency care or something specific.",
+   "names": [
+    "Delta Dental",
+    "Cigna",
+    "MetLife",
+    "Google Maps",
+    "Zocdoc",
+    "ADA Find-a-Dentist",
+    "Aspen Dental"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": true
+  },
+  "US:ps5": {
+   "answer": "The PS5 Slim is the best choice for most people, with a disc or digital edition. The PS5 Pro is worth it only if you have a 4K TV and want the best graphics. Buy at Best Buy, Walmart, Target or Amazon, which often run bundle deals and Black Friday discounts, or directly from PlayStation Direct. GameStop also sells new and used consoles. Compare prices and check bundles that include a game or extra controller before buying.",
+   "names": [
+    "PS5 Slim",
+    "PS5 Pro",
+    "Best Buy",
+    "Walmart",
+    "Target",
+    "Amazon",
+    "PlayStation Direct",
+    "GameStop"
+   ],
+   "giants": [
+    "Best Buy",
+    "Walmart",
+    "Target",
+    "Amazon"
+   ],
+   "pick": "Best Buy",
+   "hedged": false
+  },
+  "US:movie theater near me": {
+   "answer": "I don't know your location, but the big chains are AMC, Regal and Cinemark, and most cities also have an Alamo Drafthouse or independent theater. For premium screens look for IMAX, Dolby Cinema or Alamo's dine-in. Buy tickets and compare showtimes on Fandango or Atom Tickets, or directly in the AMC or Regal app. AMC A-List and Regal Unlimited subscriptions pay off if you go more than twice a month. Cheaper Tuesday and matinee prices are common.",
+   "names": [
+    "AMC",
+    "Regal",
+    "Cinemark",
+    "Alamo Drafthouse",
+    "IMAX",
+    "Dolby Cinema",
+    "Fandango",
+    "Atom Tickets",
+    "AMC A-List",
+    "Regal Unlimited"
+   ],
+   "giants": [],
+   "pick": "Fandango",
+   "hedged": false
+  },
+  "US:deals": {
+   "answer": "It depends what you want, but for general deals start with Slickdeals and DealNews, which collect user-voted discounts. Amazon, Walmart, Target and Best Buy all run frequent sales, and Black Friday and Cyber Monday are coming up. Add the Rakuten cashback app and PayPal's Honey for coupons, and use price trackers like CamelCamelCamel for Amazon. Sign up for store emails for first-order discounts. Tell me the product or category and I can be more specific.",
+   "names": [
+    "Slickdeals",
+    "DealNews",
+    "Amazon",
+    "Walmart",
+    "Target",
+    "Best Buy",
+    "Rakuten",
+    "Honey",
+    "CamelCamelCamel"
+   ],
+   "giants": [
+    "Amazon",
+    "Walmart",
+    "Target",
+    "Best Buy"
+   ],
+   "pick": "Slickdeals",
+   "hedged": false
+  },
+  "US:near me plumber": {
+   "answer": "I can't see your location, so I can't name a specific local plumber. Start with Google Maps: search \"plumber\", filter for 4.7+ stars and hundreds of reviews. Cross-check on Yelp, Angi or Thumbtack, or ask neighbors on Nextdoor. Make sure they're licensed and insured, get 2-3 written quotes, and ask about diagnostic fees and emergency rates. Avoid anyone demanding full payment upfront. Tell me your city and the problem and I can be more specific.",
+   "names": [
+    "Google Maps",
+    "Yelp",
+    "Angi",
+    "Thumbtack",
+    "Nextdoor"
+   ],
+   "giants": [],
+   "pick": "Google Maps",
+   "hedged": false
+  },
+  "US:meta glasses": {
+   "answer": "The Ray-Ban Meta (Gen 2) glasses are the best all-rounder: camera, open-ear audio, Meta AI, around $379 and up. Oakley Meta HSTN or Vanguard suit sports use, and the Meta Ray-Ban Display (about $799) adds a screen in the lens if you want the premium version. Buy from Meta.com or Ray-Ban.com, or try them in person at Best Buy or LensCrafters. If you need prescription lenses, order through Ray-Ban or Meta so they're fitted.",
+   "names": [
+    "Ray-Ban Meta (Gen 2)",
+    "Oakley Meta HSTN",
+    "Oakley Meta Vanguard",
+    "Meta Ray-Ban Display",
+    "Meta.com",
+    "Ray-Ban.com",
+    "Best Buy",
+    "LensCrafters"
+   ],
+   "giants": [
+    "Best Buy"
+   ],
+   "pick": "Ray-Ban Meta (Gen 2)",
+   "hedged": false
+  },
+  "US:printer 3d": {
+   "answer": "For most beginners, the Bambu Lab A1 Mini (about $200-300) is the easiest: fast, reliable, mostly set-and-forget. For larger prints or enclosed printing, the Bambu Lab P1S or A1 are great; Prusa MK4S is a top pick if you value open, repairable machines; Creality Ender-3 V3 is a budget option. Buy direct from Bambu Lab's US store or Prusa, or from Micro Center and Amazon. Choose PLA filament to start.",
+   "names": [
+    "Bambu Lab A1 Mini",
+    "Bambu Lab P1S",
+    "Bambu Lab A1",
+    "Prusa MK4S",
+    "Creality Ender-3 V3",
+    "Micro Center",
+    "Amazon"
+   ],
+   "giants": [
+    "Amazon"
+   ],
+   "pick": "Bambu Lab A1 Mini",
+   "hedged": false
+  },
+  "US:chromebook": {
+   "answer": "For most people, the Acer Chromebook Plus 515 or Acer Chromebook Plus Spin 714 offer a good balance of speed, screen and battery for $350-650. ASUS Chromebook Plus CX34 and Lenovo Chromebook Plus models are solid alternatives; the Lenovo Chromebook Duet is a cheap tablet-style option. Avoid sub-$200 models with 4GB RAM. Buy at Best Buy, Amazon or Walmart, and check the Auto Update Expiration date before purchasing.",
+   "names": [
+    "Acer Chromebook Plus 515",
+    "Acer Chromebook Plus Spin 714",
+    "ASUS Chromebook Plus CX34",
+    "Lenovo Chromebook Plus",
+    "Lenovo Chromebook Duet",
+    "Best Buy",
+    "Amazon",
+    "Walmart"
+   ],
+   "giants": [
+    "Best Buy",
+    "Amazon",
+    "Walmart"
+   ],
+   "pick": "Acer Chromebook Plus 515",
+   "hedged": false
+  },
+  "US:cheapest gas near me": {
+   "answer": "Use the GasBuddy app or website to see live prices around you; Google Maps and Waze also show gas prices. Warehouse clubs are usually cheapest: Costco and Sam's Club (membership needed), plus Walmart, Murphy USA and local independents. Kroger fuel points and Upside cashback can lower the price further. Don't drive far to save a few cents. Fill up away from highways and airports, where prices run higher.",
+   "names": [
+    "GasBuddy",
+    "Google Maps",
+    "Waze",
+    "Costco",
+    "Sam's Club",
+    "Walmart",
+    "Murphy USA",
+    "Kroger",
+    "Upside"
+   ],
+   "giants": [
+    "Costco",
+    "Sam's Club",
+    "Walmart"
+   ],
+   "pick": "GasBuddy",
+   "hedged": false
+  },
+  "US:homes near me": {
+   "answer": "Start with Zillow, Redfin or Realtor.com; they pull from the same MLS data and let you filter by price, beds and neighborhood and set alerts. Redfin often has the fastest listing updates and its own agents. Get mortgage pre-approval first, so you know your budget, and hire a local buyer's agent. If you're renting instead, try Apartments.com or Zillow Rentals. Tell me the city and budget and I can be more specific.",
+   "names": [
+    "Zillow",
+    "Redfin",
+    "Realtor.com",
+    "Apartments.com",
+    "Zillow Rentals"
+   ],
+   "giants": [],
+   "pick": "Zillow",
+   "hedged": false
+  },
+  "US:fon generator": {
+   "answer": "I'm not sure what you mean by \"fon generator\". Do you mean a font generator (for stylish text or custom fonts), a phone number or fake phone data generator, or a fan or power generator? Tell me what you want to make or buy and your budget, and I can point you to specific tools or products.",
+   "names": [],
+   "giants": [],
+   "pick": "",
+   "hedged": true
+  },
+  "US:medical insurance insurance": {
+   "answer": "If you don't get coverage through an employer, go to HealthCare.gov (or your state's exchange) to compare ACA plans and see subsidies; open enrollment runs Nov 1 to Jan 15 in most states. Use Medicare.gov if you're 65+, or Medicaid if income is low. Brokers like eHealth or HealthSherpa can help compare. Common carriers include Blue Cross Blue Shield, Kaiser Permanente, UnitedHealthcare and Aetna. Check that your doctors and drugs are covered.",
+   "names": [
+    "HealthCare.gov",
+    "Medicare.gov",
+    "Medicaid",
+    "eHealth",
+    "HealthSherpa",
+    "Blue Cross Blue Shield",
+    "Kaiser Permanente",
+    "UnitedHealthcare",
+    "Aetna"
+   ],
+   "giants": [],
+   "pick": "HealthCare.gov",
+   "hedged": false
+  },
+  "US:car insurance affordable": {
+   "answer": "Rates depend on your state, age, driving record and car, so compare at least 3-5 quotes. Use a comparison site like The Zebra, Compare.com or Insurify, then get direct quotes from Geico, Progressive and State Farm; USAA is often cheapest if you're military-affiliated. Ask about discounts (bundling, safe driver, telematics like Progressive Snapshot), raise your deductible, and keep your credit and record clean. Re-shop every year.",
+   "names": [
+    "The Zebra",
+    "Compare.com",
+    "Insurify",
+    "Geico",
+    "Progressive",
+    "State Farm",
+    "USAA",
+    "Progressive Snapshot"
+   ],
+   "giants": [],
+   "pick": "The Zebra",
+   "hedged": false
+  },
+  "US:new ai phones": {
+   "answer": "Top AI phones right now: Google Pixel 10 Pro (best Gemini features and camera AI), Samsung Galaxy S26 series (Galaxy AI), and iPhone 17 series (Apple Intelligence). Pixel is my pick for the most useful everyday AI. Buy unlocked from the Google Store, Samsung.com or Apple, or get carrier trade-in deals from Verizon, T-Mobile or AT&T. Best Buy is good for comparing in person. Check your budget and Android vs iPhone preference first.",
+   "names": [
+    "Google Pixel 10 Pro",
+    "Samsung Galaxy S26",
+    "iPhone 17",
+    "Google Store",
+    "Samsung.com",
+    "Apple",
+    "Verizon",
+    "T-Mobile",
+    "AT&T",
+    "Best Buy"
+   ],
+   "giants": [
+    "Best Buy"
+   ],
+   "pick": "Google Pixel 10 Pro",
+   "hedged": false
+  },
+  "US:gaming notebooks": {
+   "answer": "Top picks: ASUS ROG Zephyrus G14/G16 (portable, great screen), Lenovo Legion Pro 5i/7i (best value for power), MSI Raider/Vector for performance, Razer Blade 16 if you want premium build. For most people, an RTX 5060/5070 laptop with 16GB RAM and a 144Hz+ screen is the sweet spot; go RTX 5080 only for high-end play. Buy from Best Buy (easy returns, price matching), Costco (extended warranty), Amazon, or direct from Lenovo.com, which often has strong sales. Check prices during Black Friday. Tell me your budget and games for a sharper pick.",
+   "names": [
+    "ASUS ROG Zephyrus",
+    "Lenovo Legion Pro",
+    "MSI Raider",
+    "MSI Vector",
+    "Razer Blade 16",
+    "Best Buy",
+    "Costco",
+    "Amazon",
+    "Lenovo.com"
+   ],
+   "giants": [
+    "Best Buy",
+    "Costco",
+    "Amazon"
+   ],
+   "pick": "Lenovo Legion Pro",
+   "hedged": false
+  },
+  "US:mac air notebook": {
+   "answer": "The MacBook Air (13 or 15-inch, M4 chip) is the best choice for most people: light, fanless, all-day battery. 16GB RAM is the baseline; get 512GB storage if you can. The 15-inch gives a bigger screen at a modest premium. Best places to buy: Apple.com or Apple Store (education discount, trade-in), Amazon, Best Buy, and Costco often discount it by $100-200 off, especially around Black Friday. Apple's refurbished store is another good option with full warranty. AppleCare+ is worth considering if you're hard on laptops.",
+   "names": [
+    "MacBook Air",
+    "M4",
+    "Apple.com",
+    "Apple Store",
+    "Amazon",
+    "Best Buy",
+    "Costco",
+    "AppleCare+"
+   ],
+   "giants": [
+    "Amazon",
+    "Best Buy",
+    "Costco"
+   ],
+   "pick": "MacBook Air",
+   "hedged": false
+  },
+  "US:apple notebook pro": {
+   "answer": "The MacBook Pro is the pick for video editing, development, or heavy multitasking. The 14-inch with M4 Pro (or M4 Max for demanding work) offers great performance, a brilliant XDR display and long battery life. The base M4 14-inch is fine for lighter pro use. Go 24GB+ RAM for serious work. Buy from Apple.com (trade-in, education pricing, refurbished store), or Amazon, Best Buy and B&H Photo, which frequently discount $100-300. Costco is good for added return flexibility. Consider AppleCare+ for a laptop this expensive.",
+   "names": [
+    "MacBook Pro",
+    "M4 Pro",
+    "M4 Max",
+    "Apple.com",
+    "Amazon",
+    "Best Buy",
+    "B&H Photo",
+    "Costco",
+    "AppleCare+"
+   ],
+   "giants": [
+    "Amazon",
+    "Best Buy",
+    "Costco"
+   ],
+   "pick": "MacBook Pro",
+   "hedged": false
+  },
+  "US:video software editor": {
+   "answer": "For most people: DaVinci Resolve (free version is excellent, Studio is a one-time $295). Adobe Premiere Pro is the industry standard (subscription, about $23/month) and integrates with After Effects. Final Cut Pro ($299 one-time, Mac only) is fast and polished. For beginners or quick social videos, CapCut or Descript are easier. Buy directly from the makers: Blackmagicdesign.com, Adobe.com, or the Mac App Store. Start with DaVinci Resolve free to test your workflow; it's hard to beat on value.",
+   "names": [
+    "DaVinci Resolve",
+    "Adobe Premiere Pro",
+    "After Effects",
+    "Final Cut Pro",
+    "CapCut",
+    "Descript",
+    "Blackmagicdesign.com",
+    "Adobe.com",
+    "Mac App Store"
+   ],
+   "giants": [],
+   "pick": "DaVinci Resolve",
+   "hedged": false
+  },
+  "US:learn to code": {
+   "answer": "Start free: freeCodeCamp and The Odin Project are excellent for web development, and Harvard's CS50 (on edX or YouTube) is a great intro to programming. Python is the best first language for most people. For structured paid options, Codecademy Pro, Coursera, and Udemy courses (wait for $15 sales) work well; Scrimba is good for front end. Practice daily and build small projects. Begin with CS50 or freeCodeCamp; both are free and well respected. Tell me your goal (career change, hobby, data) for a tailored path.",
+   "names": [
+    "freeCodeCamp",
+    "The Odin Project",
+    "CS50",
+    "edX",
+    "YouTube",
+    "Python",
+    "Codecademy Pro",
+    "Coursera",
+    "Udemy",
+    "Scrimba"
+   ],
+   "giants": [],
+   "pick": "CS50",
+   "hedged": false
+  },
+  "US:online course": {
+   "answer": "It depends on the subject. General platforms: Coursera (university courses, certificates), edX, Udemy (cheap, practical, buy on sale for $10-20), LinkedIn Learning (career skills), Skillshare (creative), MasterClass (inspiration), and Khan Academy (free academics). For tech, Pluralsight; for coding, Codecademy. Check reviews, instructor credentials, and whether the certificate matters to employers. Many offer free trials or audit options. Tell me the topic and your goal, and I can narrow this down to one or two specific courses.",
+   "names": [
+    "Coursera",
+    "edX",
+    "Udemy",
+    "LinkedIn Learning",
+    "Skillshare",
+    "MasterClass",
+    "Khan Academy",
+    "Pluralsight",
+    "Codecademy"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": true
+  },
+  "US:development app mobile": {
+   "answer": "For cross-platform mobile apps, Flutter (Google, Dart) and React Native (Meta, JavaScript) are the top choices; Flutter for polished UI, React Native if you know web. For native, use Swift/SwiftUI with Xcode for iOS and Kotlin with Android Studio for Android. No-code options: FlutterFlow, Bubble, Adalo. If you want to hire a developer or agency, try Upwork, Toptal, or Clutch.co to compare firms. Tell me whether you want to build it yourself or hire someone, and your budget, for a better recommendation.",
+   "names": [
+    "Flutter",
+    "React Native",
+    "Swift",
+    "SwiftUI",
+    "Xcode",
+    "Kotlin",
+    "Android Studio",
+    "FlutterFlow",
+    "Bubble",
+    "Adalo",
+    "Upwork",
+    "Toptal",
+    "Clutch.co"
+   ],
+   "giants": [],
+   "pick": "Flutter",
+   "hedged": false
+  },
+  "US:bootcamp coding": {
+   "answer": "Reputable US coding bootcamps include General Assembly, Flatiron School, Hack Reactor, Springboard, App Academy, and Codesmith (advanced, selective). Many are online, cost $10,000-$20,000, and take 12-24 weeks. Be aware the job market for juniors is tough right now, so check outcomes reports (via CIRR), refund policies, and income-share or deferred tuition terms. Free options like freeCodeCamp or CS50 are worth trying first. Talk to recent alumni on LinkedIn before paying. Tell me your budget and goal and I can narrow it.",
+   "names": [
+    "General Assembly",
+    "Flatiron School",
+    "Hack Reactor",
+    "Springboard",
+    "App Academy",
+    "Codesmith",
+    "CIRR",
+    "freeCodeCamp",
+    "CS50",
+    "LinkedIn"
+   ],
+   "giants": [],
+   "pick": "",
+   "hedged": true
+  },
+  "US:williamsburg theme park busch gardens": {
+   "answer": "Busch Gardens Williamsburg is great for coaster fans and known for its European-themed areas; top rides are Pantheon, Verbolten, and Griffon. Sister park Water Country USA is nearby for summer. Best tickets: buy online at buschgardens.com for advance discounts, and consider the Fun Card (pass) if visiting twice or more, since it often includes parking. Go on weekdays, arrive at opening, and check for Military or Florida/Virginia resident deals. Holiday Christmas Town runs Nov-Dec. Staying in Williamsburg hotels often includes ticket bundles.",
+   "names": [
+    "Busch Gardens Williamsburg",
+    "Pantheon",
+    "Verbolten",
+    "Griffon",
+    "Water Country USA",
+    "buschgardens.com",
+    "Fun Card",
+    "Christmas Town"
+   ],
+   "giants": [],
+   "pick": "buschgardens.com",
+   "hedged": false
+  },
+  "US:great adventure theme park": {
+   "answer": "Six Flags Great Adventure in Jackson, New Jersey is the big thrill park, home to Kingda Ka's former site, Nitro, El Toro, Jersey Devil Coaster, and the Safari Off Road Adventure. Buy tickets online at sixflags.com, which is cheaper than at the gate; Six Flags season passes or memberships pay off after two visits. Visit on weekdays, buy Flash Pass only for peak days, and arrive at opening. Hurricane Harbor is a separate water park. Check for Fright Fest in fall and Holiday in the Park deals.",
+   "names": [
+    "Six Flags Great Adventure",
+    "Kingda Ka",
+    "Nitro",
+    "El Toro",
+    "Jersey Devil Coaster",
+    "Safari Off Road Adventure",
+    "sixflags.com",
+    "Flash Pass",
+    "Hurricane Harbor",
+    "Fright Fest"
+   ],
+   "giants": [],
+   "pick": "sixflags.com",
+   "hedged": false
+  }
+ }
+}
