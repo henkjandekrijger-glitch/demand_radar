@@ -195,6 +195,11 @@ export const THEMA = {
   stemcoach: { naam: 'Stem- en spreekcoach (zang, stem, presenteren)', markten: ['US', 'GB', 'NL', 'ES', 'MX'], max: 0.6,
     ow: [['spreken en presenteren', /public speaking|speaking|presentation|speech|spreek|presenteren|presentatie|openbaar|oratoria|hablar en p/], ['zangles en zangcoach', /sing|vocal|zang|zingen|canto|cantar/], ['stem verbeteren', /voice|stem|voz|deeper/], ['online, app en cursus', /online|\bapp\b|course|cursus|curso|clases/], ['prijs', /price|cost|kosten|prijs|precio|free|gratis/]],
     regex: '(voice coach|vocal coach|voice training|voice lessons|vocal lessons|singing lessons|singing coach|singing teacher|learn to sing|how to sing|singing app|public speaking|speaking coach|presentation skills|presentation coach|speech coach|improve my voice|improve your voice|deeper voice|voice exercises|vocal exercises|stemcoach|spreekcoach|stemtraining|zangles|zangcoach|zangdocent|leren zingen|presentatietraining|presenteren|spreken in het openbaar|clases de canto|aprender a cantar|profesor de canto|coach vocal|coach de voz|entrenador de voz|oratoria|hablar en publico|tecnica vocal|ejercicios de voz)' },
+  // Diensten in de buurt, VS (19 nov 2026, Henkjan: "Als je hulp maakt is dat altijd door de pov vd gebruiker = dus zoek termen."): de echte
+  // zoektermen voor de beslisgidsen hotel, massage en tandarts op whichtobuy.best (hjdk-api lib/wtb-dienst.js). Drie losse vragen.
+  'lokaal-us': { naam: 'Diensten in de buurt VS: hotel, massage, tandarts', markten: ['US'], max: 0.6,
+    ow: [['hotel', /hotel|motel|inn\b|lodging/], ['massage', /massage|spa\b/], ['tandarts', /dentist|dental|teeth|tooth/], ['near me en nu', /near me|nearby|open now|tonight|today|24 hour|emergency/], ['prijs', /cheap|price|cost|how much|afford|free|low cost|sliding/], ['verzekering', /insurance|medicaid|medicare|accept|network|delta|cigna|metlife|aetna/], ['vragen', /^(how|what|when|why|is |does|do |can|where|which)/]],
+    regex: ['(hotel near me|hotels near me|hotel nearby|hotels nearby|cheap hotels|hotels tonight|hotel tonight|motel near me|motels near me|last minute hotel|hotel deals|book a hotel|hotel booking)', '(massage near me|massage|massage therapist|massage therapy|massage spa)', '(dentist|dentists|dental clinic|dental office|emergency dentist|dental care|dental insurance|teeth cleaning)'] },
   curacao: { naam: 'Curaçao', regex: '(cura[cç]ao|curazao|kòrsou|korsou|willemstad)', markten: ['US', 'NL', 'DE', 'CA', 'CO', 'BR'] },
   'kadoly-wonen': { naam: 'Kadoly wonen', markten: KADOLY_MARKT, ow: OW_KADOLY,
     regex: '(vaas|vazen|bloempot|plantenpot|sierpot|plantenbak|plantenstandaard|plantenrek|plantentafel|kunstplant|kunstbloem|orchidee|muurcirkel|wandcirkel|wanddecoratie|muurdecoratie|wandkleed|tuinposter|muursticker|tafellamp|hanglamp|leeslamp|oplaadbare lamp|lantaarn|windlicht|kandelaar|geurkaars|windgong|windspinner|bijzettafel|dienblad|plaid|sierkussen|wasmand|opbergmand|rieten mand|diffuser|geurstokjes|tuindecoratie|tuinbeeld)' },
@@ -213,6 +218,9 @@ export const THEMA = {
     regex: '(sauna|saunas|tonsauna|barrelsauna|fasssauna|buitensauna|tuinsauna|gartensauna|außensauna|aussensauna|infraroodcabine|infrarood cabine|infrarotkabine|infrarot kabine|warmtecabine|wärmekabine|saunakachel|saunaofen|hottub|hot tub|jacuzzi|whirlpool garten|whirlpool outdoor|badetonne|bubbelbad|ijsbad|eisbad|cold plunge|dompelbad|massagestoel|massage stoel|massagesessel|massage sessel|irest|massaggio)' },
   'kadoly-cadeau': { naam: 'Kadoly cadeauvragen', markten: KADOLY_MARKT, ow: OW_KADOLY,
     regex: '(cadeau|kado|cadeautje|kadootje|geschenk|presentje|cadeaubox|giftset)' },
+  // kaufberater.best dienstgidsen (19 nov 2026, AI-gaten zonder eerste keus): Führerschein, Tagesgeld, Anwalt, Reinigung. Alleen DE.
+  'kaufberater-dienste': { naam: 'Kaufberater Dienste: Führerschein, Tagesgeld, Anwalt, Reinigung', markten: ['DE'], max: 0.45,
+    regex: '(führerschein|fuehrerschein|fahrschule|theorieprüfung|theorie app|tagesgeld|festgeld|anwalt|rechtsanwalt|fachanwalt|erstberatung|beratungshilfe|rechtsschutz|reinigung|textilreinigung|wäscherei|waescherei)' },
 };
 
 // Henkjan 16 nov 2026: Sealed Intent totaalassessment; onderzoeksbudget expliciet toegestaan.
