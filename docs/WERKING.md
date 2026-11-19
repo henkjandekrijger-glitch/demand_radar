@@ -273,7 +273,10 @@ Scripts in `tools/` (toetsen van bronnen en het model).
   UTC-dag (hele account, volgens de eigen teller van DataForSEO); daarbinnen de nachtelijke opbouw hooguit `DFS_BUILD_MAX` = $0,75
   en al het andere hooguit `DFS_DAILY_MAX` = $1 (was $4 + $3). Twijfel over de teller = niet betalen. Sinds 16 nov 2026 blijft het
   budget van de opbouw (`DFS_BUILD_MAX`) gereserveerd tot de opbouw van die dag betaald heeft of tot 08:00 UTC, zodat losse aankopen
-  (zoekvraag-thema's, checks) vóór 04:00 UTC de nachtelijke opbouw niet meer kunnen verdringen (gebeurde 15 en 16 nov). Zuinig: Google Trends-dagdata
+  (zoekvraag-thema's, checks) vóór 04:00 UTC de nachtelijke opbouw niet meer kunnen verdringen (gebeurde 15 en 16 nov). Sinds
+  18 nov 2026 gaat de opbouw voor (hij mislukte ook op 18 nov: de reserve remt alleen de radar zelf, niet MyLevel en hjdk-api op
+  hetzelfde account): de opbouw mag zijn eigen `DFS_BUILD_MAX` altijd uitgeven, ook als de rest het dagtotaal al op heeft; het
+  hele account komt op zo'n dag hooguit op `DFS_TOTAL_MAX` + `DFS_BUILD_MAX`. Voor al het andere blijven de grenzen gelijk. Zuinig: Google Trends-dagdata
   in de opbouw alleen voor de bovenste 4 groepen per land (`NOW_GOOGLE_CHUNKS`, rest goedkopere DataForSEO Trends), wachtlijst van
   de vroege signalen pas na 3 dagen of bij 900+ termen, verse maanddata in stukken van $0,45 per dag. Kasboek per proces:
   `dfs/ledger/<dag>/<proces>.json`.
