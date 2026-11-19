@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     if (req.query.others && isPro(req)) return res.status(200).json(await askOthers(store, { req, max: Math.max(1, Math.min(6, +req.query.max || 5)) }));
     // Eigenaar ?ask=<koopvraag>&site=<host>: één vraag aan de andere AI's, hooguit eens per 7 dagen per vraag (kost gatewaygeld, telt in de dagrem)
     if (req.query.ask && isPro(req)) return res.status(200).json(await askQuestion(store, String(req.query.ask), { req, site: String(req.query.site || ''), force: req.query.force === '1' }));
-    // Eigenaar ?probe=chat|responses: één vraag aan Perplexity, alleen de vorm van het antwoord en de gevonden bronnen terug (telt als 1 vraag)
+    // Eigenaar ?probe=chat|responses|sdk: één vraag aan Perplexity, alleen de vorm van het antwoord en de gevonden bronnen terug (telt als 1 vraag)
     if (req.query.probe && isPro(req)) return res.status(200).json(await probeSources(store, { req, api: String(req.query.probe) }));
     if (req.query.latest) { const L = await latestGaps(store); return res.status(200).json(L ? { day: L.day, at: L.at, model: L.model, counts: L.counts, items: presentGaps(L).map(g => (isPro(req) || !g.others ? g : { ...g, others: (({ cited, ...o }) => o)(g.others) })) } : { items: [] }); }
     res.status(200).json(await pendingGaps(store, { per: Math.max(5, Math.min(40, +req.query.per || 30)) }));

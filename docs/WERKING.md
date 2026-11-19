@@ -202,9 +202,11 @@ vinden". Zelfde route als `### fill`, dus geen AI-aanroep vanaf Vercel en geen g
   links in de tekst). Alleen een AI die live zoekt (Perplexity) geeft bronnen; GPT en Gemini antwoorden hier uit hun geheugen. Per gat
   staat `others.sources` (sites, meeste links eerst) en, alleen met teamsleutel, `others.cited` (welke AI's onze site voor dat land
   aanhalen). De tekstweergave van `view=gaps` begint met de sites die het vaakst worden aangehaald per land: dat is de werklijst
-  waar we genoemd moeten worden. Bij `?ask=` staan `cited`, `sources` en `cited` in `history`. Kost geen extra vragen. Proef waar de
-  gateway de bronnen teruggeeft: `GET /api/gaps?probe=chat&key=` of `probe=responses` (één vraag aan Perplexity, alleen de vorm terug);
-  `AI_GAPS_API=responses` laat de vragen via het Responses-eindpunt van de gateway lopen.
+  waar we genoemd moeten worden. Bij `?ask=` staan `cited`, `sources` en `cited` in `history`. Kost geen extra vragen.
+  De weg: de OpenAI-vormige eindpunten van de gateway (chat en responses) geven de bronnen van Perplexity niet door (proef 19 nov),
+  de AI SDK van Vercel wel. Daarom gaat een model dat live zoekt (`perplexity/…`) via de SDK (pakket `ai`, enige extra afhankelijkheid)
+  en de rest via chat; faalt de SDK, dan alsnog via chat zonder bronnen. `AI_GAPS_API=chat|responses|sdk` dwingt één weg af.
+  Proef: `GET /api/gaps?probe=chat|responses|sdk&key=` (één vraag aan Perplexity, alleen de vorm en de bronnen terug, telt als 1 vraag).
 - Losse koopvraag op verzoek (keuzehulp-protocol, 19 nov): `GET /api/gaps?ask=<vraag>&site=<host>&key=<teamsleutel>` legt één vraag voor
   aan dezelfde drie AI's en zegt wie ze noemen, of er een eerste keus is en of ze onze site noemen (`named`). Dezelfde vraag wordt
   hooguit eens per 7 dagen opnieuw gesteld (daarbinnen het bewaarde antwoord), telt mee in de dagrem en bewaart de laatste 12

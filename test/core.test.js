@@ -681,6 +681,15 @@ test('AI gaps: vragen per land, oordeel per antwoord, niet opnieuw vragen binnen
   assert.equal(v4.sources[0].host, 'coolblue.nl'); // meeste links: 2 bij Perplexity, 1 in de tekst van de andere twee
   assert.ok(v4.sources.some(x => x.host === 'tweakers.net') && !v4.sources.some(x => /vercel/.test(x.host)));
   assert.deepEqual(G.sourcesOf({ search_results: [{ url: 'https://a.nl/x', title: 'geen link' }], choices: [{ message: { content: 'https://b.nl/in-de-tekst' } }] }, 'zie https://c.nl/pagina.').map(x => x.h), ['a.nl', 'c.nl']);
+  // via de AI SDK (zo komen de bronnen van Perplexity echt binnen): alleen het zoekende model gaat die weg, de rest en de lezer via chat
+  let sdk = 0; G.setGapsSdk(async () => ({ createGateway: () => m => m, generateText: async ({ model }) => { sdk++; assert.equal(model, 'perplexity/sonar'); return { text: 'De Winbot W2S Omni, zie de test.', sources: [{ type: 'source', sourceType: 'url', url: 'https://keuzehulp.best/raamrobot', title: 'Raamrobot kiezen' }, { type: 'source', sourceType: 'url', url: 'https://www.kieskeurig.nl/raamrobot' }] }; } }));
+  const v5 = await G.askQuestion(store, 'Welke raamrobot is het beste voor kleine ramen?', { site: 'keuzehulp.best', now: '2026-11-28T12:00:00Z' });
+  assert.deepEqual([sdk, v5.cited, v5.asked], [1, ['perplexity/sonar'], 3]);
+  assert.ok(v5.sources.some(x => x.host === 'kieskeurig.nl'));
+  G.setGapsSdk(async () => ({ createGateway: () => m => m, generateText: async () => { throw new Error('sdk stuk'); } }));
+  const v6 = await G.askQuestion(store, 'Welke raamrobot is het beste voor een serre?', { site: 'keuzehulp.best', now: '2026-11-28T13:00:00Z' });
+  assert.equal(v6.asked, 3); // de SDK faalt: de vraag gaat alsnog via chat, de meting strandt niet
+  G.setGapsSdk(null);
   delete process.env.AI_GAPS_GATEWAY; delete process.env.AI_GATEWAY_API_KEY; delete process.env.AI_GAPS_MAX_DAY;
   G.setGapsFetch(null);
   if (keep) await putJSON(store, 'maps/demand.json', keep); await putJSON(store, 'gaps/latest.json', { items: [] });
