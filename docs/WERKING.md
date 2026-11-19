@@ -189,6 +189,12 @@ vinden". Zelfde route als `### fill`, dus geen AI-aanroep vanaf Vercel en geen g
   Claude in het antwoordbestand met `"guide": "https://..."` (of `false`), dat blijft dan staan. Alleen met teamsleutel
   zichtbaar: badge op de radar, "Own guide" in de tekst, en de lijst voor de keuzehulp-sessie:
   `/api/demand?view=gaps&guide=none&format=text&key=<teamsleutel>` (gaten zonder eigen keuzehulp).
+- Andere AI's (19 nov, Henkjan: "ik zet gateway weer aan"): met `AI_GAPS_GATEWAY=on` legt `askOthers` (`lib/aigaps.js`) de gaten
+  ook voor aan Perplexity (zoekt live), een GPT-model en Gemini via de Vercel AI Gateway (`AI_GAPS_MODELS`). Alleen de gaten,
+  elk hooguit eens per 7 dagen, samen hooguit `AI_GAPS_MAX_DAY` vragen per dag (standaard 40; teller `gaps/others-<dag>.json`,
+  eerst tellen dan vragen). De uurronde doet er 3 per keer; `GET /api/gaps?others=1&key=` doet er nu een paar (nooit in een lus).
+  Dit is een eigen schakelaar: `AI_GATEWAY` (teksten, prijsoordelen) blijft uit. Per rij staat hoeveel andere AI's ook geen
+  eerste keus hebben; labels in het gatewayoverzicht: `project:demand_radar,fn:aigaps`.
 - Opslag: `gaps/latest.json` (alles van de laatste 14 dagen, volumes bijgewerkt met de radar van vandaag), `gaps/<dag>.json`
   (de ruwe antwoorden). `GET /api/gaps?latest=1` geeft de uitkomst.
 Grens: dit is één model (Claude) zonder webzoeken, niet wat gebruikers van ChatGPT of Gemini echt zien. Meer modellen kan via

@@ -650,6 +650,20 @@ test('AI gaps: vragen per land, oordeel per antwoord, niet opnieuw vragen binnen
   await G.applyGaps(store, { day: '2026-11-19', answers: { [us.id]: { answer: 'x', names: ['A', 'B'], guide: 'https://whichtobuy.best/plumbers' } } }, { now: '2026-11-19T14:00:00Z' });
   assert.equal((await G.refreshGuides(store, { now: '2026-11-20T14:00:00Z' })).changed, 0);
   assert.equal((await G.latestGaps(store)).items.find(x => x.cc === 'US').guide, 'https://whichtobuy.best/plumbers');
+  // andere AI's: alleen met de eigen schakelaar, alleen de gaten, met een dagrem
+  assert.deepEqual(await G.askOthers(store, { now: '2026-11-19T15:00:00Z' }), { off: true });
+  process.env.AI_GAPS_GATEWAY = 'on'; process.env.AI_GATEWAY_API_KEY = 'test'; process.env.AI_GAPS_MAX_DAY = '2';
+  let calls = 0;
+  G.setGapsFetch(async (u, o) => { calls++; const m = JSON.parse(o.body).model; return { ok: true, json: async () => ({ choices: [{ message: { content: m.startsWith('perplexity') ? 'Try Roto-Rooter.\n{"names":["Roto-Rooter","Angi"],"giants":[],"pick":"Roto-Rooter","misread":false}' : 'It depends.\n{"names":["Angi","Yelp"],"giants":[],"pick":"","misread":false}' } }] }) }; });
+  const o1 = await G.askOthers(store, { now: '2026-11-19T15:00:00Z', max: 5 });
+  assert.equal(o1.saved, o1.asked); assert.ok(o1.asked >= 1 && o1.asked <= 2); assert.equal(calls, o1.asked * 3);
+  const withO = G.presentGaps(await G.latestGaps(store)).find(x => x.others);
+  assert.deepEqual([withO.others.asked, withO.others.noPick], [3, 2]);
+  assert.match((await import('../api/mcp.js')).demandText({ ready: true, day: '2026-11-19', period: '2026-10', gaps: [withO] }, 'gaps', 'ALL', 5), /Other AIs \(2 of 3 also without a first choice\): perplexity: first choice Roto-Rooter/);
+  const o2 = await G.askOthers(store, { now: '2026-11-19T16:00:00Z', max: 5 });
+  assert.ok(o2.cap || o2.done || o2.asked <= 1); // dagrem of klaar
+  const o3 = await G.askOthers(store, { now: '2026-11-19T17:00:00Z', max: 5 }); assert.ok(o3.cap || o3.done);
+  delete process.env.AI_GAPS_GATEWAY; delete process.env.AI_GATEWAY_API_KEY; delete process.env.AI_GAPS_MAX_DAY;
   G.setGapsFetch(null);
   if (keep) await putJSON(store, 'maps/demand.json', keep); await putJSON(store, 'gaps/latest.json', { items: [] });
 });
