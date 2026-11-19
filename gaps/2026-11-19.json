@@ -916,7 +916,8 @@
    "names": [],
    "giants": [],
    "pick": "",
-   "hedged": true
+   "hedged": true,
+   "misread": true
   },
   "DE:ikea bücherregal": {
    "answer": "Der Klassiker ist das BILLY von IKEA: günstig (ab ca. 40 Euro), viele Größen, Aufsatzregale und Glastüren. Mein erster Tipp, wenn du viele Bücher hast. Stabiler und mit Tiefe: HEMNES oder IVAR (Massivholz); für Würfel-Optik KALLAX. Kaufen kannst du direkt bei IKEA im Haus oder auf ikea.de, mit Lieferung oder Abholung. Gebraucht findest du Regale oft günstig bei Kleinanzeigen. Wichtig: Maße prüfen und das Regal an der Wand sichern.",
@@ -1218,7 +1219,8 @@
    "names": [],
    "giants": [],
    "pick": "",
-   "hedged": true
+   "hedged": true,
+   "misread": true
   },
   "US:medical insurance insurance": {
    "answer": "If you don't get coverage through an employer, go to HealthCare.gov (or your state's exchange) to compare ACA plans and see subsidies; open enrollment runs Nov 1 to Jan 15 in most states. Use Medicare.gov if you're 65+, or Medicaid if income is low. Brokers like eHealth or HealthSherpa can help compare. Common carriers include Blue Cross Blue Shield, Kaiser Permanente, UnitedHealthcare and Aetna. Check that your doctors and drugs are covered.",
