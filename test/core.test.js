@@ -654,9 +654,10 @@ test('AI gaps: vragen per land, oordeel per antwoord, niet opnieuw vragen binnen
   assert.deepEqual(await G.askOthers(store, { now: '2026-11-19T15:00:00Z' }), { off: true });
   process.env.AI_GAPS_GATEWAY = 'on'; process.env.AI_GATEWAY_API_KEY = 'test'; process.env.AI_GAPS_MAX_DAY = '2';
   let calls = 0;
-  G.setGapsFetch(async (u, o) => { calls++; const m = JSON.parse(o.body).model; return { ok: true, json: async () => ({ choices: [{ message: { content: m.startsWith('perplexity') ? 'Try Roto-Rooter.\n{"names":["Roto-Rooter","Angi"],"giants":[],"pick":"Roto-Rooter","misread":false}' : 'It depends.\n{"names":["Angi","Yelp"],"giants":[],"pick":"","misread":false}' } }] }) }; });
+  // twee stappen: eerst de kale vraag aan het model, dan leest de lezer (haiku) het antwoord
+  G.setGapsFetch(async (u, o) => { calls++; const B = JSON.parse(o.body), m = B.model, p = B.messages[0].content; const txt = m.startsWith('anthropic') ? (p.includes('Roto-Rooter is my top pick') ? '{"names":["Roto-Rooter","Angi"],"giants":[],"pick":"Roto-Rooter","misread":false}' : '{"names":["Angi","Yelp"],"giants":[],"pick":"","misread":false}') : (assert.ok(!p.includes('JSON')), m.startsWith('perplexity') ? 'Roto-Rooter is my top pick for most homes; Angi is a fine second.' : 'It depends on where you live. Angi and Yelp both list local plumbers.'); return { ok: true, json: async () => ({ choices: [{ message: { content: txt } }] }) }; });
   const o1 = await G.askOthers(store, { now: '2026-11-19T15:00:00Z', max: 5 });
-  assert.equal(o1.saved, o1.asked); assert.ok(o1.asked >= 1 && o1.asked <= 2); assert.equal(calls, o1.asked * 3);
+  assert.equal(o1.saved, o1.asked); assert.ok(o1.asked >= 1 && o1.asked <= 2); assert.equal(calls, o1.asked * 6);
   const withO = G.presentGaps(await G.latestGaps(store)).find(x => x.others);
   assert.deepEqual([withO.others.asked, withO.others.noPick], [3, 2]);
   assert.match((await import('../api/mcp.js')).demandText({ ready: true, day: '2026-11-19', period: '2026-10', gaps: [withO] }, 'gaps', 'ALL', 5), /Other AIs \(2 of 3 also without a first choice\): perplexity: first choice Roto-Rooter/);

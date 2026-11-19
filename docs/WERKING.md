@@ -192,7 +192,9 @@ vinden". Zelfde route als `### fill`, dus geen AI-aanroep vanaf Vercel en geen g
 - Andere AI's (19 nov, Henkjan: "ik zet gateway weer aan"): met `AI_GATEWAY=on` (hele gateway) of alleen `AI_GAPS_GATEWAY=on` legt `askOthers` (`lib/aigaps.js`) de gaten
   ook voor aan Perplexity (zoekt live), een GPT-model en Gemini via de Vercel AI Gateway (`AI_GAPS_MODELS`). Alleen de gaten,
   elk hooguit eens per 7 dagen, samen hooguit `AI_GAPS_MAX_DAY` vragen per dag (standaard 40; teller `gaps/others-<dag>.json`,
-  eerst tellen dan vragen). De uurronde doet er 3 per keer; `GET /api/gaps?others=1&key=` doet er nu een paar (nooit in een lus).
+  eerst tellen dan vragen). Twee stappen per model: eerst de kale koopvraag (zoals een gebruiker hem stelt), daarna
+  leest `AI_GAPS_READER` (standaard haiku) het antwoord en haalt namen en eerste keus eruit; het model zelf om een "pick" vragen
+  liet het bijna altijd kiezen. De uurronde doet er 3 per keer; `GET /api/gaps?others=1&key=` doet er nu een paar (nooit in een lus).
   Met alleen `AI_GAPS_GATEWAY` blijven teksten en prijsoordelen zonder gateway. Per rij staat hoeveel andere AI's ook geen
   eerste keus hebben; labels in het gatewayoverzicht: `project:demand_radar,fn:aigaps`.
 - Opslag: `gaps/latest.json` (alles van de laatste 14 dagen, volumes bijgewerkt met de radar van vandaag), `gaps/<dag>.json`

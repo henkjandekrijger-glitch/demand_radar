@@ -68,6 +68,9 @@
     },
     "api/zoekvraag.js": {
       "maxDuration": 120
+    },
+    "api/gaps.js": {
+      "maxDuration": 120
     }
   },
   "crons": [
