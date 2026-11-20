@@ -5,7 +5,7 @@
 // (hooguit ZV_MAX dollar, standaard $0,60, binnen de dagrem van lib/dfs.js), daarna altijd uit de opslag (zoekvraag/<thema>.json).
 // Nieuw thema: één regel in THEMA hieronder (regex op de zoekterm + markten met taal). regex mag ook een lijst zijn: elk deel een eigen vraag.
 import { getStore, getJSON, putJSON } from '../lib/store.js';
-import { topSearches, budget, serp } from '../lib/dfs.js';
+import { topSearches, budget, serp, searchVolume } from '../lib/dfs.js';
 
 const M = { US: [2840, 'en'], NL: [2528, 'nl'], DE: [2276, 'de'], CA: [2124, 'en'], CO: [2170, 'es'], BR: [2076, 'pt'], GB: [2826, 'en'], BE: [2056, 'nl'], AU: [2036, 'en'], FR: [2250, 'fr'], ES: [2724, 'es'], IT: [2380, 'it'], DO: [2214, 'es'], PA: [2591, 'es'], SR: [2740, 'nl'], AT: [2040, 'de'], MX: [2484, 'es'] };
 // Plastische chirurgie (14 nov 2026, Henkjan: keuzehulp "waar je moet zijn" voor NL, US en wereldwijd): de landen waar patiënten
@@ -314,16 +314,59 @@ async function nicheScan(req, res) {
   return res.status(200).json({ markt: cc, uitleg: 'Koopvragen met een situatie of doelgroep, gesorteerd op kans = vaste maandvraag x zwakte van de top 10 in Google (1 = geen echte vergelijkpagina, 0 = vol). sterk = vergelijkpagina\'s in de top 10, forum en markt = fora en winkels/marktplaatsen.', bijgewerkt: new Date(uit.t).toISOString(), termen: uit.items.length, gecontroleerd: kansen.length, nogTeControleren: uit.items.length - kansen.length, kosten: uit.kosten, fouten: b.errors.slice(0, 3), kansen: kansen.slice(0, Math.min(500, +(req.query.max || 200))) });
 }
 
+// 20 nov 2026 (plan onderdeel 8, fase 1; Henkjan: "JA ga op zoek naar data"): thema's zonder Labs-toplijst ($0,30-0,90 per thema).
+// Termen verzamelen uit gratis suggesties (Google en Bing, wat mensen intypen), filteren met de regex van het thema, daarna één partij
+// zoekvolumes per markt (Google Ads, hooguit 1.000 termen in één taak, ± $0,075). ?bron=suggest&droog=1 koopt niets en laat zien
+// hoeveel termen de gratis route vindt en welk deel van de bestaande top-200 (Labs) erbij zit; zo toetsen we eerst per thema.
+const HL = { NL: 'nl', BE: 'nl', SR: 'nl', DE: 'de', AT: 'de', CH: 'de', US: 'en', GB: 'en', CA: 'en', AU: 'en', CO: 'es', DO: 'es', PA: 'es', MX: 'es', ES: 'es', BR: 'pt', FR: 'fr' };
+export function zaden(T) {
+  const uitRegex = [].concat(T.regex || []).flatMap(r => String(r).replace(/^\(|\)$/g, '').split('|'));
+  return [...new Set([].concat(T.zaden || [], uitRegex).map(x => String(x).replace(/\[([^\]])[^\]]*\]/g, '$1').replace(/\\[bsdw]|[\\^$()?*+[\]{}.]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase()).filter(x => x.length >= 3))];
+}
+async function suggestBron(q, cc) {
+  const hl = HL[cc] || 'en', ua = { 'user-agent': 'Mozilla/5.0 (compatible; DemandRadar/1.0)' };
+  const g = fetch(`https://suggestqueries.google.com/complete/search?client=firefox&ie=utf-8&oe=utf-8&hl=${hl}&gl=${cc.toLowerCase()}&q=${encodeURIComponent(q)}`, { headers: ua, signal: AbortSignal.timeout(8000) }).then(r => r.ok ? r.json() : null).then(j => (j && j[1]) || []).catch(() => []);
+  const bg = fetch(`https://api.bing.com/osjson.aspx?query=${encodeURIComponent(q)}&market=${hl}-${cc}`, { headers: ua, signal: AbortSignal.timeout(8000) }).then(r => r.ok ? r.json() : null).then(j => (j && j[1]) || []).catch(() => []);
+  return [...await g, ...await bg].map(x => String(x).toLowerCase().trim()).filter(Boolean);
+}
+export async function verzamel(T, cc, { max = 180, conc = 6 } = {}) {
+  const z = zaden(T), qs = [...z];
+  for (const l of 'abcdefghijklmnopqrstuvwxyz') for (const s of z) qs.push(s + ' ' + l);
+  const lijst = qs.slice(0, max), gevonden = new Set(); let i = 0, vragen = 0, leeg = 0;
+  await Promise.all(Array.from({ length: conc }, async () => { while (i < lijst.length) { const q = lijst[i++]; const r = await suggestBron(q, cc); vragen++; if (!r.length) leeg++; for (const x of r) gevonden.add(x); } }));
+  const re = new RegExp([].concat(T.regex).join('|'), 'i');
+  return { termen: [...gevonden].filter(x => re.test(x)), vragen, leeg, zaden: z.length };
+}
+async function viaSuggesties(T, id, oud, droog, alleen) {
+  const markten = {}, toets = {}, b = budget(+(T.max || process.env.ZV_MAX || 0.6));
+  for (const cc of T.markten) {
+    if (alleen && cc !== alleen) continue;
+    const v = await verzamel(T, cc);
+    const top = ((oud && oud.markten && oud.markten[cc] && oud.markten[cc].termen) || []).slice().sort((a, c) => (c.v || 0) - (a.v || 0)).slice(0, 200).map(x => x.k);
+    const set = new Set(v.termen);
+    toets[cc] = { kandidaten: v.termen.length, suggestieVragen: v.vragen, zonderAntwoord: v.leeg, zaden: v.zaden, ...(top.length ? { labsTop200: top.length, daarvanGevonden: top.filter(k => set.has(k)).length, gemist: top.filter(k => !set.has(k)).slice(0, 15) } : {}) };
+    if (droog) { toets[cc].voorbeeld = v.termen.slice(0, 25); continue; }
+    const [loc, lang] = M[cc];
+    const vol = await searchVolume(v.termen, { loc, lang }, b, { months: 24 });
+    const termen = Object.entries(vol).filter(([, x]) => (x.volume || 0) >= 20).map(([k, x]) => { const m = (x.monthly || []).map(z => z.v); return { k, v: x.volume, y: m.length >= 13 && m[12] ? Math.round((m[0] / m[12] - 1) * 100) : null, i: null, c: x.cpc, cp: x.competition, o: onderwerp(k, T.ow), m: m.slice(0, 12) }; }).sort((a, c) => c.v - a.v);
+    markten[cc] = { taal: lang, termen, bron: 'suggest' };
+  }
+  return { markten, toets, kosten: Math.round(b.spent * 1000) / 1000, fouten: b.errors.slice(0, 5) };
+}
+
 export default async function handler(req, res) {
   if (req.query.niche) return nicheScan(req, res);
   const id = String(req.query.thema || '').toLowerCase(), T = THEMA[id];
   if (!T) return res.status(400).json({ error: 'onbekend thema', themas: Object.keys(THEMA) });
   const store = getStore(), pad = `zoekvraag/${id}.json`, oud = await getJSON(store, pad, null);
   let uit = oud;
+  const bron = String(req.query.bron || T.bron || 'labs');
+  if (bron === 'suggest' && req.query.droog === '1') { const r = await viaSuggesties(T, id, oud, true, String(req.query.cc || '').toUpperCase()); return res.status(200).json({ thema: id, bron, droog: true, toets: r.toets }); }
   const nieuweVersie = T.v && (oud && oud.v) !== T.v && new Date().toISOString().slice(0, 10) >= (T.vanaf || '');
   if (!oud || nieuweVersie || Date.now() - (oud.t || 0) > 7 * 864e5) {
     const b = budget(+(T.max || process.env.ZV_MAX || 0.6)), markten = {};
-    for (const cc of T.markten) {
+    if (bron === 'suggest') { const r = await viaSuggesties(T, id, oud, false, ''); Object.assign(markten, r.markten); b.spent += r.kosten; b.errors.push(...r.fouten); }
+    else for (const cc of T.markten) {
       const [loc, lang] = M[cc];
       const seen = new Set(), items = [];
       for (const re of [].concat(T.regex).flatMap(r => splitRegex(r))) for (const x of await topSearches({ loc, lang }, b, { by: 'volume', anyGrowth: true, minVolume: 20, limit: 700, regex: re, intent: null }).catch(() => [])) if (!seen.has(x.k)) { seen.add(x.k); items.push(x); }

@@ -145,7 +145,7 @@ land (± $0,01, binnen het plafond), automatisch zodra de laatste dag + 2 dagen 
 Wikidata; wekelijks, `launches/<cc>.json`). Per moment zoektermen in de eigen taal met het verloop van vorig jaar.
 
 ### events — wat de wereld verwacht
-`lib/events.js`, `/api/events`, tegel "Events". Open vragen op voorspellingsmarkten (Polymarket, Kalshi, Manifold; gratis, alleen lezen).
+`lib/events.js`, `/api/events`, tegel "Events". Open vragen op voorspellingsmarkten (Polymarket, Kalshi, Manifold, sinds 20 nov 2026 ook PredictIt en Metaculus (`METACULUS_TOKEN` als Metaculus een sleutel eist); gratis, alleen lezen). Polymarket geeft ook de koersbeweging per dag en week (`move`); een markt die 10+ procentpunten per week verschuift telt mee bij het kiezen, en bewegingen van 5+ punten gaan mee naar de AI.
 Elke gekozen gebeurtenis gaat met zijn zoektermen in het voorspellingsboek (`### ledger`, soort `event`).
 Eén AI-vraag per dag kiest er tot 18 die de vraag in NL/DE/US verschuiven, met effect, richting en zoektermen per land.
 Opslag `events/latest.json` en een dagelijkse momentopname `events/<dag>.json` om later na te kijken.
@@ -396,6 +396,10 @@ een gratis bron vervangt een betaalde pas na een eerlijke toets (≥ 150 vergeli
   veiligheid: oude teamsleutel staat in de geschiedenis van de openbare repo (taak 4).
 
 ### Fase 1 (eerst, deze week): zelfde data, ± 70% goedkoper
+**Uitgevoerd 20 nov 2026 (Henkjan "JA"):** punt 1 (maanddata geldig tot de volgende datamaand, de 16e, hooguit 35 dagen: `nogGeldig` in
+lib/dfs.js) en punt 3 (zoekvraag `?bron=suggest`: gratis suggesties van Google en Bing plus één partij Google Ads-volumes; eerst
+`&bron=suggest&droog=1` per thema toetsen tegen de bestaande Labs-top-200, gratis; een thema gaat over met veld `bron: 'suggest'` in
+THEMA). Punt 2 (wachtrij) en 4 nog open.
 1. Maanddata één keer per maand: `DFS_CACHE_DAYS` standaard 5 → 35 (lib/dfs.js `cacheDays`); Google Ads-volumes en Labs-lijsten
    veranderen maandelijks.
 2. Wachtrij in plaats van live voor alles wat niet direct hoeft (Google Ads search_volume via task_post/task_get, zoals Amazon in
