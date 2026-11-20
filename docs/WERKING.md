@@ -206,6 +206,8 @@ vinden". Zelfde route als `### fill`, dus geen AI-aanroep vanaf Vercel en geen g
   De weg: de OpenAI-vormige eindpunten van de gateway (chat en responses) geven de bronnen van Perplexity niet door (proef 19 nov),
   de AI SDK van Vercel wel. Daarom gaat een model dat live zoekt (`perplexity/…`) via de SDK (pakket `ai`, enige extra afhankelijkheid)
   en de rest via chat; faalt de SDK, dan alsnog via chat zonder bronnen. `AI_GAPS_API=chat|responses|sdk` dwingt één weg af.
+  Bijhalen: `GET /api/gaps?sources=1&key=` legt de gaten die al gevraagd zijn maar nog zonder bronnen staan één keer voor aan alleen
+  Perplexity (één model, geen lezer, kort antwoord: de goedkoopste weg), telt in de dagrem, elk gat één keer (`srcDay`).
   Proef: `GET /api/gaps?probe=chat|responses|sdk&key=` (één vraag aan Perplexity, alleen de vorm en de bronnen terug, telt als 1 vraag).
 - Losse koopvraag op verzoek (keuzehulp-protocol, 19 nov): `GET /api/gaps?ask=<vraag>&site=<host>&key=<teamsleutel>` legt één vraag voor
   aan dezelfde drie AI's en zegt wie ze noemen, of er een eerste keus is en of ze onze site noemen (`named`). Dezelfde vraag wordt

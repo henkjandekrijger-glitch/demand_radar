@@ -690,6 +690,13 @@ test('AI gaps: vragen per land, oordeel per antwoord, niet opnieuw vragen binnen
   const v6 = await G.askQuestion(store, 'Welke raamrobot is het beste voor een serre?', { site: 'keuzehulp.best', now: '2026-11-28T13:00:00Z' });
   assert.equal(v6.asked, 3); // de SDK faalt: de vraag gaat alsnog via chat, de meting strandt niet
   G.setGapsSdk(null);
+  // bronnen bijhalen: alleen het zoekende model, alleen gaten zonder bronnen, elk gat één keer
+  { const L0 = await G.latestGaps(store), n0 = L0.items.filter(r => ['open', 'generic', 'unclear'].includes(r.level) && r.others && r.others.models.some(m => m.model.startsWith('perplexity') && !m.error && !m.src)).length; assert.ok(n0 >= 1);
+    let bf = 0; G.setGapsSdk(async () => ({ createGateway: () => m => m, generateText: async ({ model, maxOutputTokens }) => { bf++; assert.equal(model, 'perplexity/sonar'); assert.equal(maxOutputTokens, 300); return { text: 'kort', sources: [{ sourceType: 'url', url: 'https://www.angi.com/plumbers' }] }; } }));
+    const b1 = await G.backfillSources(store, { now: '2026-11-29T10:00:00Z' });
+    assert.deepEqual([b1.asked, b1.saved, b1.withSources, bf], [n0, n0, n0, n0]);
+    const rij = G.presentGaps(await G.latestGaps(store)).find(x => x.others && x.others.sources.length); assert.equal(rij.others.sources[0].host, 'angi.com');
+    assert.deepEqual(await G.backfillSources(store, { now: '2026-11-29T11:00:00Z' }), { done: true }); G.setGapsSdk(null); }
   delete process.env.AI_GAPS_GATEWAY; delete process.env.AI_GATEWAY_API_KEY; delete process.env.AI_GAPS_MAX_DAY;
   G.setGapsFetch(null);
   if (keep) await putJSON(store, 'maps/demand.json', keep); await putJSON(store, 'gaps/latest.json', { items: [] });
