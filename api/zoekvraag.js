@@ -329,8 +329,11 @@ async function suggestBron(q, cc) {
   const bg = fetch(`https://api.bing.com/osjson.aspx?query=${encodeURIComponent(q)}&market=${hl}-${cc}`, { headers: ua, signal: AbortSignal.timeout(8000) }).then(r => r.ok ? r.json() : null).then(j => (j && j[1]) || []).catch(() => []);
   return [...await g, ...await bg].map(x => String(x).toLowerCase().trim()).filter(Boolean);
 }
-export async function verzamel(T, cc, { max = 180, conc = 6 } = {}) {
-  const z = zaden(T), qs = [...z];
+const VOOR = { en: ['what is', 'where is', 'how to', 'how much', 'best', 'is', 'can i', 'why', 'when', 'blue'], nl: ['wat is', 'waar', 'hoe', 'wat kost', 'beste', 'kan ik', 'waarom', 'wanneer'], de: ['was ist', 'wo', 'wie', 'was kostet', 'beste', 'kann man', 'warum', 'wann'], es: ['qué es', 'dónde', 'cómo', 'cuánto cuesta', 'mejor', 'por qué'], pt: ['o que é', 'onde', 'como', 'quanto custa', 'melhor', 'por que'], fr: ['qu est ce que', 'où', 'comment', 'combien coûte', 'meilleur'] };
+export const kaal = x => String(x || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+export async function verzamel(T, cc, { max = 280, conc = 6 } = {}) {
+  const z = zaden(T), qs = [...z], hl = HL[cc] || 'en';
+  for (const v of VOOR[hl] || VOOR.en) for (const s of z) qs.push(v + ' ' + s);
   for (const l of 'abcdefghijklmnopqrstuvwxyz') for (const s of z) qs.push(s + ' ' + l);
   const lijst = qs.slice(0, max), gevonden = new Set(); let i = 0, vragen = 0, leeg = 0;
   await Promise.all(Array.from({ length: conc }, async () => { while (i < lijst.length) { const q = lijst[i++]; const r = await suggestBron(q, cc); vragen++; if (!r.length) leeg++; for (const x of r) gevonden.add(x); } }));
@@ -343,8 +346,9 @@ async function viaSuggesties(T, id, oud, droog, alleen) {
     if (alleen && cc !== alleen) continue;
     const v = await verzamel(T, cc);
     const top = ((oud && oud.markten && oud.markten[cc] && oud.markten[cc].termen) || []).slice().sort((a, c) => (c.v || 0) - (a.v || 0)).slice(0, 200).map(x => x.k);
-    const set = new Set(v.termen);
-    toets[cc] = { kandidaten: v.termen.length, suggestieVragen: v.vragen, zonderAntwoord: v.leeg, zaden: v.zaden, ...(top.length ? { labsTop200: top.length, daarvanGevonden: top.filter(k => set.has(k)).length, gemist: top.filter(k => !set.has(k)).slice(0, 15) } : {}) };
+    const set = new Set(v.termen.map(kaal)), oudeTop = ((oud && oud.markten && oud.markten[cc] && oud.markten[cc].termen) || []).slice().sort((a, c) => (c.v || 0) - (a.v || 0)).slice(0, 200);
+    const volTot = oudeTop.reduce((a, x) => a + (x.v || 0), 0), volVond = oudeTop.filter(x => set.has(kaal(x.k))).reduce((a, x) => a + (x.v || 0), 0);
+    toets[cc] = { kandidaten: v.termen.length, suggestieVragen: v.vragen, zonderAntwoord: v.leeg, zaden: v.zaden, ...(top.length ? { labsTop200: top.length, daarvanGevonden: top.filter(k => set.has(kaal(k))).length, volumeGevondenPct: volTot ? Math.round(volVond / volTot * 100) : null, gemist: top.filter(k => !set.has(kaal(k))).slice(0, 15) } : {}) };
     if (droog) { toets[cc].voorbeeld = v.termen.slice(0, 25); continue; }
     const [loc, lang] = M[cc];
     const vol = await searchVolume(v.termen, { loc, lang }, b, { months: 24 });
