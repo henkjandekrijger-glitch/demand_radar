@@ -1,0 +1,49 @@
+{
+ "day": "2026-11-20",
+ "model": "Claude (Sonnet), no web search",
+ "answers": {
+  "NL:wordfeud app helper": {
+   "answer": "Een Wordfeud-helper is geen app die je koopt, het zijn meestal gratis websites waar je je letters invult en woorden terugkrijgt. Zoek op woorden.org of een Wordfeud-solver, of gebruik de Scrabble-woordenlijst om te controleren of een woord geldig is. Let op: zulke hulpmiddelen tellen in een spel tegen anderen als valsspelen. Voor oefenen is Van Dale handig om woorden op te zoeken. Installeer geen onbekende apps met veel advertenties.",
+   "names": [
+    "woorden.org",
+    "Van Dale",
+    "Wordfeud"
+   ],
+   "giants": [],
+   "pick": "woorden.org",
+   "hedged": false,
+   "misread": false
+  },
+  "DE:silvesterkreuzfahrt 2026": {
+   "answer": "Für Silvester 2026 auf See sind AIDA (Kanaren, Karibik), TUI Cruises mit Mein Schiff und MSC Kreuzfahrten beliebt. Bei Silvesterreisen sind die Preise hoch und die Kabinen früh weg, also bald buchen. Ich würde bei Dreamlines die Angebote vergleichen, denn dort sieht man viele Reedereien und Preise nebeneinander. Alternativ direkt bei AIDA oder TUI Cruises buchen, oder über e-hoi oder ein Reisebüro. Achte auf Trinkgelder und Ausflugskosten.",
+   "names": [
+    "AIDA",
+    "TUI Cruises",
+    "Mein Schiff",
+    "MSC Kreuzfahrten",
+    "Dreamlines",
+    "e-hoi"
+   ],
+   "giants": [],
+   "pick": "Dreamlines",
+   "hedged": false,
+   "misread": false
+  },
+  "DE:fitzek bücher": {
+   "answer": "Zum Einstieg in Sebastian Fitzek empfehle ich \"Die Therapie\" oder \"Der Seelenbrecher\". Sehr beliebt sind außerdem \"Passagier 23\", \"Das Paket\" und \"Abgeschnitten\" (mit Michael Tsokos). Kaufen kannst du die Bücher bei Thalia, Hugendubel oder in der lokalen Buchhandlung, online auch über genialokal.de. Amazon ist oft günstig und schnell, und bei Gebrauchtbüchern lohnt sich Medimops. Mein erster Tipp wäre Thalia.",
+   "names": [
+    "Thalia",
+    "Hugendubel",
+    "genialokal.de",
+    "Amazon",
+    "Medimops"
+   ],
+   "giants": [
+    "Amazon"
+   ],
+   "pick": "Thalia",
+   "hedged": false,
+   "misread": false
+  }
+ }
+}
