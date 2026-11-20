@@ -158,7 +158,7 @@ export const THEMA = {
   'kdp-boeken': { naam: 'Boeken als cadeau (eigen KDP-boeken)', markten: ['US', 'CA', 'GB', 'DE'], max: 0.6, ow: OW_KDP,
     serp: { US: ['stocking stuffers for teens', 'fun facts book for adults', 'pit boss cookbook', 'apocrypha book', 'white elephant gifts for men'], DE: ['adventskalender für männer'] },
     regex: '(stocking stuffer|white elephant|secret santa|fun fact|facts book|trivia book|bathroom reader|gifts for teen|gift for teen|teen boy gift|adventskalender für männer|adventskalender männer|adventskalender mann|advent calendar for men|unnützes wissen|wichtelgeschenk|pit boss|pellet grill cookbook|pellet smoker|traeger cookbook|smoker cookbook|griddle cookbook|blackstone cookbook|crock pot cookbook|slow cooker cookbook|apocrypha|book of enoch|bible color|bible coloring|large print word search|word search large print|habit tracker|lasting change|coin collecting book)' },
-  'fear-boek': { naam: 'Angst en moed (boek over FEAR)', markten: ['US', 'GB', 'DE'], max: 0.45, ow: OW_FEAR,
+  'fear-boek': { naam: 'Angst en moed (boek over FEAR)', markten: ['US', 'GB', 'DE'], max: 0.45, ow: OW_FEAR, bron: 'suggest', // 20 nov: eerste thema via gratis suggesties (± $0,08 per markt)
     serp: { US: ['books about fear', 'how to overcome fear', 'feel the fear and do it anyway', 'fear of failure'], DE: ['angst überwinden buch'] },
     regex: '(fear|afraid|scared of|scared to|phobia|courage|fearless|overthink|angst|ängste|furcht|phobie|mutig|mut haben|panikattacke)' },
   // taniakross.media (16 nov 2026, Henkjan: "Ik zie te weinig bezoek maak een plan voor meer SEO en LLM bezoek en wat voor content daarvoor
@@ -351,7 +351,8 @@ async function viaSuggesties(T, id, oud, droog, alleen) {
     toets[cc] = { kandidaten: v.termen.length, suggestieVragen: v.vragen, zonderAntwoord: v.leeg, zaden: v.zaden, ...(top.length ? { labsTop200: top.length, daarvanGevonden: top.filter(k => set.has(kaal(k))).length, volumeGevondenPct: volTot ? Math.round(volVond / volTot * 100) : null, gemist: top.filter(k => !set.has(kaal(k))).slice(0, 15) } : {}) };
     if (droog) { toets[cc].voorbeeld = v.termen.slice(0, 25); continue; }
     const [loc, lang] = M[cc];
-    const vol = await searchVolume(v.termen, { loc, lang }, b, { months: 24 });
+    const kopen = v.termen.filter(k => onderwerp(k, T.ow) !== 'ruis'); // merken, series en spellen niet betalen
+    const vol = await searchVolume(kopen, { loc, lang }, b, { months: 24 });
     const termen = Object.entries(vol).filter(([, x]) => (x.volume || 0) >= 20).map(([k, x]) => { const m = (x.monthly || []).map(z => z.v); return { k, v: x.volume, y: m.length >= 13 && m[12] ? Math.round((m[0] / m[12] - 1) * 100) : null, i: null, c: x.cpc, cp: x.competition, o: onderwerp(k, T.ow), m: m.slice(0, 12) }; }).sort((a, c) => c.v - a.v);
     markten[cc] = { taal: lang, termen, bron: 'suggest' };
   }
