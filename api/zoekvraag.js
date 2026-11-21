@@ -161,6 +161,12 @@ export const THEMA = {
   'fear-boek': { naam: 'Angst en moed (boek over FEAR)', markten: ['US', 'GB', 'DE'], max: 0.45, ow: OW_FEAR, bron: 'suggest', // 20 nov: eerste thema via gratis suggesties (± $0,08 per markt)
     serp: { US: ['books about fear', 'how to overcome fear', 'feel the fear and do it anyway', 'fear of failure'], DE: ['angst überwinden buch'] },
     regex: '(fear|afraid|scared of|scared to|phobia|courage|fearless|overthink|angst|ängste|furcht|phobie|mutig|mut haben|panikattacke)' },
+  // Voorspelspel zonder geld (21 nov 2026, Henkjan: "Hebben we een url ? Buiten vercel ?" en "Zoek domeinen met radar ."): welke woorden
+  // mensen typen rond voorspellen, gelijk krijgen, witte kerst en de benzineprijs, om een domeinnaam op echte zoekvraag te kiezen.
+  voorspelspel: { naam: 'Voorspelspel zonder geld (domeinkeuze)', markten: ['NL', 'US'], max: 0.3, bron: 'suggest',
+    ow: [['witte kerst', /witte kerst|white christmas|sneeuw|snow/], ['benzine', /benzine|brandstof|gas price|gasoline|fuel/], ['gelijk krijgen', /called it|told you|zei ik toch|gelijk/], ['wedden', /wedden|weddenschap|\bbet\b|betting|gokken|poll|peiling/], ['voorspellen', /voorspel|predict|forecast|verwachting/]],
+    zaden: ['witte kerst', 'kans op witte kerst', 'sneeuw met kerst', 'voorspelling', 'voorspellen', 'zei ik toch', 'gelijk krijgen', 'weddenschap', 'white christmas', 'will gas prices go down', 'gas prices christmas', 'prediction game', 'predictions', 'called it', 'i told you so'],
+    regex: '(witte kerst|sneeuw|voorspel|zei ik toch|gelijk|wedden|weddenschap|white christmas|snow|gas price|gasoline|predict|called it|told you so|forecast)' },
   // taniakross.media (16 nov 2026, Henkjan: "Ik zie te weinig bezoek maak een plan voor meer SEO en LLM bezoek en wat voor content daarvoor
   // nodig is kijk naar demand radar welke content of faq er bij moet"): Tania zelf, haar werk (opera, radio, tv, masterclass, dagvoorzitter)
   // en de gasten van haar podcast A Kross, in NL en BE (en de VS voor opera en Masked Singer).
