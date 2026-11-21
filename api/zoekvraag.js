@@ -248,6 +248,12 @@ export const THEMA = {
   // kaufberater.best dienstgidsen (19 nov 2026, AI-gaten zonder eerste keus): Führerschein, Tagesgeld, Anwalt, Reinigung. Alleen DE.
   'kaufberater-dienste': { naam: 'Kaufberater Dienste: Führerschein, Tagesgeld, Anwalt, Reinigung', markten: ['DE'], max: 0.45,
     regex: '(führerschein|fuehrerschein|fahrschule|theorieprüfung|theorie app|tagesgeld|festgeld|anwalt|rechtsanwalt|fachanwalt|erstberatung|beratungshilfe|rechtsschutz|reinigung|textilreinigung|wäscherei|waescherei)' },
+  // Groepscadeaus op gids.kadoly.com (Henkjan 21 nov 2026: "vind demandradar hiervoor en maak de paginas in de gids": een pagina per moment,
+  // zoals cadeau voor de juf of afscheidscadeau collega, met een knop "Start een groepscadeau"). Momenten waarop een groep samen geeft. NL en BE.
+  'kadoly-samen': { naam: 'Kadoly groepscadeaus: juf, collega, afscheid, pensioen, trainer', markten: KADOLY_MARKT, max: 0.4,
+    ow: [['school en opvang', /juf|juffen|meester|leerkracht|leraar|lerares|kinderopvang|leidster|klas|school|peuter|kinderdagverblijf|kdv|bso/], ['werk', /collega|afscheid|pensioen|werk|baas|manager|jubileum/],
+      ['club en vrijwilligers', /trainer|coach|voorzitter|vrijwilliger|club|vereniging|team/], ['samen geven', /groep|samen|namens|inzamel/], ['bedanken', /bedank/], ['mijlpalen', /abraham|sarah|50 jaar|65 jaar|jarig/]],
+    regex: '(juf|juffen|juffendag|meester|meesterdag|leerkracht|leraar|lerares|kinderopvang|leidster|collega|afscheid|pensioen|jubileum|trainer|coach|voorzitter|vrijwilliger|groepscadeau|namens de klas|namens klas|abraham|sarah|bedankje|bedank).*(cadeau|kado|cadeautje|attentie|presentje)|(cadeau|kado|cadeautje|attentie|presentje).*(juf|juffen|meester|leerkracht|leraar|lerares|kinderopvang|leidster|collega|afscheid|pensioen|jubileum|trainer|coach|voorzitter|vrijwilliger|namens|groep)|(afscheidscadeau|pensioencadeau|jubileumcadeau|groepscadeau|bedankcadeau|juffendag cadeau)' },
 };
 
 // Henkjan 16 nov 2026: Sealed Intent totaalassessment; onderzoeksbudget expliciet toegestaan.
