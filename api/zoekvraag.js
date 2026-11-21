@@ -164,9 +164,9 @@ export const THEMA = {
   // Voorspelspel zonder geld (21 nov 2026, Henkjan: "Hebben we een url ? Buiten vercel ?" en "Zoek domeinen met radar ."): welke woorden
   // mensen typen rond voorspellen, gelijk krijgen, witte kerst en de benzineprijs, om een domeinnaam op echte zoekvraag te kiezen.
   voorspelspel: { naam: 'Voorspelspel zonder geld (domeinkeuze)', markten: ['NL', 'US'], max: 0.3, bron: 'suggest',
-    ow: [['witte kerst', /witte kerst|white christmas|sneeuw|snow/], ['benzine', /benzine|brandstof|gas price|gasoline|fuel/], ['gelijk krijgen', /called it|told you|zei ik toch|gelijk/], ['wedden', /wedden|weddenschap|\bbet\b|betting|gokken|poll|peiling/], ['voorspellen', /voorspel|predict|forecast|verwachting/]],
+    ow: [['ruis', /kerstboom|kerstbal|kerstster|kerstroos|kersthuis|kerstverlichting|lyrics|liedje|song|movie|film|mr deluxe|cast|dvd|bing crosby|irving berlin|vinyl|karaoke|chords|sheet music|ornament|decor|tree/], ['witte kerst', /witte kerst|white christmas|sneeuw|snow/], ['benzine', /benzine|brandstof|gas price|gasoline|fuel/], ['gelijk krijgen', /called it|told you|zei ik toch|gelijk/], ['wedden', /wedden|weddenschap|\bbet\b|betting|gokken|poll|peiling/], ['voorspellen', /voorspel|predict|forecast|verwachting/]],
     zaden: ['witte kerst', 'kans op witte kerst', 'sneeuw met kerst', 'voorspelling', 'voorspellen', 'zei ik toch', 'gelijk krijgen', 'weddenschap', 'white christmas', 'will gas prices go down', 'gas prices christmas', 'prediction game', 'predictions', 'called it', 'i told you so'],
-    regex: '(witte kerst|sneeuw|voorspel|zei ik toch|gelijk|wedden|weddenschap|white christmas|snow|gas price|gasoline|predict|called it|told you so|forecast)' },
+    regex: '(witte kerst|sneeuw met kerst|sneeuw kerst|sneeuwen met kerst|voorspel|zei ik toch|gelijk gehad|gelijk krijgen|gelijk had|weddenschap|white christmas|snow on christmas|snow for christmas|snow christmas|will it snow|gas price|predict|called it|told you so)' },
   // taniakross.media (16 nov 2026, Henkjan: "Ik zie te weinig bezoek maak een plan voor meer SEO en LLM bezoek en wat voor content daarvoor
   // nodig is kijk naar demand radar welke content of faq er bij moet"): Tania zelf, haar werk (opera, radio, tv, masterclass, dagvoorzitter)
   // en de gasten van haar podcast A Kross, in NL en BE (en de VS voor opera en Masked Singer).
