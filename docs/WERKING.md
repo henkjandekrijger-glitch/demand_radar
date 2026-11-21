@@ -129,6 +129,24 @@ land door als het verouderd is (kost niets). In de overdracht: onderdeel fabriek
 voorspellers uit de live bronnen (`### extra`, `### gsc`, `### events`) zodra ze maanden hebben, en de vraagproef als advertentie
 voor Demand Radar (wacht op overleg met Henkjan: skin in the game zonder geld via reputatie, verdiende punten en radar-toegang).
 
+### behoefte — behoeftes in plaats van zoektermen (21 nov 2026)
+`lib/behoefte.js`. Henkjan 21 nov: "We zijn nu heel gefocust op zoektermen vind ik" en "Ja zorg dat je alle mogelijke data points
+hebt . En zoeken moet nog wel beschikbaar blijven natuurlijk ." Een behoefte = een groep termen van de kijklijst met dezelfde twee
+meest specifieke kernwoorden (woorden die 3 tot 2% van de termen delen; meervoud, z/s, -ing en "kopen/best/goedkoop" weggepoetst).
+Per behoefte (vanaf 300 zoekopdrachten per maand) alle meters die de radar heeft:
+- zoeken: Google (opgetelde maandreeks, groei per jaar, 12 maanden), Search Console van de eigen sites (`### gsc`);
+- kopen: Amazon "gekocht vorige maand" (`### amazonsales`), Keepa-verkoop, -prijs (`### keepa`), bol.com populair (NL, `### bol`);
+- aanbod: nieuwe domeinen (`### aanbod`), AI-antwoord (`### gaps`), adverteerderswaarde (volume × klikprijs per maand);
+- oorzaak: gebeurtenissen van voorspellingsmarkten (`### events`);
+- aandacht: Wikipedia-paginaweergaven per maand (gratis; elke uurronde hooguit 60 behoeftes, artikel via de zoek-API van de taal
+  van het land, ververst na 30 dagen, `behoefte/wiki.json`);
+- voorspelling: de voorspelfabriek (`### fabriek`) draait ook op de opgetelde reeksen (minder ruis dan losse termen).
+Score = kans op een verrassing × log(geld per maand). Dekking per meter staat erbij (hoeveel behoeftes hem hebben).
+Eén land per uurronde, één keer per dag; gratis. Opslag `behoefte/<cc>.json` (top 300). Publiek: `/api/early?behoefte=1&cc=NL[&n=50]`;
+`&run=1` bouwt dat land opnieuw (hooguit dagelijks). Zoektermen blijven volledig beschikbaar (`/api/demand`, `/api/early`,
+`/api/zoekvraag`). Nog niet als meter: advertenties (Meta/TikTok, wacht op sleutels), YouTube, Reddit per onderwerp, Clickmind
+(eigen kliks en verkopen per onderwerp uit hjdk-api), lanceringen en beleid per onderwerp.
+
 ### aanbod — aanbod vóór vraag: nieuwe domeinen (21 nov 2026)
 `lib/aanbod.js`. Wie geld zet, zit vóór de zoekvraag (plan stap 4). WhoisDS zet elke dag gratis de nieuw geregistreerde domeinen
 online (± 70.000 namen per dag; hergebruik ook commercieel toegestaan volgens de site). De uurronde haalt één keer per dag de

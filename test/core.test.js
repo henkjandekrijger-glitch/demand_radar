@@ -728,3 +728,16 @@ test('aanbod: zip uitpakken en nieuwe domeinen per term tellen', async () => {
   const tel = telDomeinen(txt.split('\n'), new Map([[compact('air fryer'), ['air fryer']], [compact('witte kerst'), ['witte kerst']]]));
   assert.equal(tel.get('airfryer'), 1); assert.equal(tel.get('wittekerst'), 1);
 });
+
+test('behoeftes: termen groeperen per onderwerp en alle meters koppelen', async () => {
+  const { groepeer, bouwBehoeftes } = await import('../lib/behoefte.js'), { memoryStore, putJSON } = await import('../lib/store.js');
+  const g = groepeer(['moisturizer for eczema', 'eczema moisturizers', 'eczema cream', 'air fryer', 'best air fryer', 'air fryer recipes', 'witte kerst', 'kans op witte kerst', 'witte kerst 2026']);
+  assert.equal(g.get('ecsema').length, 3); assert.equal(g.get('air fryer').length, 3); assert.equal(g.get('kerst wit').length, 3);
+  const store = memoryStore(), kw = {}; let seed = 9; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const W = ['eczema', 'cream', 'fryer', 'lamp', 'tafel', 'fiets', 'jas', 'reis'];
+  for (let n = 0; n < 800; n++) { const m = [], lv = 300 + rnd() * 2000; for (let i = 0; i < 48; i++) m.push([2022 + Math.floor((i + 10) / 12), ((i + 10) % 12) + 1, Math.round(lv * (0.8 + rnd() * 0.4))]); kw[`${W[n % 8]} ${W[(n * 3) % 8]} x${n % 50}`] = { m, cpc: 1 }; }
+  await putJSON(store, 'gsc/latest.json', { rows: [{ prop: 'p', rows: [['eczema cream tips', 'nld', 100, 40]] }] });
+  const r = await bouwBehoeftes(store, 'NL', { ser: { month: '2026-09', kw } });
+  assert.ok(r.behoeftes > 5 && r.items[0].zoeken.google.reeks.length === 12);
+  assert.ok(r.dekking.searchConsole >= 1, JSON.stringify(r.dekking));
+});
