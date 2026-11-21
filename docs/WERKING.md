@@ -81,8 +81,8 @@ toont, met een vooraf vastgelegde meetlat (`RULES`, nooit achteraf aanpassen):
   200 per bron per land per maand): binnen 3 maanden ≥ 40% boven de maand waarin de bron hem aanwees;
 - `event` (gekozen gebeurtenissen van voorspellingsmarkten, zoektermen per land): de maand erna ≥ 20% hoger (more) of lager
   (less) dan de maand ervoor.
-- `verrassing` (sinds 21 nov 2026, de tips van `### fabriek`): de doelmaand ≥ 40% boven de simpele gok (zelfde maand vorig jaar
-  × trend), vastgelegd met de kans; basiskans = dezelfde meetlat op alle termen van de kijklijst.
+- `verrassing` (sinds 21 nov 2026, de tips van `### fabriek`): de doelmaand ≥ 40% boven de simpele gok (zo hoog als nu × de
+  seizoensstap van de vorige twee jaren), vastgelegd met de kans; basiskans = dezelfde meetlat op alle termen van de kijklijst.
 De termen gaan op de kijklijst van de vroege signalen (de maanddata komt binnen het DataForSEO-plafond). Elke dag (uurronde)
 nagekeken tegen `early/series-<cc>.json`; elke uitkomst krijgt de **basiskans**: dezelfde meetlat op alle termen van de kijklijst
 (≥ 100 zoekopdrachten) in dezelfde maanden. Na 270 dagen zonder data vervalt een regel. Opslag `ledger/open.json`,
@@ -105,9 +105,12 @@ zei, hoe vaak het uitkwam, de bijstelling, een logboek). Volledig hertrainen (ni
 `lib/fabriek.js`. Henkjan 21 nov: "Radar moet vooral extreem goed voorspellen kom weeer met een voorstel wat het 100 x beter maakt"
 en "Ja doe alle 4". Waarom: van de 17 "Will rise"-tips van 21 nov stegen er 14 vorig jaar in dezelfde maanden ook al ≥ 40% (seizoen,
 geen voorspelling) en "Rising now" was slechter dan toeval (60% tegen 69%, 48 nagekeken). Vier delen:
-1. **Meetlat**: de simpele gok = zelfde maand vorig jaar × trend (laatste 3 maanden tegen een jaar eerder, begrensd 0,5-2;
-   `ledger.seizoensGok`/`gokIdx`, beide dezelfde formule). Een **verrassing** = de doelmaand ≥ 40% boven die gok (en boven 50).
-   Alleen dat telt als voorspelling; seizoen is kalender. Soort `verrassing` in het voorspellingsboek (`### ledger`).
+1. **Meetlat**: de simpele gok = zo hoog als nu, met de seizoensstap van "nu" naar de doelmaand van vorig jaar en het jaar
+   daarvoor (meetkundig gemiddeld, +10 tegen delen door nul; `ledger.seizoensGok`/`gokIdx`, beide dezelfde formule). Een
+   **verrassing** = de doelmaand ≥ 40% boven die gok (en boven 50). Alleen dat telt als voorspelling; seizoen en een sprong die al
+   gemaakt is, zitten al in de gok. Soort `verrassing` in het voorspellingsboek (`### ledger`). De eerste versie (vorig jaar ×
+   begrensde trend) is dezelfde dag vervangen: daar haalden termen die al gesprongen waren 79% "raak" (9,7× toeval) alleen
+   omdat de gok te laag bleef; de 40 tips van die versie zijn ingetrokken voordat er iets was nagekeken (fabriek versie 2).
 2. **Terugtoets**: de kijklijst (`early/series-<cc>.json`, ± 20.000 termen, 4 jaar) wordt nagespeeld: elke beginmaand, 1-3
    maanden vooruit, alleen data van toen (± 1 miljoen rijen per land). Leren op doelmaanden tot 12 maanden terug, toetsen op de
    laatste 12 doelmaanden die het leren niet zag: logloss-winst tegen toeval en de trefkans van de top-100 per maand (tips 2
