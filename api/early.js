@@ -106,6 +106,14 @@ export default async function handler(req, res) {
       if (op === 'refresh') return res.status(200).json(await refreshEarly(store, { max: Math.min(3, +(req.query.max || 1.5)) }));
       return res.status(400).json({ error: 'unknown op' });
     }
+    // Voorspelfabriek (publiek, gratis): ?fabriek=1 → toets, voorspelmarkt en verrassingen per land; &run=1 rekent één land door
+    // als de kijklijst een nieuwere maand heeft (of nog nooit gedraaid); niets kost geld, dus veilig zonder sleutel.
+    if (req.query.fabriek) {
+      const F = await import('../lib/fabriek.js'), A = await import('../lib/aanbod.js'), { getJSON } = await import('../lib/store.js');
+      const ran = req.query.run === '1' ? await F.fabriekRonde(store, { cc: ['NL', 'DE', 'US'].includes(String(req.query.cc || '').toUpperCase()) ? String(req.query.cc).toUpperCase() : null }) : null;
+      res.setHeader('Cache-Control', ran ? 'no-store' : 'public, max-age=600');
+      return res.status(200).json({ ...(ran ? { ran } : {}), ...F.fabriekView(await F.loadFabriek(store)), aanbod: A.aanbodView(await getJSON(store, A.AANBOD, null).catch(() => null)) });
+    }
     if (req.query.wild) { const { wildList } = await import('../lib/wildcards.js'); res.setHeader('Cache-Control', 'public, max-age=600'); return res.status(200).json(await wildList(store)); }
     const L = await latestEarly(store);
     if (!L) return res.status(200).json({ ready: false, items: [] });

@@ -81,6 +81,8 @@ toont, met een vooraf vastgelegde meetlat (`RULES`, nooit achteraf aanpassen):
   200 per bron per land per maand): binnen 3 maanden ≥ 40% boven de maand waarin de bron hem aanwees;
 - `event` (gekozen gebeurtenissen van voorspellingsmarkten, zoektermen per land): de maand erna ≥ 20% hoger (more) of lager
   (less) dan de maand ervoor.
+- `verrassing` (sinds 21 nov 2026, de tips van `### fabriek`): de doelmaand ≥ 40% boven de simpele gok (zelfde maand vorig jaar
+  × trend), vastgelegd met de kans; basiskans = dezelfde meetlat op alle termen van de kijklijst.
 De termen gaan op de kijklijst van de vroege signalen (de maanddata komt binnen het DataForSEO-plafond). Elke dag (uurronde)
 nagekeken tegen `early/series-<cc>.json`; elke uitkomst krijgt de **basiskans**: dezelfde meetlat op alle termen van de kijklijst
 (≥ 100 zoekopdrachten) in dezelfde maanden. Na 270 dagen zonder data vervalt een regel. Opslag `ledger/open.json`,
@@ -98,6 +100,38 @@ productiekenmerken) en wat er echt gebeurde. Per land een bijstelling q = σ(a +
 ongewijzigd. Eén land per uurronde, gratis (alleen lezen en rekenen). Opslag `learn/forecast-adapt.json` (per land: wat het model
 zei, hoe vaak het uitkwam, de bijstelling, een logboek). Volledig hertrainen (nieuwe bomen) blijft `tools/mlrows.mjs` +
 `tools/train_forecast.py` met het nieuwste jaar; het voorspellingsboek en deze bijstelling laten zien wanneer dat nodig is.
+
+### fabriek — voorspelfabriek: toets op historie + interne voorspelmarkt (21 nov 2026)
+`lib/fabriek.js`. Henkjan 21 nov: "Radar moet vooral extreem goed voorspellen kom weeer met een voorstel wat het 100 x beter maakt"
+en "Ja doe alle 4". Waarom: van de 17 "Will rise"-tips van 21 nov stegen er 14 vorig jaar in dezelfde maanden ook al ≥ 40% (seizoen,
+geen voorspelling) en "Rising now" was slechter dan toeval (60% tegen 69%, 48 nagekeken). Vier delen:
+1. **Meetlat**: de simpele gok = zelfde maand vorig jaar × trend (laatste 3 maanden tegen een jaar eerder, begrensd 0,5-2;
+   `ledger.seizoensGok`/`gokIdx`, beide dezelfde formule). Een **verrassing** = de doelmaand ≥ 40% boven die gok (en boven 50).
+   Alleen dat telt als voorspelling; seizoen is kalender. Soort `verrassing` in het voorspellingsboek (`### ledger`).
+2. **Terugtoets**: de kijklijst (`early/series-<cc>.json`, ± 20.000 termen, 4 jaar) wordt nagespeeld: elke beginmaand, 1-3
+   maanden vooruit, alleen data van toen (± 1 miljoen rijen per land). Leren op doelmaanden tot 12 maanden terug, toetsen op de
+   laatste 12 doelmaanden die het leren niet zag: logloss-winst tegen toeval en de trefkans van de top-100 per maand (tips 2
+   maanden vooruit) tegen de basiskans van die maand (lift).
+3. **Voorspelmarkt**: elke voorspeller (verrassing nu, momentum, jaartrend, versnelling, piek/terugval, grootte, onrust,
+   seizoenspiek, vorig jaar verrast, maanden vooruit, nieuwe domeinen, Amazon-verkoop via Keepa) leert zijn eigen kans
+   (10 kwantielvakjes + "weet het niet", met rem); de markt weegt ze logistisch op logloss (met rem naar 0). Per voorspeller:
+   aandeel in de markt en zijn eigen top-100-lift. Een voorspeller zonder geschiedenis weegt vanzelf nul tot hij maanden heeft.
+   Het getrainde model v2 (`### forecast`) doet niet mee: het zag deze maanden bij het trainen (zou valsspelen).
+4. **Live**: opnieuw leren op alles, dan per term de kans op een verrassing 1-3 maanden na de laatste maand; de 40 sterkste
+   tips per land (kans ≥ 2× toeval, met de twee voorspellers die het meest bijdragen) gaan als `verrassing` in het voorspellingsboek.
+Eén land per uurronde, alleen bij een nieuwe datamaand (of na 30 dagen); gratis (alleen lezen en rekenen, ± 10 s per land).
+Opslag `learn/fabriek.json`. Publiek: `/api/early?fabriek=1` (toets, markt, tips per land, aanbod); `&run=1[&cc=NL]` rekent één
+land door als het verouderd is (kost niets). In de overdracht: onderdeel fabriek. Volgende: daling-verrassingen (≤ 0,7× de gok),
+voorspellers uit de live bronnen (`### extra`, `### gsc`, `### events`) zodra ze maanden hebben, en de vraagproef als advertentie
+voor Demand Radar (wacht op overleg met Henkjan: skin in the game zonder geld via reputatie, verdiende punten en radar-toegang).
+
+### aanbod — aanbod vóór vraag: nieuwe domeinen (21 nov 2026)
+`lib/aanbod.js`. Wie geld zet, zit vóór de zoekvraag (plan stap 4). WhoisDS zet elke dag gratis de nieuw geregistreerde domeinen
+online (± 70.000 namen per dag; hergebruik ook commercieel toegestaan volgens de site). De uurronde haalt één keer per dag de
+bestanden van gisteren en eergisteren (zip, zelf uitgepakt), en telt per zoekterm van de kijklijsten NL, DE en US (zonder spaties
+en accenten, 5-30 tekens) hoeveel nieuwe domeinen hem bevatten. Per maand opgeteld in `aanbod/domeinen.json` (18 maanden);
+de voorspelfabriek gebruikt een maand als hij ≥ 25 dagen heeft (voorspeller "nieuwe domeinen"). Gratis. Nog niet: merkaanvragen
+(USPTO-sleutel van Henkjan) en CZDS (alle .com-registraties; niet nodig zolang WhoisDS werkt).
 
 ### bingnow — Bing als gratis nu-signaal (14 nov 2026)
 `lib/bingnow.js`. De nachtelijke opbouw vraagt per land voor ± 90 termen hoe het NU gaat. De bovenste 20 krijgen Google Trends-dagdata
@@ -379,6 +413,8 @@ Surgery-keuzemenu en schone vraagdata (15 november 2026)
 Het bestaande thema plastische-chirurgie ondersteunt nu ook ooglaseren, lenzen, staar, tandheelkunde en aanvullende keuze-ingrepen. Versie 3 koopt pas vanaf 16 november, binnen dezelfde thema- en dagrem; geen force refresh. De bestaande cache wordt bij lezen met de strikte ingreep-regex gefilterd en opnieuw ingedeeld. quality meldt bronversie, verwijderde termen en ontbrekende dekking. Ontbrekend volume is onbekend, geen nul. Keywordvolumes zijn overlappende zoekschattingen, geen unieke personen. todayin surgery koppelt alleen ingrepen met aantoonbare aanbiedersbronnen aan publieke dossiers; dunne selecties worden niet geïndexeerd.
 
 ## 8. PLAN 16 nov 2026: radar onafhankelijk van DataForSEO (Henkjan: "Ja", uitvoeren)
+
+21 nov 2026, nieuw voorstel (Henkjan: "Radar moet vooral extreem goed voorspellen ... 100 x beter", "Ja doe alle 4"): meetlat tegen de simpele gok, terugtoets op de historie, interne voorspelmarkt (`### fabriek`) en aanbod vóór vraag (`### aanbod`). De vraagproef met eigen advertenties wacht op overleg (wordt meteen een advertentie voor Demand Radar).
 
 Henkjan 16 nov: "Maak Radar extreem onafhankelijk van DataForSEO, ik vind ze duur" en daarna "Ja" op fase 1 plus de top 3 bronnen.
 Doel: DataForSEO van ± $45–60 per maand (plus uitzonderingen) naar ± $5 per maand, zonder slechter te voorspellen. Regel blijft:

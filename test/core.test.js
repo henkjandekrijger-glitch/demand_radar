@@ -701,3 +701,30 @@ test('AI gaps: vragen per land, oordeel per antwoord, niet opnieuw vragen binnen
   G.setGapsFetch(null);
   if (keep) await putJSON(store, 'maps/demand.json', keep); await putJSON(store, 'gaps/latest.json', { items: [] });
 });
+
+test('voorspelfabriek: simpele gok gelijk in boek en fabriek, toets en tips op nagebootste reeksen', async () => {
+  const { seizoensGok, gokIdx, toArr, judgeEntry } = await import('../lib/ledger.js');
+  const m = []; for (let i = 0; i < 40; i++) m.push([2023 + Math.floor((i + 6) / 12), ((i + 6) % 12) + 1, 200 + 100 * ((i % 12) === 5 ? 3 : 1) + i]);
+  const a = toArr(m), obj = Object.fromEntries(m.map(r => [`${r[0]}-${String(r[1]).padStart(2, '0')}`, r[2]])), g = k => (obj[k] == null ? null : obj[k]);
+  const t = (2025 * 12 + 11 - 1) - 2015 * 12; // nu = 2025-11
+  assert.ok(Math.abs(seizoensGok(g, '2025-11', '2026-01') - gokIdx(a, t, t + 2)) < 1e-6);
+  const r = judgeEntry({ kind: 'verrassing', now: '2025-11', target: '2026-01' }, obj); assert.ok(r.state === 'hit' || r.state === 'miss');
+  const { fabriekLand } = await import('../lib/fabriek.js');
+  let seed = 3; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648, kw = {};
+  for (let n = 0; n < 1500; n++) { let b = 1; const lv = 300 + rnd() * 3000, mm = []; for (let i = 0; i < 48; i++) { if (rnd() < 0.03) b = 1 + rnd() * 2; else b = 1 + (b - 1) * 0.7; mm.push([2022 + Math.floor((i + 10) / 12), ((i + 10) % 12) + 1, Math.round(lv * b * (1 + 0.3 * Math.sin(i / 2)) * (0.9 + rnd() * 0.2))]); } kw['t' + n] = { m: mm }; }
+  const out = await fabriekLand(null, 'NL', { ser: { month: '2026-09', kw } });
+  assert.ok(out.toets.rijen > 10000 && out.toets.top100 && out.toets.top100.lift > 1, JSON.stringify(out.toets.top100));
+  assert.ok(out.calls.length > 0 && out.calls[0].target > out.calls[0].now);
+  assert.equal(out.markt.reduce((s, x) => s + x.aandeel, 0) >= 98, true);
+});
+
+test('aanbod: zip uitpakken en nieuwe domeinen per term tellen', async () => {
+  const zlib = await import('node:zlib'), { unzipFirst, telDomeinen, compact } = await import('../lib/aanbod.js');
+  const body = Buffer.from('bestairfryer.com\nwitte-kerst.shop\nfoo.org\n'), data = zlib.deflateRawSync(body), name = Buffer.from('d.txt');
+  const lh = Buffer.alloc(30); lh.writeUInt32LE(0x04034b50, 0); lh.writeUInt16LE(8, 8); lh.writeUInt32LE(data.length, 18); lh.writeUInt32LE(body.length, 22); lh.writeUInt16LE(name.length, 26);
+  const cd = Buffer.alloc(46); cd.writeUInt32LE(0x02014b50, 0); cd.writeUInt16LE(8, 10); cd.writeUInt32LE(data.length, 20); cd.writeUInt32LE(body.length, 24); cd.writeUInt16LE(name.length, 28); cd.writeUInt32LE(0, 42);
+  const off = lh.length + name.length + data.length, eo = Buffer.alloc(22); eo.writeUInt32LE(0x06054b50, 0); eo.writeUInt32LE(cd.length + name.length, 12); eo.writeUInt32LE(off, 16);
+  const txt = unzipFirst(Buffer.concat([lh, name, data, cd, name, eo]));
+  const tel = telDomeinen(txt.split('\n'), new Map([[compact('air fryer'), ['air fryer']], [compact('witte kerst'), ['witte kerst']]]));
+  assert.equal(tel.get('airfryer'), 1); assert.equal(tel.get('wittekerst'), 1);
+});
