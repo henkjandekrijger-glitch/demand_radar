@@ -453,3 +453,5 @@ Sinds 18 nov 2026 ook hanglamp (NL, BE; plafond $0,50) en wellness (NL, BE, DE; 
 
 Sinds 21 nov 2026 ook voorspelspel (NL, US; plafond $0,30; via gratis suggesties, alleen het zoekvolume betaald): voorspellen, gelijk krijgen, wedden, witte kerst en benzineprijs, om de domeinnaam van het voorspelspel zonder geld ("Zei ik toch" / "Called it") op echte zoekvraag te kiezen.
 Sinds 21 nov 2026 ook meubels (NL, BE; plafond $0,50): eettafel, dressoir en ladekast, tv-meubel, console- en salontafel, bed, kamado, met groepen materiaal, vorm en maat, stijl. Voor de keuring van Droppery-producten (hjdk-api lib/dpkeur.js: vraag is een van de vier punten) en de meubelgidsen op gids.kadoly.com (Henkjan: "Zet alles van droppery in de winkel. En maak er de juiste content bij ... doe alles met demandradar").
+
+Sinds 21 nov 2026 ook sieraden (NL, BE; plafond $0,50): ketting, armband, oorbellen, ring, horloge, naam en gepersonaliseerd, materiaal, voor wie, cadeaumoment. Voor de sieradenmerken van Orderchamp in Kadoly en een sieradengids op gids.kadoly.com (Henkjan: "ik wil daarvoor gaan met de kerst").
