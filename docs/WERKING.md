@@ -123,6 +123,10 @@ geen voorspelling) en "Rising now" was slechter dan toeval (60% tegen 69%, 48 na
    Het getrainde model v2 (`### forecast`) doet niet mee: het zag deze maanden bij het trainen (zou valsspelen).
 4. **Live**: opnieuw leren op alles, dan per term de kans op een verrassing 1-3 maanden na de laatste maand; de 40 sterkste
    tips per land (kans ≥ 2× toeval, met de twee voorspellers die het meest bijdragen) gaan als `verrassing` in het voorspellingsboek.
+**Ruisfilter** (`lib/schoon.js`, 21 nov 2026, Henkjan: "En ja ruis filteren ."): Google Ads groepeert varianten soms opnieuw;
+dan springt een term in één keer 4× of meer en blijft daar ("luxury nyc hotels" −89% in een jaar). Een blijvende sprong (mediaan
+3 maanden erna tegen 3 ervoor ≥ 4× of ≤ ¼, een half jaar later nog ≥ 3× of ≤ ⅓) die een jaar eerder niet op dezelfde plek zat
+(geen seizoen) is een breuk: alles vóór de breuk telt niet mee. Aantal termen met een breuk staat in de uitkomst (`breuken`).
 Eén land per uurronde, alleen bij een nieuwe datamaand (of na 30 dagen); gratis (alleen lezen en rekenen, ± 10 s per land).
 Opslag `learn/fabriek.json`. Publiek: `/api/early?fabriek=1` (toets, markt, tips per land, aanbod); `&run=1[&cc=NL]` rekent één
 land door als het verouderd is (kost niets). In de overdracht: onderdeel fabriek. Volgende: daling-verrassingen (≤ 0,7× de gok),
@@ -138,14 +142,20 @@ Per behoefte (vanaf 300 zoekopdrachten per maand) alle meters die de radar heeft
 - kopen: Amazon "gekocht vorige maand" (`### amazonsales`), Keepa-verkoop, -prijs (`### keepa`), bol.com populair (NL, `### bol`);
 - aanbod: nieuwe domeinen (`### aanbod`), AI-antwoord (`### gaps`), adverteerderswaarde (volume × klikprijs per maand);
 - oorzaak: gebeurtenissen van voorspellingsmarkten (`### events`);
+- oorzaak ook: lanceringen (`launches/<cc>.json`) en beleid (`regulation/<cc>.json`), op naam en ideeën gekoppeld;
+- eigen: Clickmind, mensen die de term aanklikten op Henkjans eigen advertenties en sites, 14 dagen tegen de 14 ervoor (hjdk-api
+  `/api/mm?op=cmradar`, alleen dit Vercel-project via zijn OIDC-token, dagelijks naar `cm/latest.json`; `lib/meters.js` cmDag);
 - aandacht: Wikipedia-paginaweergaven per maand (gratis; elke uurronde hooguit 60 behoeftes, artikel via de zoek-API van de taal
-  van het land, ververst na 30 dagen, `behoefte/wiki.json`);
+  van het land, ververst na 30 dagen, `behoefte/wiki.json`); Reddit (berichten in 30 dagen, reddit.com en anders PullPush met ook
+  de 30 dagen ervoor; 30 behoeftes per uur, ververst na 7 dagen); YouTube (nieuwe video's in 30 dagen tegen een jaar eerder en
+  kijkers, `lib/youtube.js` binnen het dagquotum, 8 per uur, ververst na 14 dagen); Meta-advertenties in NL/DE (`lib/meta.js`,
+  wacht op META_AD_TOKEN). Alles in `behoefte/meters.json` (`lib/meters.js` metersRonde), best scorende behoeftes eerst;
 - voorspelling: de voorspelfabriek (`### fabriek`) draait ook op de opgetelde reeksen (minder ruis dan losse termen).
 Score = kans op een verrassing × log(geld per maand). Dekking per meter staat erbij (hoeveel behoeftes hem hebben).
 Eén land per uurronde, één keer per dag; gratis. Opslag `behoefte/<cc>.json` (top 300). Publiek: `/api/early?behoefte=1&cc=NL[&n=50]`;
 `&run=1` bouwt dat land opnieuw (hooguit dagelijks). Zoektermen blijven volledig beschikbaar (`/api/demand`, `/api/early`,
-`/api/zoekvraag`). Nog niet als meter: advertenties (Meta/TikTok, wacht op sleutels), YouTube, Reddit per onderwerp, Clickmind
-(eigen kliks en verkopen per onderwerp uit hjdk-api), lanceringen en beleid per onderwerp.
+`/api/zoekvraag`). Ruisfilter (`lib/schoon.js`, zie `### fabriek`) ook hier: termen met een Google-breuk tellen alleen vanaf de breuk. Nog niet als
+meter: TikTok-advertenties (vraagt een betaalde ScrapeCreators-sleutel), verkopen per onderwerp uit Clickmind (nu alleen kliks).
 
 ### aanbod — aanbod vóór vraag: nieuwe domeinen (21 nov 2026)
 `lib/aanbod.js`. Wie geld zet, zit vóór de zoekvraag (plan stap 4). WhoisDS zet elke dag gratis de nieuw geregistreerde domeinen

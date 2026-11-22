@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     // Voorspelfabriek (21 nov 2026): terugtoets op de historie + interne voorspelmarkt, één land per ronde bij een nieuwe datamaand (gratis)
     const fabriek = heavy ? { wait: 'busy hour' } : await (await import('../lib/fabriek.js')).fabriekRonde(store).catch(e => ({ error: String(e.message || e).slice(0, 120) }));
     // Behoeftes (21 nov 2026): termen gegroepeerd per onderwerp met alle meters en een eigen voorspelling; één land per ronde, dagelijks
-    const behoefte = heavy || (fabriek && fabriek.fabriek && fabriek.fabriek !== 'up to date') ? { wait: 'busy hour' } : await (await import('../lib/behoefte.js')).behoefteRonde(store).catch(e => ({ error: String(e.message || e).slice(0, 120) }));
+    const behoefte = heavy || (fabriek && fabriek.fabriek && fabriek.fabriek !== 'up to date') ? { wait: 'busy hour' } : await (await import('../lib/behoefte.js')).behoefteRonde(store, { oidc: String(req.headers['x-vercel-oidc-token'] || process.env.VERCEL_OIDC_TOKEN || '') }).catch(e => ({ error: String(e.message || e).slice(0, 120) }));
     // Aanbod vóór vraag: nieuw geregistreerde domeinen per zoekterm (WhoisDS, gratis, één keer per dag)
     const aanbod = await (await import('../lib/aanbod.js')).aanbodDag(store).catch(e => ({ error: String(e.message || e).slice(0, 120) }));
     // Search Console van alle eigen sites via hjdk-api (gratis Google-bron, één keer per dag; eigen Vercel OIDC-token als bewijs)

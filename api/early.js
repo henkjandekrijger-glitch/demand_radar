@@ -117,7 +117,7 @@ export default async function handler(req, res) {
     // Behoeftes (publiek, gratis): ?behoefte=1&cc=NL[&n=50] → onderwerpen met alle meters; &run=1 bouwt dat land opnieuw (hooguit dagelijks)
     if (req.query.behoefte) {
       const Bh = await import('../lib/behoefte.js'), cc = ['NL', 'DE', 'US'].includes(String(req.query.cc || '').toUpperCase()) ? String(req.query.cc).toUpperCase() : 'NL';
-      const ran = req.query.run === '1' ? await Bh.behoefteRonde(store, { cc }) : null;
+      const ran = req.query.run === '1' ? await Bh.behoefteRonde(store, { cc, oidc: String(req.headers['x-vercel-oidc-token'] || process.env.VERCEL_OIDC_TOKEN || '') }) : null;
       res.setHeader('Cache-Control', ran ? 'no-store' : 'public, max-age=600');
       return res.status(200).json({ ...(ran ? { ran } : {}), ...(await Bh.behoefteView(store, cc, Math.max(1, Math.min(300, +req.query.n || 50)))) });
     }

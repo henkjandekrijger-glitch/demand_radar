@@ -741,3 +741,11 @@ test('behoeftes: termen groeperen per onderwerp en alle meters koppelen', async 
   assert.ok(r.behoeftes > 5 && r.items[0].zoeken.google.reeks.length === 12);
   assert.ok(r.dekking.searchConsole >= 1, JSON.stringify(r.dekking));
 });
+
+test('ruisfilter: blijvende sprong van Google eruit, seizoen niet', async () => {
+  const { breuk, schoon } = await import('../lib/schoon.js');
+  const L = 140, a = new Float32Array(180).fill(NaN), s = new Float32Array(180).fill(NaN);
+  for (let i = 92; i <= L; i++) { a[i] = i < 125 ? 5000 : 400; s[i] = (i % 12 === 11) ? 8000 : 1000; }
+  assert.equal(breuk(a, L), 125); assert.ok(Number.isNaN(schoon(a, L).a[100]) && schoon(a, L).a[130] === 400);
+  assert.equal(breuk(s, L), -1);
+});
