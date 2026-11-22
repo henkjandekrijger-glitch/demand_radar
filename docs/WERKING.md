@@ -127,6 +127,8 @@ geen voorspelling) en "Rising now" was slechter dan toeval (60% tegen 69%, 48 na
 dan springt een term in één keer 4× of meer en blijft daar ("luxury nyc hotels" −89% in een jaar). Een blijvende sprong (mediaan
 3 maanden erna tegen 3 ervoor ≥ 4× of ≤ ¼, een half jaar later nog ≥ 3× of ≤ ⅓) die een jaar eerder niet op dezelfde plek zat
 (geen seizoen) is een breuk: alles vóór de breuk telt niet mee. Aantal termen met een breuk staat in de uitkomst (`breuken`).
+Ook een sprong die over twee maanden ging telt (22 nov). Live tips en de behoefte-ranglijst slaan termen over die in een jaar meer dan
+gehalveerd zijn (meestal ruis of herstel, geen kans om op te bouwen; bij behoeftes onderaan met `let_op`).
 Eén land per uurronde, alleen bij een nieuwe datamaand (of na 30 dagen); gratis (alleen lezen en rekenen, ± 10 s per land).
 Opslag `learn/fabriek.json`. Publiek: `/api/early?fabriek=1` (toets, markt, tips per land, aanbod); `&run=1[&cc=NL]` rekent één
 land door als het verouderd is (kost niets). In de overdracht: onderdeel fabriek. Volgende: daling-verrassingen (≤ 0,7× de gok),
@@ -147,7 +149,8 @@ Per behoefte (vanaf 300 zoekopdrachten per maand) alle meters die de radar heeft
   `/api/mm?op=cmradar`, alleen dit Vercel-project via zijn OIDC-token, dagelijks naar `cm/latest.json`; `lib/meters.js` cmDag);
 - aandacht: Wikipedia-paginaweergaven per maand (gratis; elke uurronde hooguit 60 behoeftes, artikel via de zoek-API van de taal
   van het land, ververst na 30 dagen, `behoefte/wiki.json`); Reddit (berichten in 30 dagen, reddit.com en anders PullPush met ook
-  de 30 dagen ervoor; 30 behoeftes per uur, ververst na 7 dagen); YouTube (nieuwe video's in 30 dagen tegen een jaar eerder en
+  de 30 dagen ervoor: eerst reddit.com, dan de archieven Arctic Shift en PullPush; 30 behoeftes per uur, ververst na 7 dagen, na
+  drie fouten op rij stopt de ronde); YouTube (nieuwe video's in 30 dagen tegen een jaar eerder en
   kijkers, `lib/youtube.js` binnen het dagquotum, 8 per uur, ververst na 14 dagen); Meta-advertenties in NL/DE (`lib/meta.js`,
   wacht op META_AD_TOKEN). Alles in `behoefte/meters.json` (`lib/meters.js` metersRonde), best scorende behoeftes eerst;
 - voorspelling: de voorspelfabriek (`### fabriek`) draait ook op de opgetelde reeksen (minder ruis dan losse termen).
