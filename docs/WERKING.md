@@ -149,7 +149,8 @@ Per behoefte (vanaf 300 zoekopdrachten per maand) alle meters die de radar heeft
   `/api/mm?op=cmradar`, alleen dit Vercel-project via zijn OIDC-token, dagelijks naar `cm/latest.json`; `lib/meters.js` cmDag);
 - aandacht: Wikipedia-paginaweergaven per maand (gratis; elke uurronde hooguit 60 behoeftes, artikel via de zoek-API van de taal
   van het land, ververst na 30 dagen, `behoefte/wiki.json`); Reddit (berichten in 30 dagen, reddit.com en anders PullPush met ook
-  de 30 dagen ervoor: eerst reddit.com, dan de archieven Arctic Shift en PullPush; 30 behoeftes per uur, ververst na 7 dagen, na
+  de 30 dagen ervoor: eerst de officiële Reddit-API met een eigen app (REDDIT_CLIENT_ID en REDDIT_CLIENT_SECRET in Vercel,
+  alleen-lezen token, per week geteld), anders reddit.com en de archieven Arctic Shift en PullPush (die weigeren Vercel-servers); 30 behoeftes per uur, ververst na 7 dagen, na
   drie fouten op rij stopt de ronde); YouTube (nieuwe video's in 30 dagen tegen een jaar eerder en
   kijkers, `lib/youtube.js` binnen het dagquotum, 8 per uur, ververst na 14 dagen); Meta-advertenties in NL/DE (`lib/meta.js`,
   wacht op META_AD_TOKEN). Alles in `behoefte/meters.json` (`lib/meters.js` metersRonde), best scorende behoeftes eerst;
