@@ -278,7 +278,21 @@ export const THEMA = {
     ow: [['ruis', /lyrics|song|movie|film|meme|gif|wallpaper|cast|episode/], ['voornemens', /resolution|new year|2027/], ['spijt en opnieuw beginnen', /wasted|regret|behind in life|too late|start over|fresh start|life together/], ['uitstel en luiheid', /procrastinat|lazy|motivation|disciplin/], ['gewoontes', /habit|consisten|routine/], ['doelen', /goal|vision board/], ['werkboek en boeken', /workbook|book|journal|planner/], ['leven veranderen', /change (your|my) life|self improvement|better person/]],
     serp: { US: ['how to stick to new years resolutions', 'how to get your life together', 'habit workbook', 'i wasted another year', 'how to stop procrastinating'] },
     zaden: ['new year resolutions', 'how to stick to new years resolutions', 'how to get your life together', 'how to stop procrastinating', 'how to stop being lazy', 'how to be consistent', 'how to build habits', 'i wasted another year', 'i wasted my life', 'how to start over', 'best books to change your life', 'goal setting workbook', 'how to be disciplined', '2027 goals'],
-    regex: '(new year|resolution|change your life|change my life|life together|procrastinat|being lazy|consisten|habit|wasted|fresh start|goal setting|self improvement|start over|no motivation|disciplin|2027 goals|workbook)' },
+    regex: '(new year|resolution|change your life|change my life|life together|procrastinat|being lazy|consisten|habit|wasted|fresh start|goal setting|self improvement|start over|no motivation|disciplin|2027 goals|workbook)' },  // We are many now (23 nov 2026, Henkjan: "Zoek in demandradar wat er werkelijk kut is en waar naar gezocht wordt in NL", "Maak thema nu
+  // aan"): bij welke bedrijven mensen willen opzeggen, klagen, terugboeken of geld terugvragen. Precies acht zaden, zodat de gratis route
+  // (hooguit 280 vragen) voor elk zaad het hele alfabet haalt en zo de bedrijfsnamen vindt (opzeggen a..z, klacht a..z). Geen eigen zaden.
+  machteloos: { naam: 'We are many now: opzeggen, klacht, incasso en geld terug per bedrijf', markten: ['NL'], max: 0.3, bron: 'suggest',
+    ow: [['ruis', /ontslag|arbeids|werkgever|\bbaan\b|huurcontract|huurhuis|huurwoning|betekenis|engels|vertaal|synoniem|puzzel|kruiswoord|lyrics|film/],
+      ['overheid en zorg', /politie|gemeente|huisarts|ziekenhuis|tandarts|belastingdienst|uwv|cjib|\bduo\b|\bsvb\b|ombudsman/],
+      ['telecom en tv', /kpn|ziggo|odido|vodafone|t-mobile|tele2|simpel|\bben\b|lebara|youfone|delta|videoland|viaplay|netflix|spotify|disney|dazn|hbo|prime|youtube/],
+      ['vervoer en reizen', /\bns\b|ov.?chip|arriva|klm|transavia|ryanair|easyjet|\btui\b|corendon|booking|vlucht|vertraging|flixbus|swapfiets|anwb/],
+      ['pakket en winkel', /postnl|dhl|dpd|\bbol\b|coolblue|zalando|wehkamp|amazon|temu|shein|vinted|marktplaats|ikea|mediamarkt|albert heijn|jumbo|hellofresh|picnic/],
+      ['sport en loterij', /basic.?fit|sportschool|fitness|sportcity|anytime|trainmore|loterij|toto/],
+      ['energie en verzekering', /energie|eneco|essent|vattenfall|greenchoice|verzekering|zilveren kruis|\bcz\b|vgz|menzis|centraal beheer|interpolis/],
+      ['bank en betalen', /\bing\b|rabobank|\babn\b|\bsns\b|bunq|knab|klarna|riverty|afterpay|paypal|creditcard/],
+      ['hosting en software', /mijndomein|strato|vimexx|transip|hostnet|yourhosting|microsoft|adobe|google|apple|icloud|chatgpt|canva|blendle/],
+      ['incasso en terugboeken', /incasso|storner|terugboek|aanmaning|deurwaarder/], ['geld terug', /geld terug/], ['klacht', /klacht/], ['opzeggen', /opzeggen|stilzwijgend/]],
+    regex: '(opzeggen|klacht|incasso|geld terug|storneren|terugboeken|stilzwijgend|aanmaning)' },
 };
 
 // Henkjan 16 nov 2026: Sealed Intent totaalassessment; onderzoeksbudget expliciet toegestaan.
