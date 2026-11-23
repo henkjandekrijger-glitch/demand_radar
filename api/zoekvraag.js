@@ -281,7 +281,7 @@ export const THEMA = {
     regex: '(new year|resolution|change your life|change my life|life together|procrastinat|being lazy|consisten|habit|wasted|fresh start|goal setting|self improvement|start over|no motivation|disciplin|2027 goals|workbook)' },  // We are many now (23 nov 2026, Henkjan: "Zoek in demandradar wat er werkelijk kut is en waar naar gezocht wordt in NL", "Maak thema nu
   // aan"): bij welke bedrijven mensen willen opzeggen, klagen, terugboeken of geld terugvragen. Precies acht zaden, zodat de gratis route
   // (hooguit 280 vragen) voor elk zaad het hele alfabet haalt en zo de bedrijfsnamen vindt (opzeggen a..z, klacht a..z). Geen eigen zaden.
-  machteloos: { naam: 'We are many now: opzeggen, klacht, incasso en geld terug per bedrijf', markten: ['NL'], max: 0.3, bron: 'suggest',
+  machteloos: { naam: 'We are many now: opzeggen, klacht, incasso en geld terug per bedrijf', markten: ['NL'], max: 0.3, bron: 'suggest', partijen: 3, vrij: '2026-11-23', // Henkjan 23 nov: "JA overrul budget regel"
     ow: [['ruis', /ontslag|arbeids|werkgever|\bbaan\b|huurcontract|huurhuis|huurwoning|betekenis|engels|vertaal|synoniem|puzzel|kruiswoord|lyrics|film|overgang|burn.?out|bloeddruk|ontsteking|virus|zwanger|schildklier|maag|darm|\brug\b|\bnek\b|\bhart|long|galblaas|galstenen|nier|hernia|menstruatie|vitamine|corona|griep|hoofdpijn|pijn|tekort|allergie|diabetes|artrose|reuma|hooikoorts|stress|lichamelijk|psychisch|symptomen|ziekte|medicijn|spiraal|prikkelbare|gourmetten|gezondheid|adhd|autisme|kanker|prostaat|lever|alvleesklier|bekken|schouder|knie|heup|oog|oren|keel|hyperventilatie|anemie|ijzer|b12|magnesium|kalium|cortisol|oestrogeen|testosteron/], // 23 nov: 'klachten' vangt ook lichamelijke klachten; die kopen we niet
       ['overheid en zorg', /politie|gemeente|huisarts|ziekenhuis|tandarts|belastingdienst|uwv|cjib|\bduo\b|\bsvb\b|ombudsman/],
       ['telecom en tv', /kpn|ziggo|odido|vodafone|t-mobile|tele2|simpel|\bben\b|lebara|youfone|delta|videoland|viaplay|netflix|spotify|disney|dazn|hbo|prime|youtube/],
@@ -409,6 +409,7 @@ export async function verzamel(T, cc, { max = 280, conc = 6 } = {}) {
 }
 async function viaSuggesties(T, id, oud, droog, alleen) {
   const markten = {}, toets = {}, b = budget(+(T.max || process.env.ZV_MAX || 0.6));
+  if (T.vrij) b.vrij = T.vrij; // eenmalige vrijstelling van de dagrem op Henkjans woord (zie lib/dfs.js), alleen op die UTC-dag
   for (const cc of T.markten) {
     if (alleen && cc !== alleen) continue;
     const v = await verzamel(T, cc);
@@ -419,7 +420,8 @@ async function viaSuggesties(T, id, oud, droog, alleen) {
     if (droog) { toets[cc].voorbeeld = v.termen.slice(0, 25); continue; }
     const [loc, lang] = M[cc];
     const kopen = v.termen.filter(k => onderwerp(k, T.ow) !== 'ruis'); // merken, series en spellen niet betalen
-    const vol = await searchVolume(kopen, { loc, lang }, b, { months: 24 });
+    const vol = {}; // hooguit 1.000 termen per taak (± $0,075); een thema met `partijen` koopt er meer, binnen zijn eigen plafond
+    for (let i = 0; i < kopen.length && i < (T.partijen || 1) * 1000; i += 1000) Object.assign(vol, await searchVolume(kopen.slice(i, i + 1000), { loc, lang }, b, { months: 24 }));
     const termen = Object.entries(vol).filter(([, x]) => (x.volume || 0) >= 20).map(([k, x]) => { const m = (x.monthly || []).map(z => z.v); return { k, v: x.volume, y: m.length >= 13 && m[12] ? Math.round((m[0] / m[12] - 1) * 100) : null, i: null, c: x.cpc, cp: x.competition, o: onderwerp(k, T.ow), m: m.slice(0, 12) }; }).sort((a, c) => c.v - a.v);
     markten[cc] = { taal: lang, termen, bron: 'suggest' };
   }
