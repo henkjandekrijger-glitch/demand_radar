@@ -282,7 +282,7 @@ export const THEMA = {
   // aan"): bij welke bedrijven mensen willen opzeggen, klagen, terugboeken of geld terugvragen. Precies acht zaden, zodat de gratis route
   // (hooguit 280 vragen) voor elk zaad het hele alfabet haalt en zo de bedrijfsnamen vindt (opzeggen a..z, klacht a..z). Geen eigen zaden.
   machteloos: { naam: 'We are many now: opzeggen, klacht, incasso en geld terug per bedrijf', markten: ['NL'], max: 0.3, bron: 'suggest',
-    ow: [['ruis', /ontslag|arbeids|werkgever|\bbaan\b|huurcontract|huurhuis|huurwoning|betekenis|engels|vertaal|synoniem|puzzel|kruiswoord|lyrics|film/],
+    ow: [['ruis', /ontslag|arbeids|werkgever|\bbaan\b|huurcontract|huurhuis|huurwoning|betekenis|engels|vertaal|synoniem|puzzel|kruiswoord|lyrics|film|overgang|burn.?out|bloeddruk|ontsteking|virus|zwanger|schildklier|maag|darm|\brug\b|\bnek\b|\bhart|long|galblaas|galstenen|nier|hernia|menstruatie|vitamine|corona|griep|hoofdpijn|pijn|tekort|allergie|diabetes|artrose|reuma|hooikoorts|stress|lichamelijk|psychisch|symptomen|ziekte|medicijn|spiraal|prikkelbare|gourmetten|gezondheid|adhd|autisme|kanker|prostaat|lever|alvleesklier|bekken|schouder|knie|heup|oog|oren|keel|hyperventilatie|anemie|ijzer|b12|magnesium|kalium|cortisol|oestrogeen|testosteron/], // 23 nov: 'klachten' vangt ook lichamelijke klachten; die kopen we niet
       ['overheid en zorg', /politie|gemeente|huisarts|ziekenhuis|tandarts|belastingdienst|uwv|cjib|\bduo\b|\bsvb\b|ombudsman/],
       ['telecom en tv', /kpn|ziggo|odido|vodafone|t-mobile|tele2|simpel|\bben\b|lebara|youfone|delta|videoland|viaplay|netflix|spotify|disney|dazn|hbo|prime|youtube/],
       ['vervoer en reizen', /\bns\b|ov.?chip|arriva|klm|transavia|ryanair|easyjet|\btui\b|corendon|booking|vlucht|vertraging|flixbus|swapfiets|anwb/],
