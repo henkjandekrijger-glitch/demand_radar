@@ -293,6 +293,18 @@ export const THEMA = {
       ['hosting en software', /mijndomein|strato|vimexx|transip|hostnet|yourhosting|microsoft|adobe|google|apple|icloud|chatgpt|canva|blendle/],
       ['incasso en terugboeken', /incasso|storner|terugboek|aanmaning|deurwaarder/], ['geld terug', /geld terug/], ['klacht', /klacht/], ['opzeggen', /opzeggen|stilzwijgend/]],
     regex: '(opzeggen|klacht|incasso|geld terug|storneren|terugboeken|stilzwijgend|aanmaning)' },
+  // Muziek als medicijn (24 nov 2026, Henkjan: "Maak mbhv demandradar en de AI gaten een muziek als medicijn dossier wat helemaal compleet is"
+  // en "Demandradar kun je nu inzetten"): wat mensen zoeken over muziek en gezondheid, voor het dossier op taniakross.media (NL en EN).
+  'muziek-medicijn': { naam: 'Muziek als medicijn (dossier taniakross.media)', markten: ['NL', 'BE', 'US', 'GB'], max: 0.45, bron: 'suggest', vrij: '2026-11-24', // Henkjan 24 nov: "Demandradar kun je nu inzetten"
+    ow: [['ruis', /lyrics|chords|akkoorden|karaoke|songtekst|tekst van|ringtone|download|mp3|guitar|gitaar|piano sheet|bladmuziek|festival|concert ticket/],
+      ['dementie en geheugen', /dementie|alzheimer|geheugen|dementia|memory/], ['pijn en operatie', /pijn|operatie|ziekenhuis|herstel|pain|surgery|hospital|recovery|chemo|kanker|cancer/],
+      ['slaap', /slaap|slapen|sleep|insomnia/], ['stress, angst en stemming', /stress|angst|depress|somber|ontspan|rust|anxiety|relax|calm|mood|mental/],
+      ['hersenen en parkinson', /hersen|brain|parkinson|beroerte|stroke|afasie|aphasia|autis|adhd|neuro/], ['zingen', /zing|zang|koor|sing|choir|voice/],
+      ['therapie', /therap|therapeut|music therapist|opleiding|training|cursus/], ['baby en kind', /baby|prematu|zwanger|pregnan|kind|child|kids/],
+      ['klank en frequentie', /hz|binaural|klankschaal|sound bath|sound healing|frequen|solfeggio/]],
+    zaden: ['muziek als medicijn', 'muziektherapie', 'muziek en dementie', 'muziek tegen pijn', 'zingen is gezond', 'muziek om te slapen', 'muziek bij parkinson', 'muziek en gezondheid', 'muziek tegen stress', 'muziek in het ziekenhuis',
+      'music as medicine', 'music therapy', 'music and dementia', 'music for pain', 'benefits of singing', 'music for sleep', 'music and parkinsons', 'music and health', 'music for anxiety', 'music in hospitals'],
+    regex: '(muziektherap|music therap|muziek als medicijn|music as medicine|muziek en gezondheid|music and health|helende muziek|healing music|sound healing|klankschaal|binaural|benefits of singing|zingen is gezond|zingen gezond|muziek (bij|tegen|voor|en|om) |music (for|and|in|to help|helps|therapy) |(dementie|alzheimer|parkinson|pijn|slaap|stress|angst|depressie|ziekenhuis|operatie) (en )?muziek|(dementia|alzheimer|parkinson|pain|sleep|stress|anxiety|depression|hospital|surgery) (and )?music)' },
 };
 
 // Henkjan 16 nov 2026: Sealed Intent totaalassessment; onderzoeksbudget expliciet toegestaan.
