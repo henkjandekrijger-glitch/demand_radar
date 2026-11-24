@@ -295,6 +295,15 @@ export const THEMA = {
     regex: '(opzeggen|klacht|incasso|geld terug|storneren|terugboeken|stilzwijgend|aanmaning)' },
   // Muziek als medicijn (24 nov 2026, Henkjan: "Maak mbhv demandradar en de AI gaten een muziek als medicijn dossier wat helemaal compleet is"
   // en "Demandradar kun je nu inzetten"): wat mensen zoeken over muziek en gezondheid, voor het dossier op taniakross.media (NL en EN).
+  // Nexy-app (nexy.now, repo clickmind-distribution), 24 nov 2026, Henkjan: "Kijk met demandadar icm je nexy MD wat we gaan posten" en "Niet meer op India maar op US en EU".
+  // Vragen van gezinnen, ouders en mensen die privé bellen of vergaderen aan tafel; de algemene AI-vragen zitten in ai-keuze (nexy.help).
+  'nexy-now': { naam: 'Nexy-app: gezin, groepen, bellen, notulen (nexy.now)', markten: ['US', 'GB'], max: 0.25, bron: 'suggest', vrij: '2026-11-24',
+    ow: [['ruis', /lyrics|login|sign in|customer service number|apk|mod|crack|torrent/],
+      ['gezin en planning', /family|famil|organizer|planner|calendar|chore|kids|parent|school|carpool/], ['herinneringen delen', /remind|shared list|to do|todo|task/],
+      ['bellen en antwoorden', /call|phone|answer|voicemail|screen|receptionist|missed/], ['notulen en vergaderen', /note taker|notes|minutes|meeting|transcri|record/],
+      ['groepschat', /group chat|groupchat|whatsapp group|group text|imessage group/]],
+    zaden: ['family organizer app', 'shared reminders app', 'carpool app for parents', 'school calendar app', 'ai note taker', 'call recorder app', 'ai answering service', 'call screening app', 'group chat organizer', 'family calendar app'],
+    regex: '(family (organizer|planner|calendar|app)|shared (reminder|calendar|to do|list)|carpool|school (calendar|newsletter|emails)|note taker|meeting (notes|minutes)|call (recorder|summary|screening|screener)|answering (service|app)|missed call|voicemail|group chat|chore app|reminder app)' },
   'muziek-medicijn': { naam: 'Muziek als medicijn (dossier taniakross.media)', markten: ['NL', 'BE', 'US', 'GB'], max: 0.45, bron: 'suggest', vrij: '2026-11-24', // Henkjan 24 nov: "Demandradar kun je nu inzetten"
     ow: [['ruis', /lyrics|chords|akkoorden|karaoke|songtekst|tekst van|ringtone|download|mp3|guitar|gitaar|piano sheet|bladmuziek|festival|concert ticket/],
       ['dementie en geheugen', /dementie|alzheimer|geheugen|dementia|memory/], ['pijn en operatie', /pijn|operatie|ziekenhuis|herstel|pain|surgery|hospital|recovery|chemo|kanker|cancer/],
