@@ -18,8 +18,11 @@ export default async function handler(req, res) {
   try {
     if (req.query.raw) {
       if (req.query.raw !== RAW_TOKEN) return res.status(403).json({ error: 'forbidden' });
-      const data = await buildCheck(q, m, { ai: req.query.ai === '1', city: c, aiToken: gatewayToken(req) });
-      res.setHeader('Cache-Control', 'public, s-maxage=21600, stale-while-revalidate=86400');
+      // own=1: eigen vraag van het team (zie lib/dfs.js, 24 nov 2026): niet onder de dagrem, alleen onder de noodrem.
+      const bouw = () => buildCheck(q, m, { ai: req.query.ai === '1', city: c, aiToken: gatewayToken(req) });
+      const data = req.query.own === '1' ? await (await import('../lib/dfs.js')).alsEigen(bouw) : await bouw();
+      // Een uitkomst zonder gemeten cijfers omdat de dagrem dicht zat niet 6 uur bewaren: zodra er weer ruimte is, opnieuw meten.
+      res.setHeader('Cache-Control', data && data.budgetReached ? 'private, no-store' : 'public, s-maxage=21600, stale-while-revalidate=86400');
       return res.status(200).json(data);
     }
     if (!isBot(req)) checked(getStore(), { cc: m, q }).catch(() => {}); // wat mensen checken is zelf een vraagsignaal

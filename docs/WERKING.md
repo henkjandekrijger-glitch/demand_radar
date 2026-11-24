@@ -396,6 +396,14 @@ Scripts in `tools/` (toetsen van bronnen en het model).
 
 ## 5. Geld en grenzen
 
+- **DataForSEO, sinds 24 nov 2026** (Henkjan: "wordt nu gek van de beperking geef me oplossing", daarna "Ok maak dit"): de gewone
+  plafonds zijn `DFS_TOTAL_MAX` = $6 (alles samen per UTC-dag) en `DFS_DAILY_MAX` = $5 (alles behalve de opbouw); de potjes van de
+  opbouw hieronder blijven gelijk. **Eigen vragen vallen niet meer onder de dagrem**: een check met teamsleutel of teamcookie en
+  MCP `check_demand` met teamsleutel lopen via `alsEigen()` (lib/dfs.js) en stoppen pas bij de noodrem `DFS_OWN_MAX` = $15 per
+  UTC-dag voor het hele account (tegen een lus die op hol slaat). Bezoekers en automatische rondes houden de gewone rem. Eén melding
+  per dag via Telegram zodra het dagtotaal boven `DFS_ALERT` = $4 komt (`TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`; zonder die twee
+  staat het alleen in `dfs/alert-<dag>.json`). Een check zonder gemeten cijfers omdat de rem dicht zat wordt niet meer 6 uur bewaard.
+  Wat hieronder over $1,50 en $1 staat is de stand van 7 tot 24 nov.
 - **DataForSEO** (7 nov, Henkjan: "zorg dat mn saldo daar niet zo snel opgaat"): alles samen hooguit `DFS_TOTAL_MAX` = $1,50 per
   UTC-dag (hele account, volgens de eigen teller van DataForSEO); daarbinnen de nachtelijke opbouw hooguit `DFS_BUILD_MAX` = $0,75
   en al het andere hooguit `DFS_DAILY_MAX` = $1 (was $4 + $3). Twijfel over de teller = niet betalen. Sinds 16 nov 2026 blijft het

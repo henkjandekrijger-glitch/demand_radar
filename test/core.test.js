@@ -593,6 +593,22 @@ test('DataForSEO-dagrem: de nachtelijke opbouw gaat voor, toplijsten en de rest 
   await boek({});
 });
 
+test('DataForSEO: eigen vragen vallen niet onder de dagrem, wel onder de noodrem; bezoekers houden de rem', async () => {
+  const { getStore, putJSON } = await import('../lib/store.js'), store = getStore(), day = new Date().toISOString().slice(0, 10);
+  const teller = v => setFetch(async () => new Response(JSON.stringify({ tasks: [{ result: [{ money: { balance: 30, statistics: { day: { total: v } } } }] }] }), { status: 200 }));
+  await putJSON(store, `dfs/build-${day}.json`, { spent: 0.5, builds: 1 }); await putJSON(store, `dfs/alert-${day}.json`, { at: 'test' });
+  let d = await import('../lib/dfs.js?eigen=1'); teller(d.totalCap() + 1);
+  assert.equal(await d.underCap(0.2), false, 'bezoeker of automatische ronde: rem dicht');
+  assert.equal(await d.alsEigen(() => d.underCap(0.2)), true, 'eigen vraag gaat door');
+  assert.equal(await d.alsEigen(async () => { await new Promise(r => setTimeout(r, 5)); return d.isEigen(); }), true, 'blijft eigen over await heen');
+  assert.equal(d.isEigen(), false, 'buiten de eigen vraag geldt de gewone rem weer');
+  d.buildMode(true); assert.equal(await d.alsEigen(() => d.underCap(0.5, 'dataforseo_labs/google/top_searches/live')), true); d.buildMode(false);
+  d = await import('../lib/dfs.js?eigen=2'); teller(d.ownCap() - 0.1);
+  assert.equal(await d.alsEigen(() => d.underCap(0.2)), false, 'noodrem: ook een eigen vraag stopt');
+  assert.ok(d.dailyCap() >= 5 && d.totalCap() >= 6 && d.ownCap() > d.totalCap());
+  assert.equal(await d.meldDag(d.alertAt() - 0.01), false); assert.equal(await d.meldDag(d.alertAt() + 1), false, 'vandaag al gemeld: niet nog eens');
+});
+
 test('AI gaps: vragen per land, oordeel per antwoord, niet opnieuw vragen binnen 7 dagen', async () => {
   const { getStore, putJSON, getJSON } = await import('../lib/store.js'), store = getStore();
   const G = await import('../lib/aigaps.js');
