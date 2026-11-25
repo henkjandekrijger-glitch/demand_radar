@@ -171,7 +171,9 @@ geen winst; dit onderdeel maakt er de lijst "stijgt in de VS of DE, nog niet in 
   of een vertaling uit een kleine, zekere woordenlijst EN/DE → NL (`KAART`; ook Duitse samenstellingen in twee bekende delen,
   wasserfilter → waterfilter, en twee Engelse woorden aan elkaar, water filter → waterfilter). Een koppeling telt alleen als de NL-vorm
   op de NL-kijklijst staat; één woord dat in het Nederlands iets anders betekent (`VALS`: gift, boot, kind, ...) koppelt niet op
-  dezelfde term. Eén koppeling per NL-term per bronland (de grootste bronterm). Ruis eruit: `noise` uit `lib/rising.js` plus media,
+  dezelfde term. Eén koppeling per NL-term per bronland (de grootste bronterm); varianten (meervoud, woordvolgorde, dezelfde 24 maanden cijfers zoals
+  basic fit/base fit) tellen één keer (versie 2, 24 nov: versie 1 telde ze dubbel; die tips zijn ingetrokken voordat er iets was nagekeken).
+  NL moet vorig jaar data hebben en ± 20 zoekopdrachten per maand. Ruis eruit: `noise` uit `lib/rising.js` plus media,
   nieuws, weer, losse evenementen, winkelketens en verschuivende feestdagen (`RUIS`); Google-breuken via `lib/schoon.js`.
 - **Stijging** (vooraf vastgelegd, `stijgtIdx` in `lib/ledger.js`, één definitie voor toets en nakijken): de 3 maanden tot en met t
   elk boven dezelfde maand vorig jaar, samen ≥ 1,5× die maanden, gemiddeld ≥ 100 per maand in het bronland en ≥ 50 in NL. Begin = eerste
