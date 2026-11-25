@@ -1,5 +1,5 @@
 // GET /api/early — vroege signalen: nog niet doorgebroken, maar het patroon lijkt op zoektermen die daarna wél doorbraken.
-// ?cc=NL&tier=hidden|starting&limit=20. Eigenaar: POST ?op=seed&cc=NL { series: { zoekterm: { m: [[j,m,v]], cpc } } }, ?op=score, ?op=refresh.
+// ?cc=NL&tier=hidden|starting&limit=20. Ook ?fabriek=1, ?behoefte=1 en ?overslag=1 (lib/overslag.js). Eigenaar: POST ?op=seed&cc=NL { series: { zoekterm: { m: [[j,m,v]], cpc } } }, ?op=score, ?op=refresh.
 import { getStore } from '../lib/store.js';
 import { isPro } from '../lib/access.js';
 import { latestEarly, seedEarly, scoreEarly, refreshEarly } from '../lib/earlydata.js';
@@ -120,6 +120,17 @@ export default async function handler(req, res) {
       const ran = req.query.run === '1' ? await Bh.behoefteRonde(store, { cc, oidc: String(req.headers['x-vercel-oidc-token'] || process.env.VERCEL_OIDC_TOKEN || '') }) : null;
       res.setHeader('Cache-Control', ran ? 'no-store' : 'public, max-age=600');
       return res.status(200).json({ ...(ran ? { ran } : {}), ...(await Bh.behoefteView(store, cc, Math.max(1, Math.min(300, +req.query.n || 50)))) });
+    }
+    // Overslag (publiek, gratis): ?overslag=1[&cc=NL][&n=50][&format=text] → stijgt in de VS of DE, nog niet in NL: terugtoets per
+    // bronland en de voorspellijst; &run=1 rekent opnieuw als de stand niet van vandaag is (alleen lezen en rekenen, kost niets).
+    if (req.query.overslag) {
+      const O = await import('../lib/overslag.js'), cc = String(req.query.cc || 'NL').toUpperCase(), n = Math.max(1, Math.min(200, +req.query.n || 50));
+      if (!O.DOEL[cc]) return res.status(200).json({ ready: false, cc, reden: cc === 'BE' ? 'België heeft nog geen kijklijst (alleen NL, DE en US hebben maanddata; BE erbij kost DataForSEO)' : 'alleen cc=NL' });
+      const ran = req.query.run === '1' ? await O.overslagRonde(store, { cc }) : null;
+      const v = O.overslagView(await O.loadOverslag(store, cc), n);
+      res.setHeader('Cache-Control', ran ? 'no-store' : 'public, max-age=600');
+      if (req.query.format === 'text') { res.setHeader('content-type', 'text/plain; charset=utf-8'); return res.status(200).send(O.overslagTekst(v)); }
+      return res.status(200).json({ ...(ran ? { ran } : {}), ...v });
     }
     if (req.query.wild) { const { wildList } = await import('../lib/wildcards.js'); res.setHeader('Cache-Control', 'public, max-age=600'); return res.status(200).json(await wildList(store)); }
     const L = await latestEarly(store);

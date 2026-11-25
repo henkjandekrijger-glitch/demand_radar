@@ -765,3 +765,38 @@ test('ruisfilter: blijvende sprong van Google eruit, seizoen niet', async () => 
   assert.equal(breuk(a, L), 125); assert.ok(Number.isNaN(schoon(a, L).a[100]) && schoon(a, L).a[130] === 400);
   assert.equal(breuk(s, L), -1);
 });
+
+test('overslag: koppelen (gelijk, vertaald, valse vrienden), terugtoets met toeval en live lijst', async () => {
+  const O = await import('../lib/overslag.js'), { stijgtIdx, toArr, judgeEntry } = await import('../lib/ledger.js');
+  // koppelen: dezelfde term, vertaling EN en DE (ook Duitse samenstelling), en "gift" (NL: vergif) niet op dezelfde term
+  const k = (w, t) => O.kandidaten(O.norm(w), t).map(x => x.vorm);
+  assert.ok(k('water filter', 'EN').includes('waterfilter'));
+  assert.ok(k('wasserfilter kaufen', 'DE').includes('waterfilter'));
+  assert.ok(k('gold necklace', 'EN').includes('gouden ketting'));
+  assert.ok(k('Kette Damen', 'DE').includes('ketting dames'));
+  // reeksen: 48 maanden tot 2026-10; 60 paren waarin NL 2 maanden na de VS stijgt, 300 rustige paren, 1 live-stijger
+  let seed = 5; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const reeks = (lv, sprong, groei = 3) => { const m = []; for (let i = 0; i < 48; i++) { const y = 2022 + Math.floor((i + 10) / 12), mo = ((i + 10) % 12) + 1, f = sprong != null && i >= sprong ? groei : 1; m.push([y, mo, Math.round(lv * f * (0.9 + rnd() * 0.2))]); } return m; };
+  const US = { kw: {} }, NL = { kw: {} }, DE = { kw: {} };
+  for (let n = 0; n < 60; n++) { const s = 16 + (n % 20); US.kw[`gadget${n} lamp`] = { m: reeks(2000, s) }; NL.kw[`gadget${n} lamp`] = { m: reeks(300, s + 2) }; }
+  for (let n = 0; n < 300; n++) { US.kw[`rustig${n}`] = { m: reeks(2000) }; NL.kw[`rustig${n}`] = { m: reeks(300, rnd() < 0.1 ? 20 + (n % 15) : null) }; }
+  US.kw['labubu'] = { m: reeks(2000, 44) }; NL.kw['labubu'] = { m: reeks(300) };
+  US.kw['gift'] = { m: reeks(2000, 44) }; NL.kw['gift'] = { m: reeks(300) };
+  DE.kw['wasserfilter'] = { m: reeks(1000, 44) }; NL.kw['waterfilter kopen'] = { m: reeks(300) };
+  for (const S of [US, NL, DE]) S.month = '2026-10';
+  const r = await O.overslagLand(null, 'NL', { ser: { NL, US, DE } });
+  const us = r.bron.US;
+  assert.ok(us.koppelingen >= 360 && us.gevallen >= 50, JSON.stringify({ k: us.koppelingen, g: us.gevallen }));
+  assert.ok(us.raak > 80 && us.toeval < 25 && us.vertraging === 2, JSON.stringify({ raak: us.raak, toeval: us.toeval, lag: us.vertraging }));
+  assert.ok(r.bron.DE.koppelingen === 1 && r.bron.DE.vertaald === 1, JSON.stringify(r.bron.DE).slice(0, 300));
+  const namen = r.items.map(x => x.k);
+  assert.ok(namen.includes('labubu') && namen.includes('waterfilter kopen') && !namen.includes('gift'), namen.join(','));
+  const lab = r.items.find(x => x.k === 'labubu'); assert.ok(lab.kans > lab.toeval && lab.verwacht > '2026-10');
+  assert.ok(O.overslagTekst(O.overslagView(r)).includes('US → NL'));
+  // nakijken in het voorspellingsboek: dezelfde stijgregel
+  const nl = toArr(NL.kw['gadget0 lamp'].m), t = (2022 * 12 + 10) - 2015 * 12 + 20; // NL springt in maand 18 vanaf 2022-11, stijgt na 3 maanden (2024-07)
+  assert.ok(stijgtIdx(nl, t, 50));
+  const obj = Object.fromEntries(NL.kw['gadget0 lamp'].m.map(x => [`${x[0]}-${String(x[1]).padStart(2, '0')}`, x[2]]));
+  assert.equal(judgeEntry({ kind: 'overslag', now: '2024-04', target: '2024-06' }, obj).state, 'hit');
+  assert.equal(judgeEntry({ kind: 'overslag', now: '2026-07', target: '2026-09' }, Object.fromEntries(NL.kw['rustig1'].m.map(x => [`${x[0]}-${String(x[1]).padStart(2, '0')}`, x[2]]))).state, 'waiting');
+});

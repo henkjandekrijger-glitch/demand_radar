@@ -24,6 +24,8 @@ export default async function handler(req, res) {
     const fabriek = heavy ? { wait: 'busy hour' } : await (await import('../lib/fabriek.js')).fabriekRonde(store).catch(e => ({ error: String(e.message || e).slice(0, 120) }));
     // Behoeftes (21 nov 2026): termen gegroepeerd per onderwerp met alle meters en een eigen voorspelling; één land per ronde, dagelijks
     const behoefte = heavy || (fabriek && fabriek.fabriek && fabriek.fabriek !== 'up to date') ? { wait: 'busy hour' } : await (await import('../lib/behoefte.js')).behoefteRonde(store, { oidc: String(req.headers['x-vercel-oidc-token'] || process.env.VERCEL_OIDC_TOKEN || '') }).catch(e => ({ error: String(e.message || e).slice(0, 120) }));
+    // Overslag (24 nov 2026): stijgt in de VS of DE, nog niet in NL; één keer per dag, gratis (alleen lezen en rekenen)
+    const overslag = heavy || (fabriek && fabriek.fabriek && fabriek.fabriek !== 'up to date') || (behoefte && behoefte.behoefte && behoefte.behoefte !== 'up to date') ? { wait: 'busy hour' } : await (await import('../lib/overslag.js')).overslagRonde(store).catch(e => ({ error: String(e.message || e).slice(0, 120) }));
     // Aanbod vóór vraag: nieuw geregistreerde domeinen per zoekterm (WhoisDS, gratis, één keer per dag)
     const aanbod = await (await import('../lib/aanbod.js')).aanbodDag(store).catch(e => ({ error: String(e.message || e).slice(0, 120) }));
     // Search Console van alle eigen sites via hjdk-api (gratis Google-bron, één keer per dag; eigen Vercel OIDC-token als bewijs)
@@ -34,7 +36,7 @@ export default async function handler(req, res) {
     const { keepaCollect } = await import('../lib/keepa.js'); // Keepa: Amazon-historie per zoekterm, binnen de tokens van het uur
     const keepa = heavy ? { wait: 'busy hour' } : await keepaCollect(store, { max: 110 }).catch(e => ({ error: String(e.message || e).slice(0, 120) }));
     const bing = await (await import('../lib/bingsubmit.js')).bingIndienen(store, 'yoors', { max: 2000 }).catch(e => ({ error: String(e.message || e).slice(0, 120) })); // Yoors-productpagina's bij Bing (dagquotum, elke URL één keer)
-    const out = { ok: true, signals: sig, bol, early, wild, ledger, adapt, fabriek, behoefte, aanbod, gsc, amzSales, feedOpt, prices, keepa, bing, ...(await runLoop(store)) };
+    const out = { ok: true, signals: sig, bol, early, wild, ledger, adapt, fabriek, behoefte, overslag, aanbod, gsc, amzSales, feedOpt, prices, keepa, bing, ...(await runLoop(store)) };
     const { heartbeat } = await import('../lib/components.js'); await heartbeat(store, 'loop', out); // hartslag voor de overdracht
     res.status(200).json(out); }
   catch (e) { res.status(500).json({ ok: false, error: String(e.message || e) }); }

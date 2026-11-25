@@ -36,7 +36,7 @@ andere regel). De test `test/core.test.js` controleert dat elk eindpunt in `api/
 | Taak | Wanneer | Wat |
 |---|---|---|
 | `/api/warm` | elk uur :07 | radaroverzicht verversen; **nachtelijke opbouw** van de radar vanaf 04:00 (als de radar niet van vandaag is, max 2 pogingen); Events van vandaag klaarzetten |
-| `/api/loop` | elk uur :23 | signalen en kliks optellen, bol-momentopname, vroege signalen (één zware stap per uur), wildcards nakijken, **voorspellingsboek nakijken** (dagelijks) en **kansen bijstellen** (bij een nieuwe datamaand), Amazon-verkoop (maandelijks), Shopping-titels, marktprijzen Yoors, Keepa, leerlus pagina/mail |
+| `/api/loop` | elk uur :23 | signalen en kliks optellen, bol-momentopname, vroege signalen (één zware stap per uur), wildcards nakijken, **voorspellingsboek nakijken** (dagelijks) en **kansen bijstellen** (bij een nieuwe datamaand), **overslag VS/DE → NL** (dagelijks), Amazon-verkoop (maandelijks), Shopping-titels, marktprijzen Yoors, Keepa, leerlus pagina/mail |
 | `/api/warmmap` | 04:15 | kansenkaart (alleen met `AUTO_BUILD=on`) |
 | `/api/daily` | 05:40 | dagmail "Demand of the day" (Resend), alleen als mail is ingesteld |
 
@@ -81,6 +81,8 @@ toont, met een vooraf vastgelegde meetlat (`RULES`, nooit achteraf aanpassen):
   200 per bron per land per maand): binnen 3 maanden ≥ 40% boven de maand waarin de bron hem aanwees;
 - `event` (gekozen gebeurtenissen van voorspellingsmarkten, zoektermen per land): de maand erna ≥ 20% hoger (more) of lager
   (less) dan de maand ervoor.
+- `overslag` (sinds 24 nov 2026, de tips van `### overslag`): NL stijgt (3 maanden op rij boven vorig jaar, samen ≥ 1,5×) binnen
+  het venster tot 2 maanden na de verwachte maand.
 - `verrassing` (sinds 21 nov 2026, de tips van `### fabriek`): de doelmaand ≥ 40% boven nu én boven de simpele gok (zo hoog als
   nu × de seizoensstap van de vorige twee jaren), vastgelegd met de kans; basiskans = dezelfde meetlat op alle termen van de kijklijst.
 De termen gaan op de kijklijst van de vroege signalen (de maanddata komt binnen het DataForSEO-plafond). Elke dag (uurronde)
@@ -160,6 +162,34 @@ Eén land per uurronde, één keer per dag; gratis. Opslag `behoefte/<cc>.json` 
 `&run=1` bouwt dat land opnieuw (hooguit dagelijks). Zoektermen blijven volledig beschikbaar (`/api/demand`, `/api/early`,
 `/api/zoekvraag`). Ruisfilter (`lib/schoon.js`, zie `### fabriek`) ook hier: termen met een Google-breuk tellen alleen vanaf de breuk. Nog niet als
 meter: TikTok-advertenties (vraagt een betaalde ScrapeCreators-sleutel), verkopen per onderwerp uit Clickmind (nu alleen kliks).
+
+### overslag — trends uit de VS en Duitsland die naar NL overslaan (24 nov 2026)
+`lib/overslag.js`. Henkjan 24 nov: "zoals we eerder keken duitse of vs trend die naar NL over slaat ? of kan slaan die voorspelling
+kan je maken" en "Ja doe". Eerder (16 okt, README) bleek alleen Duitsland → Nederland eenzijdig en gaf het als kenmerk in het model
+geen winst; dit onderdeel maakt er de lijst "stijgt in de VS of DE, nog niet in NL" van, met een eigen terugtoets.
+- **Koppelen**: dezelfde term (na weghalen van kopen/kaufen/buy/best/goedkoop en accenten; merk- en productnamen zijn vaak gelijk)
+  of een vertaling uit een kleine, zekere woordenlijst EN/DE → NL (`KAART`; ook Duitse samenstellingen in twee bekende delen,
+  wasserfilter → waterfilter, en twee Engelse woorden aan elkaar, water filter → waterfilter). Een koppeling telt alleen als de NL-vorm
+  op de NL-kijklijst staat; één woord dat in het Nederlands iets anders betekent (`VALS`: gift, boot, kind, ...) koppelt niet op
+  dezelfde term. Eén koppeling per NL-term per bronland (de grootste bronterm). Ruis eruit: `noise` uit `lib/rising.js` plus media,
+  nieuws, weer, losse evenementen, winkelketens en verschuivende feestdagen (`RUIS`); Google-breuken via `lib/schoon.js`.
+- **Stijging** (vooraf vastgelegd, `stijgtIdx` in `lib/ledger.js`, één definitie voor toets en nakijken): de 3 maanden tot en met t
+  elk boven dezelfde maand vorig jaar, samen ≥ 1,5× die maanden, gemiddeld ≥ 100 per maand in het bronland en ≥ 50 in NL. Begin = eerste
+  maand dat dit geldt; een losse piekmaand (≥ 70% van de 3 maanden) telt niet.
+- **Terugtoets** per bronland op de 4 jaar van de kijklijsten: elk begin in het bronland terwijl NL de 4 maanden ervoor niet steeg
+  (daarna 12 maanden afkoelen per koppeling) → steeg NL binnen 6 maanden, en na hoeveel maanden? Toeval = dezelfde koppelingen in
+  maanden zonder voorloper; lift = raak / toeval. Ook oud tegen nieuw (helft van de gevallen) en **omgekeerd** (NL eerst, volgt het
+  bronland?): even groot als vooruit = gezamenlijke oorzaak, geen voorloper. Kans per "maanden sinds het begin" (0-3) × sterkte
+  (1,5-2×, 2-3×, 3×+), met rem (20 denkbeeldige gevallen) naar het gemiddelde. Onder 30 gevallen geen kans ("kans onbekend").
+- **Live**: bronland stijgt nu (begin hooguit 3 maanden terug), NL sinds het begin niet → verwachte maand = begin + mediane
+  vertraging, kans uit de tabel. Twee bronlanden op dezelfde NL-term: de hoogste kans, de ander onder `ook`.
+- **Voorspellingsboek**: de 40 sterkste tips (kans ≥ 1,5× toeval) gaan als soort `overslag` in `### ledger` (meetlat `RULES.overslag`:
+  NL stijgt in een maand van na "nu" tot 2 maanden na de verwachte maand, hooguit 6 maanden na "nu"; basiskans = dezelfde regel op
+  alle NL-termen die op "nu" niet al stegen), met het bronland als `src` (raak per bronland in de samenvatting).
+- **België**: nog niet. Alleen NL, DE en US hebben een kijklijst met maanddata; BE erbij kost DataForSEO (`/api/series?ads=1&cc=BE`).
+Eén keer per dag vanuit de uurronde (`/api/loop`, niet in een zwaar uur of als fabriek of behoefte dat uur rekende); gratis (alleen
+lezen en rekenen). Opslag `overslag/NL.json`. Publiek: `/api/early?overslag=1[&cc=NL][&n=50][&format=text]`; `&run=1` rekent opnieuw als
+de stand niet van vandaag is. In de overdracht: onderdeel overslag.
 
 ### aanbod — aanbod vóór vraag: nieuwe domeinen (21 nov 2026)
 `lib/aanbod.js`. Wie geld zet, zit vóór de zoekvraag (plan stap 4). WhoisDS zet elke dag gratis de nieuw geregistreerde domeinen
@@ -446,7 +476,8 @@ Scripts in `tools/` (toetsen van bronnen en het model).
 
 ## 7. Getoetst en afgevallen
 
-Wikipedia-bezoeken, griep, vacatures, VS als voorloper, energieprijzen, Keepa-verkoophistorie: geen winst in de toets.
+Wikipedia-bezoeken, griep, vacatures, VS als voorloper, energieprijzen, Keepa-verkoophistorie: geen winst in de toets (als kenmerk in het
+model; VS/DE als voorloper staat sinds 24 nov 2026 wel als eigen lijst met eigen terugtoets in `### overslag`).
 Energy-Charts (stroomprijs) mag niet doorgegeven worden. Amazon-bestsellerpagina's, Pinterest- en TikTok-websites, eBay/Etsy:
 geblokkeerd vanaf de server.
 
