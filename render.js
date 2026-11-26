@@ -3,11 +3,13 @@
 const fs = require('fs'), { spawn, execFileSync } = require('child_process');
 const { chromium } = require('playwright');
 const FF = fs.readFileSync('ff.txt', 'utf8').trim();
-const vo = JSON.parse(fs.readFileSync('vo.json', 'utf8'));
+const K = process.env.K || 'yt';
+const vo = JSON.parse(fs.readFileSync(`vo_${K}.json`, 'utf8'));
 const FPS = 30;
 
 // tijdlijn
-const tekst = fs.readFileSync('vo.txt', 'utf8').split('\n').map(x => x.trim()).filter(Boolean);
+const CTA = { yt: 'Nexy is free on iPhone and Android. Type nexy.now/yt', tt: 'Nexy is free on iPhone and Android. The link is in my bio.', ig: 'Nexy is free on iPhone and Android. The link is in my bio.', tg: 'Nexy is free on iPhone and Android. Tap the link below.', fb: 'Nexy is free on iPhone and Android. Tap the link below.' }[K];
+const tekst = fs.readFileSync('vo.txt', 'utf8').split('\n').map(x => x.trim()).filter(Boolean).map(x => x.replace('{CTA}', CTA));
 const T = { vo, tekst, l: [] };
 T.l[0] = 0.05; T.uit = T.l[0] + vo[0] + 0.1; T.l[1] = T.uit + 0.15;
 T.b = T.l[1] + vo[1] + 0.25; T.l[2] = T.b + 0.1; T.shut = T.l[2] + vo[2] + 0.1; T.c = T.shut + 0.1;
@@ -20,7 +22,7 @@ fs.writeFileSync('T.json', JSON.stringify(T, null, 1));
   const mode = process.argv[2] || 'full';
   const b = await chromium.launch();
   const p = await b.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
-  await p.goto('file://' + process.cwd() + '/video.html');
+  await p.goto('file://' + process.cwd() + '/video.html?k=' + K);
   await p.evaluate(T => { window.T = T; }, T);
   await p.evaluate(async () => { for (const f of ['400 29px "Source Serif 4"', '600 29px "Source Serif 4"', '700 44px "Source Serif 4"', 'italic 400 28px "Source Serif 4"', '400 30px Inter', '500 30px Inter', '600 30px Inter', '700 30px Inter', '800 62px Inter']) await document.fonts.load(f); await document.fonts.ready; });
   await p.waitForTimeout(800);
@@ -46,7 +48,7 @@ fs.writeFileSync('T.json', JSON.stringify(T, null, 1));
   // geluid: stem, papier bij de start, whoosh bij elke overgang, sluiter, melding, bericht van Sam, typen, lichte beat (104 BPM)
   const ms = x => Math.round(x * 1000);
   const ins = [], fl = [], tags = [];
-  T.l.forEach((s, i) => { ins.push('-i', `vo${i + 1}.wav`); fl.push(`[${i}:a]aresample=48000,adelay=${ms(s)}:all=1[v${i}]`); tags.push(`[v${i}]`); });
+  T.l.forEach((s, i) => { ins.push('-i', `vo${i + 1}_${K}.wav`); fl.push(`[${i}:a]aresample=48000,adelay=${ms(s)}:all=1[v${i}]`); tags.push(`[v${i}]`); });
   const add = (f, tag) => { fl.push(f + `[${tag}]`); tags.push(`[${tag}]`); };
   add(`anoisesrc=d=0.5:c=pink:a=0.35,bandpass=f=2500:w=2000,afade=t=in:d=0.05,afade=t=out:st=0.15:d=0.35,adelay=0:all=1`, 'pap');
   [T.uit, T.c - 0.15, T.e - 0.15].forEach((x, k) => add(`anoisesrc=d=0.35:c=pink:a=0.25,highpass=f=600,lowpass=f=5000,afade=t=in:d=0.2,afade=t=out:st=0.2:d=0.15,adelay=${ms(x)}:all=1`, 'wh' + k));
@@ -59,7 +61,7 @@ fs.writeFileSync('T.json', JSON.stringify(T, null, 1));
   const filt = fl.join(';') + ';' + tags.join('') + `amix=inputs=${tags.length}:normalize=0,alimiter=limit=0.95,afade=t=out:st=${T.end - 0.4}:d=0.4,atrim=0:${T.end}[a]`;
   execFileSync(FF, ['-y', '-loglevel', 'error', ...ins, '-filter_complex', filt, '-map', '[a]', '-ar', '48000', '-ac', '2', 'geluid.wav']);
   execFileSync(FF, ['-y', '-loglevel', 'error', '-i', 'beeld.mp4', '-i', 'geluid.wav', '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11', '-ar', '48000', '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', '-shortest', 'uit.tmp.mp4']);
-  fs.renameSync('uit.tmp.mp4', 'schoolbrief2.mp4');
-  fs.writeFileSync('w.html', `<html><body style="margin:0;background:#111;display:flex;justify-content:center"><video src="schoolbrief2.mp4?${Date.now()}" controls autoplay style="height:100vh"></video></body></html>`);
+  fs.renameSync('uit.tmp.mp4', `schoolbrief-${K}.mp4`);
+  fs.writeFileSync('w.html', `<html><body style="margin:0;background:#111;display:flex;justify-content:center"><video src="schoolbrief-${K}.mp4?${Date.now()}" controls autoplay style="height:100vh"></video></body></html>`);
   console.log('klaar', T.end.toFixed(2), 's');
 })().catch(e => { console.error(e); process.exit(1); });
