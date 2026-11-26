@@ -58,7 +58,7 @@ fs.writeFileSync('T.json', JSON.stringify(T, null, 1));
   add(`aevalsrc='0.55*sin(2*PI*52*mod(t,0.5769))*exp(-mod(t,0.5769)*13)+0.10*(random(0)*2-1)*exp(-mod(t+0.2885,0.5769)*75)':s=48000:d=${T.end},volume=0.22`, 'beat');
   const filt = fl.join(';') + ';' + tags.join('') + `amix=inputs=${tags.length}:normalize=0,alimiter=limit=0.95,afade=t=out:st=${T.end - 0.4}:d=0.4,atrim=0:${T.end}[a]`;
   execFileSync(FF, ['-y', '-loglevel', 'error', ...ins, '-filter_complex', filt, '-map', '[a]', '-ar', '48000', '-ac', '2', 'geluid.wav']);
-  execFileSync(FF, ['-y', '-loglevel', 'error', '-i', 'beeld.mp4', '-i', 'geluid.wav', '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', '-shortest', 'uit.tmp.mp4']);
+  execFileSync(FF, ['-y', '-loglevel', 'error', '-i', 'beeld.mp4', '-i', 'geluid.wav', '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11', '-ar', '48000', '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', '-shortest', 'uit.tmp.mp4']);
   fs.renameSync('uit.tmp.mp4', 'schoolbrief2.mp4');
   fs.writeFileSync('w.html', `<html><body style="margin:0;background:#111;display:flex;justify-content:center"><video src="schoolbrief2.mp4?${Date.now()}" controls autoplay style="height:100vh"></video></body></html>`);
   console.log('klaar', T.end.toFixed(2), 's');

@@ -184,8 +184,8 @@ function sub(t) {
 window.render = function (t) {
   const T = window.T; if (!P) { show('letter'); punten(); }
   $('flash').style.opacity = 0;
-  sub(t); const inChat = t >= T.c && t < T.e; $('sub').style.top = inChat ? '300px' : '250px'; $('url').style.top = inChat ? '118px' : '1452px'; $('url').style.left = inChat ? '700px' : '50%';
-  $('url').style.opacity = t >= T.urlAan && t < T.e ? ease((t - T.urlAan) / .3) : 0;
+  sub(t); const inChat = t >= T.c && t < T.e; $('sub').style.top = inChat ? '300px' : '250px'; $('sub').style.right = inChat ? '460px' : '150px'; $('url').style.top = inChat ? '118px' : '1452px'; $('url').style.left = inChat ? '700px' : '50%';
+  $('url').style.opacity = t >= T.urlAan && t < T.e && !(t >= T.ban - .05 && t < T.samT + .45) ? ease((t - T.urlAan) / .3) : 0;
   if (t < T.c) {
     show('letter');
     const h2 = P.h2, mid = { x: 540, y: 1050 };
