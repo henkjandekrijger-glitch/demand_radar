@@ -195,9 +195,12 @@ function sub(t) {
 
 window.render = function (t) {
   const T = window.T; if (!P) { show('letter'); punten(); }
+  const B = T.B, bt = Math.exp(-9 * (((t % B) + B) % B)); // puls op elke tel
+  const punch = c => 1 + .05 * Math.exp(-14 * Math.max(0, t - c)) * (t >= c ? 1 : 0);
   $('flash').style.opacity = 0;
   sub(t); const inChat = t >= T.c && t < T.e; $('sub').style.top = inChat ? '300px' : '250px'; $('sub').style.right = inChat ? '460px' : '150px'; $('url').style.top = inChat ? '1440px' : '1430px'; $('url').style.left = '50%';
   $('url').style.opacity = t < T.e && !(t >= T.ban - .05 && t < T.samT + .45) ? 1 : 0;
+  $('url').style.transform = `translateX(-50%) scale(${1 + .035 * bt})`;
   if (t < T.c) {
     show('letter');
     const h2 = P.h2, mid = { x: 540, y: 1050 };
@@ -210,9 +213,10 @@ window.render = function (t) {
       const u = t - T.b;
       x = mid.x + Math.sin(u * 4.4) * 6; y = mid.y + Math.cos(u * 3.1) * 6; s = 0.98 + 0.03 * ease(u / 1.5);
     }
+    s *= punch(T.uit) * punch(T.b);
     cam(x, y, s, 540, t < T.uit ? 900 : mix(900, 1010, inout((t - T.uit) / .75)));
     // markeren: picture day staat er al bij de start, de rest bij regel 2
-    const tijden = { h2: -1, h1: T.l[1] + .25, h3: T.l[1] + .6, h4: T.l[1] + .95 };
+    const tijden = { h2: -1, h1: T.uit + B, h3: T.uit + 2 * B, h4: T.uit + 3 * B };
     for (const id of ['h1', 'h2', 'h3', 'h4']) { const k = id === 'h2' ? ease(t / .35) : ease((t - tijden[id]) / .3); $(id).querySelector('i').style.width = `calc(${k * 100}% + ${k * 10}px)`; }
     // rode ring om picture day
     const r = $('ring'), rk = ease((t - .15) / .4);
@@ -221,16 +225,16 @@ window.render = function (t) {
     const camOn = t >= T.b;
     $('cam').style.display = camOn ? 'block' : 'none';
     $('focus').style.display = camOn && t > T.b + .5 ? 'block' : 'none';
-    $('focus').style.transform = `scale(${1 - .1 * Math.abs(Math.sin((t - T.b) * 5))})`;
+    $('focus').style.transform = `scale(${1 - .08 * bt})`;
     if (t >= T.shut && t < T.shut + 2 / 30) $('flash').style.opacity = .9;
   } else if (t < T.e) {
     show('chat');
     const u = t - T.c;
-    const set = ease(u / .3); $('chat').style.transform = `scale(${1.06 - .06 * set})`;
+    const set = ease(u / .25); $('chat').style.transform = `scale(${(1.06 - .06 * set) * punch(T.d)})`;
     $('me').style.opacity = 1;
     const nx = ease((u - .35) / .35); $('nx').style.opacity = nx; $('nx').style.transform = `translateY(${(1 - nx) * 80}px)`;
     document.querySelectorAll('#nx .it').forEach((el, i) => {
-      const s0 = T.l[3] + .45 + i * .5, k = ease((t - s0) / .28);
+      const s0 = T.rij + i * B, k = ease((t - s0) / .28);
       el.style.opacity = .12 + .88 * k; el.querySelector('p').style.opacity = k;
       el.querySelector('.d').style.transform = `scale(${.85 + .15 * back((t - s0) / .35)})`;
     });
@@ -243,10 +247,10 @@ window.render = function (t) {
   } else {
     show('end');
     const u = t - T.e;
-    $('logo').style.transform = `scale(${back(u / .4)})`;
-    const pk = back((u - .2) / .45), bob = Math.sin(u * 7) * 10;
+    $('logo').style.transform = `scale(${back(u / .4) * (1 + .04 * bt)})`;
+    const pk = back((u - .2) / .45), bob = 16 * bt;
     $('u').innerHTML = `<span>${URLT}</span><span style="display:inline-block;color:#2d5ff6;font-size:80px;transform:translate(${ONDER ? 0 : -bob * .7}px,${bob}px)">${PIJL}</span>`;
-    $('u').style.transform = `scale(${.6 + .4 * pk})`; $('u').style.opacity = cl((u - .2) / .2);
+    $('u').style.transform = `scale(${(.6 + .4 * pk) * (1 + .03 * bt)})`; $('u').style.opacity = cl((u - .2) / .2);
   }
 };
 </script></body></html>
