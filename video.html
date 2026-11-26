@@ -1,0 +1,240 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=block" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#000;font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased}
+.scene{position:absolute;inset:0;display:none;overflow:hidden}
+/* ondertitel: de gesproken zin, woord voor woord, binnen de veilige zone */
+#sub{position:absolute;left:70px;right:150px;top:250px;z-index:40;text-align:left}
+#sub div{display:inline;background:rgba(10,14,30,.82);color:#fff;font:800 62px/1.32 Inter;letter-spacing:-.8px;padding:8px 18px;border-radius:14px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+#sub div b{font-weight:800;color:#ffd84d}
+#url{position:absolute;left:50%;top:1452px;transform:translateX(-50%);z-index:40;background:rgba(10,14,30,.78);color:#fff;font:700 40px Inter;padding:14px 30px;border-radius:40px;letter-spacing:-.3px;white-space:nowrap}
+/* scène A en B: de brief */
+#bg{position:absolute;inset:-80px;background:url(as1.png) center 30%/1800px auto;filter:blur(9px) brightness(.72) saturate(1.15)}
+#vign{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 55%,rgba(0,0,0,0) 45%,rgba(0,0,0,.6) 100%)}
+#stage{position:absolute;inset:0}
+#paperwrap{position:absolute;left:70px;top:430px;width:940px;height:1240px}
+.paper{position:absolute;inset:0;background:#f3eee3;border-radius:4px;box-shadow:0 50px 90px rgba(0,0,0,.6),0 8px 16px rgba(0,0,0,.35);padding:76px 74px 60px;font-family:'Source Serif 4',Georgia,serif;color:#242424;overflow:hidden}
+.paper .grain{position:absolute;inset:0;opacity:.35;mix-blend-mode:multiply;pointer-events:none}
+.paper .fold{position:absolute;left:0;right:0;top:33.3%;height:3px;background:linear-gradient(180deg,rgba(0,0,0,.10),rgba(255,255,255,.5));pointer-events:none}
+.paper .fold.b{top:66.6%}
+.paper .curl{position:absolute;right:0;bottom:0;width:180px;height:180px;background:linear-gradient(135deg,rgba(0,0,0,0) 50%,rgba(0,0,0,.10) 75%,rgba(0,0,0,.18));pointer-events:none}
+.lh{display:flex;align-items:center;gap:24px;border-bottom:3px double #1f4e3d;padding-bottom:20px;margin-bottom:28px}
+.crest{width:92px;height:92px;border-radius:50%;background:#1f4e3d;color:#f1e7c8;font:700 36px 'Source Serif 4';display:flex;align-items:center;justify-content:center;border:4px solid #c9b46a;flex:0 0 92px}
+.lh h1{font-size:44px;color:#1f4e3d;line-height:1.1}
+.lh p{font:400 23px Inter;color:#556;margin-top:6px}
+.paper .dt{font-size:27px;color:#444;margin-bottom:20px}
+.paper p.t{font-size:29px;line-height:1.5;margin-bottom:18px}
+.hl{position:relative;white-space:nowrap;z-index:0}
+.hl i{position:absolute;left:-5px;top:10%;height:86%;width:0;background:rgba(255,214,10,.8);border-radius:5px;z-index:-1}
+#ring{position:absolute;border:7px solid #e5322d;border-radius:50%;opacity:0;z-index:5;pointer-events:none}
+.sig{font-style:italic;font-size:28px;margin-top:8px}
+#cam{position:absolute;inset:0;display:none;z-index:15}
+#cam .bar{position:absolute;left:0;right:0;background:#000}
+#cam .top{top:0;height:200px}
+#cam .bot{bottom:0;height:380px}
+#cam .br{position:absolute;width:100px;height:100px;border:7px solid #fff}
+#cam .to{position:absolute;top:110px;width:100%;text-align:center;color:#fff;font:600 36px Inter}
+#cam .to em{font-style:normal;background:#2d5ff6;padding:6px 20px;border-radius:30px;margin-left:10px}
+#cam .lab{position:absolute;bottom:300px;width:100%;text-align:center;color:#ffd60a;font:600 30px Inter;letter-spacing:3px}
+#cam .shut{position:absolute;left:50%;bottom:100px;width:160px;height:160px;margin-left:-80px;border-radius:50%;border:9px solid #fff;display:flex;align-items:center;justify-content:center}
+#cam .shut b{width:122px;height:122px;border-radius:50%;background:#fff;display:block}
+#focus{position:absolute;left:390px;top:860px;width:300px;height:300px;border:5px solid #ffd60a;z-index:16;display:none}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;z-index:60}
+/* scène C en D: de groepschat */
+#chat{background:#eef1f7}
+.sbar{position:absolute;top:0;left:0;right:0;height:70px;display:flex;justify-content:space-between;align-items:center;padding:0 56px;font:600 32px Inter;color:#0b1530;background:#fff}
+.hdr{position:absolute;top:70px;left:0;right:0;height:150px;background:#fff;border-bottom:1px solid #e3e7ef;display:flex;align-items:center;padding:0 40px;gap:24px}
+.hdr .back{font:400 70px Inter;color:#2d5ff6;line-height:1}
+.hdr .av{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,#ffb347,#ff7a59);color:#fff;font:700 42px Inter;display:flex;align-items:center;justify-content:center}
+.hdr h2{font:700 44px Inter;color:#0b1530}
+.hdr p{font:400 29px Inter;color:#6b7385;margin-top:2px}
+#feed{position:absolute;top:220px;left:0;right:0;bottom:0}
+#msgs{position:absolute;left:36px;right:36px;top:220px}
+.me{margin:0 0 22px auto;width:340px;background:#dfe7fd;border-radius:36px 36px 8px 36px;padding:16px}
+.me .ph{height:170px;border-radius:24px;overflow:hidden;position:relative;background:#bbb}
+.me .ph .mini{position:absolute;left:50%;top:50%;width:940px;height:1240px;margin:-620px 0 0 -470px;transform:scale(.27) rotate(-3deg)}
+.me .tm{font:400 24px Inter;color:#6b7385;text-align:right;margin-top:8px}
+.nx{background:#fff;border-radius:36px;padding:28px 30px 28px;box-shadow:0 10px 30px rgba(20,40,90,.10)}
+.nx .who{display:flex;align-items:center;gap:12px;font:700 32px Inter;color:#2d5ff6}
+.nx .who small{font:400 28px Inter;color:#6b7385;margin-left:4px}
+.nx .card{margin-top:18px;border:3px solid #2d5ff6;border-radius:28px;padding:22px 26px 6px}
+.nx .card .k{font:700 26px Inter;color:#2d5ff6;letter-spacing:1.5px}
+.it{display:flex;gap:24px;align-items:center;padding:18px 0;border-top:1px solid #e8ebf2}
+.it:first-of-type{border-top:0}
+.it .d{flex:0 0 128px;background:#eef3ff;border-radius:20px;text-align:center;padding:8px 0 10px}
+.it .d b{display:block;font:700 24px Inter;color:#2d5ff6;letter-spacing:1px}
+.it .d u{display:block;text-decoration:none;font:800 48px Inter;color:#0b1530;line-height:1.05}
+.it .w h4{font:600 44px Inter;color:#0b1530;line-height:1.15;letter-spacing:-.5px}
+.it .w p{font:500 30px Inter;color:#3d7a2e;margin-top:6px}
+.sam{display:flex;gap:18px;align-items:flex-end;margin-top:26px}
+.sam .a{width:84px;height:84px;border-radius:50%;background:#3d7a2e;color:#fff;font:700 38px Inter;display:flex;align-items:center;justify-content:center;flex:0 0 84px}
+.sam .b{background:#fff;border-radius:36px 36px 36px 8px;padding:22px 30px;box-shadow:0 6px 20px rgba(20,40,90,.08)}
+.sam .b h6{font:700 28px Inter;color:#3d7a2e}
+.sam .b p{font:500 44px/1.25 Inter;color:#0b1530;margin-top:4px}
+#ban{position:absolute;left:40px;right:40px;top:40px;background:rgba(250,251,255,.97);border-radius:40px;padding:26px 30px 30px;box-shadow:0 20px 50px rgba(0,0,0,.28);z-index:30;opacity:0}
+#ban .h{display:flex;align-items:center;gap:16px;font:600 28px Inter;color:#444;letter-spacing:.5px}
+#ban .h i{margin-left:auto;font-style:normal;font-weight:400;color:#888}
+#ban .ic{width:56px;height:56px;border-radius:14px;background:#2d5ff6;padding:9px}
+#ban h6{font:700 42px Inter;color:#000;margin-top:14px}
+#ban p{font:400 40px/1.3 Inter;color:#111;margin-top:6px}
+/* scène E: eindkaart */
+#end{background:#2d5ff6}
+#end .logo{position:absolute;left:50%;top:420px;width:150px;height:150px;margin-left:-75px;background:#fff;border-radius:36px;padding:20px 23px 24px 25px}
+#end h1{position:absolute;top:600px;width:100%;text-align:center;color:#fff;font:800 110px Inter;letter-spacing:-3px}
+#end .sub{position:absolute;top:750px;width:100%;text-align:center;color:#e4ebff;font:500 46px Inter}
+#end .u{position:absolute;left:90px;right:150px;top:930px;height:160px;background:#fff;border-radius:84px;display:flex;align-items:center;justify-content:center;font:800 96px Inter;color:#0b1530;letter-spacing:-2px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+#end .u .cur{display:inline-block;width:7px;height:92px;background:#2d5ff6;margin-left:6px}
+#end .hint{position:absolute;top:1130px;left:0;right:60px;text-align:center;color:#fff;font:600 44px Inter}
+</style></head><body>
+
+<div id="letter" class="scene">
+  <div id="bg"></div><div id="vign"></div>
+  <div id="stage">
+    <div id="paperwrap"><div class="paper" id="paper">
+      <svg class="grain" width="100%" height="100%"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .4  0 0 0 0 .3  0 0 0 .55 0"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
+      <div class="fold"></div><div class="fold b"></div><div class="curl"></div>
+      <div class="lh"><div class="crest">MG</div><div><h1>Maple Grove Elementary</h1><p>Room 3B &middot; Ms. Carter</p></div></div>
+      <div class="dt">November 24, 2026</div>
+      <p class="t">Dear Parents and Guardians,</p>
+      <p class="t">As we head into the last weeks before winter break, here are a few updates from our classroom. The children have worked hard on their reading projects this month.</p>
+      <p class="t">Please return the signed permission slip and $12 for the Science Center trip by <span class="hl" id="h1"><i></i>Friday, December 4</span>. Class photos will be taken on <span class="hl" id="h2"><i></i>Tuesday, December 8</span>, so please dress your child for picture day.</p>
+      <p class="t">You are invited to our Winter Concert on <span class="hl" id="h3"><i></i>Thursday, December 10 at 6 pm</span>. School ends early, at 12:30 pm, on <span class="hl" id="h4"><i></i>Friday, December 18</span>.</p>
+      <p class="sig">Ms. Carter</p>
+    </div></div>
+    <div id="ring"></div>
+  </div>
+  <div id="cam"><div class="bar top"></div><div class="bar bot"></div>
+    <div class="br" style="left:90px;top:300px;border-right:0;border-bottom:0"></div>
+    <div class="br" style="right:90px;top:300px;border-left:0;border-bottom:0"></div>
+    <div class="br" style="left:90px;bottom:460px;border-right:0;border-top:0"></div>
+    <div class="br" style="right:90px;bottom:460px;border-left:0;border-top:0"></div>
+    <div class="to">Send to <em>Family</em></div>
+    <div class="lab">PHOTO</div><div class="shut"><b></b></div></div>
+  <div id="focus"></div>
+</div>
+
+<div id="chat" class="scene">
+  <div class="sbar"><span>7:41</span><span id="sicons"></span></div>
+  <div class="hdr"><div class="back">&#8249;</div><div class="av">F</div><div><h2>Family</h2><p>Maya, Sam, Nexy</p></div></div>
+  <div id="feed"><div id="msgs">
+    <div class="me" id="me"><div class="ph"><div class="mini" id="mini"></div></div><div class="tm">7:41 PM</div></div>
+    <div class="nx" id="nx">
+      <div class="who"><span id="plug1" style="display:inline-block;width:38px;height:38px"></span>Nexy<small>kept this for you both</small></div>
+      <div class="card">
+        <div class="k">SCHOOL LETTER &middot; 4 DATES</div>
+        <div class="it"><div class="d"><b>FRI</b><u>4</u></div><div class="w"><h4>Slip and $12</h4><p>Reminder for Maya and Sam</p></div></div>
+        <div class="it"><div class="d"><b>TUE</b><u>8</u></div><div class="w"><h4>Picture day</h4><p>Reminder for Maya and Sam</p></div></div>
+        <div class="it"><div class="d"><b>THU</b><u>10</u></div><div class="w"><h4>Winter Concert, 6 pm</h4><p>Reminder for Maya and Sam</p></div></div>
+        <div class="it"><div class="d"><b>FRI</b><u>18</u></div><div class="w"><h4>Early pickup, 12:30</h4><p>Reminder for Maya and Sam</p></div></div>
+      </div>
+    </div>
+    <div class="sam" id="sam"><div class="a">S</div><div class="b"><h6>Sam</h6><p>Got it. I'll pick her outfit tonight.</p></div></div>
+  </div></div>
+  <div id="ban"><div class="h"><span class="ic" id="plug2"></span>NEXY &middot; FAMILY<i>now</i></div><h6>Tomorrow is picture day</h6><p>Lina, Tuesday. Sent to Maya and Sam.</p></div>
+</div>
+
+<div id="end" class="scene">
+  <div class="logo" id="logo"></div>
+  <h1>Nexy</h1>
+  <div class="sub">Free on iPhone and Android</div>
+  <div class="u" id="u"></div>
+  <div class="hint">Type it in your browser</div>
+</div>
+
+<div id="sub"></div>
+<div id="url">nexy.now/yt</div>
+<div id="flash"></div>
+
+<script>
+const PLUG = c => `<svg viewBox="0 0 100 100" width="100%" height="100%"><g fill="${c}"><rect x="29.3" y="3" width="10.2" height="26" rx="5.1"/><rect x="63" y="3" width="10.2" height="26" rx="5.1"/><rect x="17.4" y="32.3" width="67.6" height="11.4" rx="5.7"/><path d="M22 40h57.6v10a28.8 28.8 0 0 1-57.6 0z"/><rect x="46.1" y="70" width="10.2" height="26.4" rx="5.1"/></g></svg>`;
+const $ = id => document.getElementById(id);
+$('plug1').innerHTML = PLUG('#2d5ff6'); $('plug2').innerHTML = PLUG('#fff'); $('logo').innerHTML = PLUG('#2d5ff6');
+$('sicons').innerHTML = '<svg width="150" height="34" viewBox="0 0 150 34"><g fill="#0b1530"><rect x="0" y="22" width="7" height="10" rx="2"/><rect x="11" y="16" width="7" height="16" rx="2"/><rect x="22" y="10" width="7" height="22" rx="2"/><rect x="33" y="4" width="7" height="28" rx="2"/><path d="M62 12a22 22 0 0 1 30 0l-3.5 3.6a17 17 0 0 0-23 0zM68 19a13 13 0 0 1 18 0l-3.6 3.6a8 8 0 0 0-10.8 0zM77 30l-4.2-4.2a6 6 0 0 1 8.4 0z"/><rect x="104" y="7" width="40" height="21" rx="6" fill="none" stroke="#0b1530" stroke-width="2.6"/><rect x="108" y="11" width="28" height="13" rx="3"/><rect x="146" y="13" width="3" height="9" rx="1.5"/></g></svg>';
+$('mini').innerHTML = $('paper').outerHTML.replace('id="paper"', '').replace(/id="h\d"/g, '');
+
+const cl = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = x => { x = cl(x); return 1 - Math.pow(1 - x, 3); };
+const inout = x => { x = cl(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const back = x => { x = cl(x); const c = 1.6; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+function show(id) { for (const s of ['letter', 'chat', 'end']) $(s).style.display = s === id ? 'block' : 'none'; }
+
+// brandpunten van de data op het papier (zonder camerabeweging gemeten)
+let P = null;
+function punten() {
+  $('stage').style.transform = 'none';
+  P = {};
+  for (const id of ['h1', 'h2', 'h3', 'h4']) { const r = $(id).getBoundingClientRect(); P[id] = { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width, h: r.height }; }
+}
+// camera: zet punt (x,y) op (cx,cy) met schaal s
+function cam(x, y, s, cx = 540, cy = 860) { $('stage').style.transform = `translate(${cx - x * s}px, ${cy - y * s}px) scale(${s})`; }
+const mix = (a, b, k) => a + (b - a) * k;
+
+// ondertitel: woorden verschijnen naar rato van hun lengte over de duur van de regel
+function sub(t) {
+  const T = window.T; let txt = '', k = 0;
+  for (let i = 0; i < T.l.length; i++) { const s = T.l[i]; if (t >= s - .05 && t < s + T.vo[i] + (T.l[i + 1] ? Math.min(.5, T.l[i + 1] - s - T.vo[i]) : .8)) { txt = T.tekst[i]; k = (t - s) / T.vo[i]; } }
+  if (!txt) { $('sub').innerHTML = ''; return; }
+  const w = txt.split(' '); const tot = txt.length; let acc = 0, n = 0;
+  for (const x of w) { if ((acc / tot) <= k + .02) n++; acc += x.length + 1; }
+  $('sub').innerHTML = '<div>' + w.slice(0, Math.max(1, n)).map(x => /nexy\.now|Nexy/.test(x) ? '<b>' + x + '</b>' : x).join(' ') + '</div>';
+}
+
+window.render = function (t) {
+  const T = window.T; if (!P) punten();
+  $('flash').style.opacity = 0;
+  sub(t); $('sub').style.top = (t >= T.c && t < T.e) ? '300px' : '250px';
+  $('url').style.opacity = t >= T.urlAan && t < T.e ? ease((t - T.urlAan) / .3) : 0;
+  if (t < T.c) {
+    show('letter');
+    const h2 = P.h2, mid = { x: 540, y: 1050 };
+    let x, y, s;
+    if (t < T.uit) { x = h2.x; y = h2.y; s = mix(2.5, 2.25, t / T.uit); }
+    else if (t < T.b) {
+      const k = inout((t - T.uit) / .75);
+      x = mix(h2.x, mid.x, k); y = mix(h2.y, mid.y, k); s = mix(2.25, 1.0, k);
+    } else { // camera: handheld
+      const u = t - T.b;
+      x = mid.x + Math.sin(u * 4.4) * 6; y = mid.y + Math.cos(u * 3.1) * 6; s = 0.98 + 0.03 * ease(u / 1.5);
+    }
+    cam(x, y, s, 540, t < T.uit ? 900 : mix(900, 1010, inout((t - T.uit) / .75)));
+    // markeren: picture day staat er al bij de start, de rest bij regel 2
+    const tijden = { h2: -1, h1: T.l[1] + .25, h3: T.l[1] + .6, h4: T.l[1] + .95 };
+    for (const id of ['h1', 'h2', 'h3', 'h4']) { const k = id === 'h2' ? ease(t / .35) : ease((t - tijden[id]) / .3); $(id).querySelector('i').style.width = `calc(${k * 100}% + ${k * 10}px)`; }
+    // rode ring om picture day
+    const r = $('ring'), rk = ease((t - .15) / .4);
+    r.style.left = (h2.x - h2.w / 2 - 30) + 'px'; r.style.top = (h2.y - h2.h / 2 - 22) + 'px'; r.style.width = (h2.w + 60) + 'px'; r.style.height = (h2.h + 44) + 'px';
+    r.style.opacity = rk * (t < T.l[1] + 1.3 ? 1 : 0); r.style.transform = `scale(${1.15 - .15 * rk}) rotate(-3deg)`;
+    const camOn = t >= T.b;
+    $('cam').style.display = camOn ? 'block' : 'none';
+    $('focus').style.display = camOn && t > T.b + .5 ? 'block' : 'none';
+    $('focus').style.transform = `scale(${1 - .1 * Math.abs(Math.sin((t - T.b) * 5))})`;
+    if (t >= T.shut && t < T.shut + 2 / 30) $('flash').style.opacity = .9;
+  } else if (t < T.e) {
+    show('chat');
+    const u = t - T.c;
+    const set = ease(u / .3); $('chat').style.transform = `scale(${1.06 - .06 * set})`;
+    $('me').style.opacity = 1;
+    const nx = ease((u - .35) / .35); $('nx').style.opacity = nx; $('nx').style.transform = `translateY(${(1 - nx) * 80}px)`;
+    document.querySelectorAll('#nx .it').forEach((el, i) => {
+      const s0 = T.l[3] + .45 + i * .5, k = ease((t - s0) / .28);
+      el.style.opacity = .12 + .88 * k; el.querySelector('p').style.opacity = k;
+      el.querySelector('.d').style.transform = `scale(${.85 + .15 * back((t - s0) / .35)})`;
+    });
+    // regel 5: chat schuift omhoog, melding valt in, Sam antwoordt
+    const sc = inout((t - T.d) / .6);
+    $('msgs').style.transform = `translateY(${-sc * 300}px)`;
+    const sm = ease((t - T.samT) / .35); $('sam').style.opacity = sm; $('sam').style.transform = `translateY(${(1 - sm) * 60}px)`;
+    const bk = back((t - T.ban) / .45), bo = cl((t - T.ban) / .12) * (t < T.samT + .1 ? 1 : 1 - cl((t - T.samT - .1) / .3));
+    $('ban').style.opacity = bo; $('ban').style.transform = `translateY(${(1 - bk) * -320}px)`;
+  } else {
+    show('end');
+    const u = t - T.e;
+    $('logo').style.transform = `scale(${back(u / .4)})`;
+    const s = 'nexy.now/yt', n = Math.min(s.length, Math.floor(cl((u - .25) / .7) * s.length + .001));
+    const blink = Math.floor(t * 2.4) % 2 === 0 ? 1 : 0;
+    $('u').innerHTML = s.slice(0, n) + `<span class="cur" style="opacity:${n < s.length ? 1 : blink}"></span>`;
+  }
+};
+</script></body></html>
