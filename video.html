@@ -13,7 +13,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000;font-family
 /* scène A en B: de brief */
 #bg{position:absolute;inset:-80px;background:url(as1.png) center top/1800px auto;filter:blur(9px) brightness(.72) saturate(1.15)}
 #vign{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 55%,rgba(0,0,0,0) 45%,rgba(0,0,0,.6) 100%)}
-#stage{position:absolute;inset:0}
+#stage{position:absolute;inset:0;transform-origin:0 0}
 #paperwrap{position:absolute;left:70px;top:430px;width:940px;height:1240px}
 .paper{position:absolute;inset:0;background:#f3eee3;border-radius:4px;box-shadow:0 50px 90px rgba(0,0,0,.6),0 8px 16px rgba(0,0,0,.35);padding:76px 74px 60px;font-family:'Source Serif 4',Georgia,serif;color:#242424;overflow:hidden}
 .paper .grain{position:absolute;inset:0;opacity:.35;mix-blend-mode:multiply;pointer-events:none}
@@ -184,7 +184,7 @@ function sub(t) {
 window.render = function (t) {
   const T = window.T; if (!P) { show('letter'); punten(); }
   $('flash').style.opacity = 0;
-  sub(t); $('sub').style.top = (t >= T.c && t < T.e) ? '300px' : '250px';
+  sub(t); const inChat = t >= T.c && t < T.e; $('sub').style.top = inChat ? '300px' : '250px'; $('url').style.top = inChat ? '118px' : '1452px'; $('url').style.left = inChat ? '700px' : '50%';
   $('url').style.opacity = t >= T.urlAan && t < T.e ? ease((t - T.urlAan) / .3) : 0;
   if (t < T.c) {
     show('letter');
