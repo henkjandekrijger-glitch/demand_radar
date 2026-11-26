@@ -8,7 +8,7 @@ const vo = JSON.parse(fs.readFileSync(`vo_${K}.json`, 'utf8'));
 const FPS = 30;
 
 // tijdlijn
-const CTA = { yt: 'Nexy is free on iPhone and Android. Type nexy.now/yt', tt: 'Nexy is free on iPhone and Android. The link is in my bio.', ig: 'Nexy is free on iPhone and Android. The link is in my bio.', tg: 'Nexy is free on iPhone and Android. Tap the link below.', fb: 'Nexy is free on iPhone and Android. Tap the link below.' }[K];
+const CTA = { yt: 'Nexy is free on iPhone and Android. Tap our channel name for the link.', tt: 'Nexy is free on iPhone and Android. The link is in my profile.', ig: 'Nexy is free on iPhone and Android. The link is in my profile.' }[K] || 'Nexy is free on iPhone and Android. Tap the link below.';
 const tekst = fs.readFileSync('vo.txt', 'utf8').split('\n').map(x => x.trim()).filter(Boolean).map(x => x.replace('{CTA}', CTA));
 const T = { vo, tekst, l: [] };
 T.l[0] = 0.05; T.uit = T.l[0] + vo[0] + 0.1; T.l[1] = T.uit + 0.15;

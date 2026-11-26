@@ -5,12 +5,10 @@ stem = sys.argv[1] if len(sys.argv) > 1 else 'af_heart'
 tempo = float(sys.argv[2]) if len(sys.argv) > 2 else 1.05
 K = os.environ.get('K', 'yt')
 CTA = {
-  'yt': 'Nexy is free on iPhone and Android. Type nexy dot now, slash Y T.',
-  'tt': 'Nexy is free on iPhone and Android. The link is in my bio.',
-  'ig': 'Nexy is free on iPhone and Android. The link is in my bio.',
-  'tg': 'Nexy is free on iPhone and Android. Tap the link below.',
-  'fb': 'Nexy is free on iPhone and Android. Tap the link below.',
-}[K]
+  'yt': 'Nexy is free on iPhone and Android. Tap our channel name for the link.',
+  'tt': 'Nexy is free on iPhone and Android. The link is in my profile.',
+  'ig': 'Nexy is free on iPhone and Android. The link is in my profile.',
+}.get(K, 'Nexy is free on iPhone and Android. Tap the link below.')
 k = Kokoro('ko/kokoro.onnx', 'ko/voices.bin')
 duur = []
 for i, regel in enumerate([r.strip().replace('{CTA}', CTA) for r in open('vo.txt') if r.strip()], 1):
