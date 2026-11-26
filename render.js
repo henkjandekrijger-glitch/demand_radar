@@ -22,7 +22,7 @@ fs.writeFileSync('T.json', JSON.stringify(T, null, 1));
   const p = await b.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
   await p.goto('file://' + process.cwd() + '/video.html');
   await p.evaluate(T => { window.T = T; }, T);
-  await p.evaluate(() => document.fonts.ready);
+  await p.evaluate(async () => { for (const f of ['400 29px "Source Serif 4"', '600 29px "Source Serif 4"', '700 44px "Source Serif 4"', 'italic 400 28px "Source Serif 4"', '400 30px Inter', '500 30px Inter', '600 30px Inter', '700 30px Inter', '800 62px Inter']) await document.fonts.load(f); await document.fonts.ready; });
   await p.waitForTimeout(800);
   if (mode === 'preview') {
     const ts = (process.argv[3] || '').split(',').map(Number);
